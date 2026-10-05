@@ -2317,8 +2317,8 @@ const COLORS = [
 ];
 
 // Supabase Configuration - Replace with your credentials
-const SUPABASE_URL = "https://stjscemgelpcuufuxyah.supabase.co/rest/v1/";
-const SUPABASE_ANON_KEY = "sb_publishable_qh5AXAKUrldv5uRrZb9j3g__0SgNJMz"
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
+const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
 let supabaseClient = null;
 let currentUser = null;
