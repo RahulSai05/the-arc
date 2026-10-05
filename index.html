@@ -1,0 +1,4938 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>The Arc</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&family=Onest:wght@400..700&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --bg:#FFF8E7;
+  --panel:#FFFFFF;
+  --panel2:#F5EFE3;
+  --panel3:#EEE5D5;
+  --line:#E7DED0;
+  --line2:#D3C2A5;
+
+  --text:#2D2622;
+  --muted:#7A7068;
+  --dim:#A89888;
+
+  --accent:#722F37;
+  --accent2:#B85A6A;
+  --accent-soft:#FAE8E8;
+  --on-accent:#FFF8E7;
+
+  --gold:#D4A84B;
+  --orange:#E87A3D;
+  --green:#5D986D;
+  --red:#C85C5C;
+
+  --display:'Bricolage Grotesque',system-ui,sans-serif;
+  --body:'Onest',system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+
+  color-scheme:light;
+}
+
+.dark{
+  --bg:#171310;
+  --panel:#24201C;
+  --panel2:#302A25;
+  --panel3:#39312B;
+  --line:#3B342F;
+  --line2:#50473F;
+
+  --text:#FFF8E7;
+  --muted:#B0A294;
+  --dim:#75685D;
+
+  --accent:#C74B5D;
+  --accent2:#D46B7B;
+  --accent-soft:#3C282C;
+  --on-accent:#FFF8E7;
+
+  --gold:#D4A84B;
+  --orange:#E87A3D;
+  --green:#72B184;
+  --red:#D76A6A;
+
+  color-scheme:dark;
+}
+
+*,
+*::before,
+*::after{
+  box-sizing:border-box;
+}
+
+[hidden]{
+  display:none!important;
+}
+
+html{
+  scroll-behavior:smooth;
+}
+
+body{
+  margin:0;
+  min-height:100vh;
+  background:var(--bg);
+  color:var(--text);
+  font-family:var(--body);
+  font-size:15px;
+  line-height:1.45;
+  transition:background .25s,color .25s;
+}
+
+button,
+input,
+textarea,
+select{
+  font:inherit;
+}
+
+button{
+  cursor:pointer;
+}
+
+button:disabled{
+  cursor:not-allowed;
+}
+
+:focus-visible{
+  outline:2px solid var(--accent);
+  outline-offset:3px;
+}
+
+.app{
+  width:min(1240px,100%);
+  margin:auto;
+  padding:24px 18px 60px;
+}
+
+/* =========================
+   HEADER
+========================= */
+
+.top{
+  display:grid;
+  grid-template-columns:1fr auto 1fr;
+  align-items:center;
+  gap:20px;
+}
+
+.brand{
+  min-width:0;
+}
+
+.brand-title{
+  font:800 43px/1 var(--display);
+  letter-spacing:-.045em;
+  text-transform:uppercase;
+}
+
+.brand-sub{
+  margin-top:7px;
+  color:var(--muted);
+  font-size:12px;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  font-weight:600;
+}
+
+.nav{
+  display:flex;
+  align-items:center;
+  gap:3px;
+  padding:5px;
+  border:1px solid var(--line);
+  background:var(--panel);
+  border-radius:999px;
+  box-shadow:0 3px 16px rgba(50,30,20,.04);
+}
+
+.nav button{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  padding:11px 18px;
+  border:0;
+  border-radius:999px;
+  background:transparent;
+  color:var(--muted);
+  font-size:13px;
+  font-weight:700;
+  transition:.15s;
+}
+
+.nav button:hover{
+  color:var(--text);
+}
+
+.nav button[aria-current="page"]{
+  background:var(--accent);
+  color:var(--on-accent);
+}
+
+.header-actions{
+  display:flex;
+  justify-content:flex-end;
+  align-items:center;
+  gap:8px;
+}
+
+.icon-btn{
+  width:42px;
+  height:42px;
+  display:grid;
+  place-items:center;
+  border:1px solid var(--line2);
+  background:var(--panel);
+  color:var(--text);
+  border-radius:13px;
+  transition:.15s;
+}
+
+.icon-btn:hover{
+  border-color:var(--accent);
+  color:var(--accent);
+}
+
+.btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  border:1px solid var(--line2);
+  background:var(--panel);
+  color:var(--text);
+  padding:10px 16px;
+  border-radius:999px;
+  font-size:12px;
+  font-weight:700;
+  transition:.15s;
+}
+
+.btn:hover{
+  border-color:var(--accent);
+  color:var(--accent);
+}
+
+.btn-primary{
+  background:var(--accent);
+  border-color:var(--accent);
+  color:var(--on-accent);
+}
+
+.btn-primary:hover{
+  color:var(--on-accent);
+  background:var(--accent2);
+  border-color:var(--accent2);
+}
+
+.subbar{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:15px;
+  margin-top:20px;
+}
+
+.status{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  color:var(--muted);
+  font-size:11px;
+  font-weight:700;
+  letter-spacing:.07em;
+  text-transform:uppercase;
+}
+
+.status::before{
+  content:"";
+  width:7px;
+  height:7px;
+  border-radius:50%;
+  background:var(--green);
+}
+
+/* =========================
+   GENERAL
+========================= */
+
+.view{
+  display:grid;
+  gap:18px;
+  margin-top:22px;
+}
+
+.panel{
+  min-width:0;
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:22px;
+  padding:24px;
+  box-shadow:0 5px 25px rgba(50,30,20,.025);
+}
+
+.section-label{
+  color:var(--muted);
+  font-size:10px;
+  font-weight:800;
+  letter-spacing:.15em;
+  text-transform:uppercase;
+}
+
+.section-title{
+  margin-top:5px;
+  font:800 24px/1.05 var(--display);
+  letter-spacing:-.025em;
+}
+
+.muted{
+  color:var(--muted);
+}
+
+.small{
+  font-size:12px;
+}
+
+.grid-2{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:18px;
+}
+
+.grid-3{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:14px;
+}
+
+.grid-4{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:14px;
+}
+
+/* =========================
+   ICON
+========================= */
+
+.icon{
+  width:18px;
+  height:18px;
+  fill:none;
+  stroke:currentColor;
+  stroke-width:2;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+  flex:none;
+}
+
+.icon-sm{
+  width:15px;
+  height:15px;
+}
+
+/* =========================
+   TODAY HERO
+========================= */
+
+.hero{
+  display:grid;
+  grid-template-columns:1fr auto 1fr;
+  align-items:center;
+  gap:25px;
+  padding:28px;
+  background:
+    radial-gradient(circle at 50% 0%,var(--accent-soft),transparent 48%),
+    var(--panel);
+  border:1px solid var(--line);
+  border-radius:25px;
+}
+
+.hero-copy{
+  min-width:0;
+}
+
+.hero-eyebrow{
+  color:var(--accent);
+  font-size:11px;
+  font-weight:800;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+}
+
+.hero-title{
+  margin-top:8px;
+  font:800 34px/1 var(--display);
+  letter-spacing:-.04em;
+}
+
+.hero-date{
+  margin-top:9px;
+  color:var(--muted);
+  font-size:13px;
+}
+
+.hero-message{
+  margin-top:18px;
+  max-width:310px;
+  color:var(--muted);
+  font-size:14px;
+}
+
+.hero-stats{
+  display:grid;
+  gap:11px;
+  justify-items:end;
+}
+
+.hero-stat{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  min-width:170px;
+  padding:10px 13px;
+  background:var(--panel2);
+  border:1px solid var(--line);
+  border-radius:14px;
+}
+
+.hero-stat b{
+  font:800 20px/1 var(--display);
+}
+
+.hero-stat span{
+  color:var(--muted);
+  font-size:11px;
+  font-weight:700;
+}
+
+/* ring */
+
+.ring{
+  position:relative;
+  width:190px;
+  height:190px;
+  flex:none;
+}
+
+.ring svg{
+  width:100%;
+  height:100%;
+  transform:rotate(-90deg);
+}
+
+.ring-bg{
+  fill:none;
+  stroke:var(--line);
+}
+
+.ring-progress{
+  fill:none;
+  stroke:var(--accent);
+  stroke-linecap:round;
+  transition:stroke-dashoffset .4s ease;
+}
+
+.ring-center{
+  position:absolute;
+  inset:0;
+  display:grid;
+  place-content:center;
+  text-align:center;
+}
+
+.ring-number{
+  font:800 43px/1 var(--display);
+  letter-spacing:-.04em;
+}
+
+.ring-label{
+  margin-top:5px;
+  color:var(--muted);
+  font-size:10px;
+  font-weight:800;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+}
+
+/* =========================
+   HABIT LIST
+========================= */
+
+.habit-list{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:10px;
+}
+
+@media(max-width:700px){
+  .habit-list{
+    grid-template-columns:1fr;
+  }
+}
+
+.habit-card{
+  display:grid;
+  grid-template-columns:auto 1fr auto auto;
+  align-items:center;
+  gap:14px;
+  min-width:0;
+  padding:14px 16px;
+  border:1px solid var(--line);
+  background:var(--panel);
+  border-radius:17px;
+  transition:.15s;
+}
+
+.habit-card:hover{
+  border-color:var(--line2);
+  transform:translateY(-1px);
+}
+
+.habit-card.completed{
+  background:var(--accent-soft);
+  border-color:var(--accent2);
+}
+
+.check{
+  position:relative;
+  width:38px;
+  height:38px;
+  flex:none;
+}
+
+.check input{
+  position:absolute;
+  inset:0;
+  opacity:0;
+  margin:0;
+  cursor:pointer;
+  z-index:2;
+}
+
+.check-mark{
+  position:absolute;
+  inset:0;
+  border:2px solid var(--line2);
+  border-radius:12px;
+  transition:.15s;
+}
+
+.check-mark::after{
+  content:"";
+  position:absolute;
+  left:12px;
+  top:7px;
+  width:9px;
+  height:16px;
+  border:solid var(--on-accent);
+  border-width:0 2.5px 2.5px 0;
+  transform:rotate(45deg) scale(0);
+  transition:.12s;
+}
+
+.check input:checked + .check-mark{
+  background:var(--accent);
+  border-color:var(--accent);
+}
+
+.check input:checked + .check-mark::after{
+  transform:rotate(45deg) scale(1);
+}
+
+.habit-info{
+  min-width:0;
+}
+
+.habit-name{
+  display:flex;
+  align-items:center;
+  gap:9px;
+  min-width:0;
+}
+
+.habit-name b{
+  font-size:15px;
+  font-weight:750;
+  overflow-wrap:anywhere;
+}
+
+.habit-card.completed .habit-name b{
+  color:var(--muted);
+  text-decoration:line-through;
+}
+
+.habit-desc{
+  margin-top:3px;
+  color:var(--muted);
+  font-size:12px;
+  overflow-wrap:anywhere;
+}
+
+.dot{
+  width:9px;
+  height:9px;
+  border-radius:50%;
+  flex:none;
+}
+
+.streak{
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+  color:var(--accent);
+  font-size:12px;
+  font-weight:800;
+  white-space:nowrap;
+}
+
+.streak.zero{
+  color:var(--dim);
+}
+
+/* =========================
+   MINI STATS
+========================= */
+
+.stat-card{
+  padding:19px;
+  border:1px solid var(--line);
+  background:var(--panel);
+  border-radius:18px;
+}
+
+.stat-top{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+}
+
+.stat-value{
+  margin-top:12px;
+  font:800 30px/1 var(--display);
+  letter-spacing:-.03em;
+}
+
+.stat-caption{
+  margin-top:6px;
+  color:var(--muted);
+  font-size:12px;
+}
+
+.stat-icon{
+  width:36px;
+  height:36px;
+  display:grid;
+  place-items:center;
+  background:var(--accent-soft);
+  color:var(--accent);
+  border-radius:11px;
+}
+
+/* =========================
+   WEEK
+========================= */
+
+.panel-heading{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:15px;
+  margin-bottom:20px;
+}
+
+.week-bars{
+  display:grid;
+  grid-template-columns:repeat(7,1fr);
+  gap:10px;
+  align-items:end;
+}
+
+.day-bar{
+  display:grid;
+  gap:7px;
+  justify-items:center;
+}
+
+.bar-track{
+  width:100%;
+  max-width:38px;
+  height:130px;
+  display:flex;
+  align-items:flex-end;
+  overflow:hidden;
+  background:var(--panel2);
+  border-radius:12px;
+}
+
+.bar-fill{
+  width:100%;
+  min-height:0;
+  background:var(--accent);
+  border-radius:12px;
+  transition:height .35s;
+}
+
+.day-name{
+  color:var(--muted);
+  font-size:10px;
+  font-weight:700;
+}
+
+.day-bar.today .day-name{
+  color:var(--accent);
+}
+
+.day-percent{
+  color:var(--muted);
+  font-size:10px;
+  font-weight:700;
+}
+
+/* =========================
+   PROGRESS
+========================= */
+
+.progress-list{
+  display:grid;
+  gap:18px;
+  max-height:240px;
+  overflow-y:auto;
+  padding-right:8px;
+}
+
+.progress-list::-webkit-scrollbar{
+  width:6px;
+}
+
+.progress-list::-webkit-scrollbar-track{
+  background:var(--panel2);
+  border-radius:999px;
+}
+
+.progress-list::-webkit-scrollbar-thumb{
+  background:var(--line2);
+  border-radius:999px;
+}
+
+.progress-list::-webkit-scrollbar-thumb:hover{
+  background:var(--dim);
+}
+
+.progress-row{
+  display:grid;
+  gap:8px;
+}
+
+.progress-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+}
+
+.progress-name{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  font-size:13px;
+  font-weight:700;
+}
+
+.progress-value{
+  color:var(--muted);
+  font-size:12px;
+  font-variant-numeric:tabular-nums;
+}
+
+.progress-track{
+  height:9px;
+  overflow:hidden;
+  background:var(--line);
+  border-radius:999px;
+}
+
+.progress-fill{
+  height:100%;
+  background:var(--accent);
+  border-radius:999px;
+  transition:width .35s;
+}
+
+/* =========================
+   HABITS PAGE
+========================= */
+
+.toolbar{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:15px;
+  flex-wrap:wrap;
+  margin-bottom:20px;
+}
+
+.select{
+  appearance:none;
+  border:1px solid var(--line);
+  background:var(--panel2);
+  color:var(--text);
+  padding:11px 38px 11px 14px;
+  border-radius:999px;
+  font-size:11px;
+  font-weight:800;
+  letter-spacing:.05em;
+  text-transform:uppercase;
+  background-image:
+    linear-gradient(45deg,transparent 50%,var(--muted) 50%),
+    linear-gradient(135deg,var(--muted) 50%,transparent 50%);
+  background-position:
+    calc(100% - 17px) 48%,
+    calc(100% - 12px) 48%;
+  background-size:5px 5px,5px 5px;
+  background-repeat:no-repeat;
+}
+
+.calendar-wrap{
+  overflow-x:auto;
+  -webkit-overflow-scrolling:touch;
+}
+
+.calendar{
+  min-width:750px;
+}
+
+.calendar-row{
+  display:grid;
+  align-items:center;
+  grid-template-columns:170px repeat(var(--days),40px) 120px;
+}
+
+.calendar-header{
+  color:var(--dim);
+  font-size:10px;
+  font-weight:800;
+  text-align:center;
+  padding-bottom:8px;
+}
+
+.calendar-habit{
+  display:flex;
+  align-items:center;
+  gap:9px;
+  min-height:52px;
+  padding-left:8px;
+  font-size:12px;
+  font-weight:750;
+}
+
+.calendar-day{
+  display:grid;
+  place-items:center;
+  min-height:52px;
+}
+
+.calendar-date{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:2px;
+  color:var(--dim);
+  font-size:10px;
+  font-weight:700;
+}
+
+.calendar-day-num{
+  font-size:11px;
+}
+
+.calendar-month{
+  font-size:8px;
+  text-transform:uppercase;
+  letter-spacing:.05em;
+  opacity:.7;
+}
+
+.calendar-date.today{
+  color:var(--accent);
+}
+
+.calendar-date.today .calendar-month{
+  opacity:1;
+}
+
+.calendar-check{
+  position:relative;
+  width:25px;
+  height:25px;
+}
+
+.calendar-check input{
+  position:absolute;
+  inset:0;
+  opacity:0;
+  cursor:pointer;
+  z-index:2;
+}
+
+.calendar-mark{
+  position:absolute;
+  inset:0;
+  border:1.5px solid var(--line2);
+  border-radius:8px;
+}
+
+.calendar-check input:checked + .calendar-mark{
+  background:var(--accent);
+  border-color:var(--accent);
+}
+
+.calendar-mark::after{
+  content:"";
+  position:absolute;
+  left:8px;
+  top:4px;
+  width:6px;
+  height:11px;
+  border:solid var(--on-accent);
+  border-width:0 2px 2px 0;
+  transform:rotate(45deg) scale(0);
+}
+
+.calendar-check input:checked + .calendar-mark::after{
+  transform:rotate(45deg) scale(1);
+}
+
+.calendar-stats{
+  display:flex;
+  justify-content:flex-end;
+  gap:10px;
+  padding-right:10px;
+  color:var(--muted);
+  font-size:11px;
+  font-weight:750;
+}
+
+/* =========================
+   INSIGHTS
+========================= */
+
+.insight-hero{
+  display:flex;
+  align-items:flex-end;
+  justify-content:space-between;
+  gap:20px;
+  flex-wrap:wrap;
+}
+
+.insight-score{
+  font:800 68px/.9 var(--display);
+  letter-spacing:-.05em;
+}
+
+.filters{
+  display:flex;
+  flex-wrap:wrap;
+  gap:9px;
+}
+
+.chart{
+  margin-top:25px;
+  width:100%;
+  min-height:270px;
+}
+
+.chart svg{
+  width:100%;
+  height:270px;
+  display:block;
+}
+
+.chart text{
+  fill:var(--muted);
+  font:500 10px var(--body);
+}
+
+.kpi-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:14px;
+}
+
+.kpi{
+  padding:18px;
+  text-align:center;
+  border:1px solid var(--line);
+  background:var(--panel);
+  border-radius:18px;
+}
+
+.kpi-label{
+  color:var(--muted);
+  font-size:10px;
+  font-weight:800;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+}
+
+.kpi-value{
+  margin-top:10px;
+  font:800 28px/1 var(--display);
+}
+
+.kpi-value.positive{
+  color:var(--green);
+}
+
+.kpi-value.negative{
+  color:var(--orange);
+}
+
+.leaderboard{
+  display:grid;
+  gap:18px;
+}
+
+.rank-row{
+  display:grid;
+  gap:8px;
+}
+
+.rank-top{
+  display:flex;
+  align-items:center;
+  gap:9px;
+}
+
+.rank-name{
+  flex:1;
+  min-width:0;
+  font-size:13px;
+  font-weight:750;
+}
+
+.rank-score{
+  color:var(--accent);
+  font-size:12px;
+  font-weight:800;
+}
+
+.streak-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:15px;
+  padding:13px 0;
+  border-bottom:1px solid var(--line);
+}
+
+.streak-row:last-child{
+  border-bottom:0;
+}
+
+.streak-left{
+  display:flex;
+  align-items:center;
+  gap:9px;
+  min-width:0;
+}
+
+.streak-number{
+  font:800 22px/1 var(--display);
+  color:var(--accent);
+}
+
+/* =========================
+   WEEKLY INSIGHTS
+========================= */
+
+.weekly-grid{
+  display:grid;
+  grid-template-columns:repeat(8,minmax(40px,1fr));
+  gap:10px;
+  align-items:end;
+}
+
+.week-column{
+  display:grid;
+  gap:7px;
+  justify-items:center;
+}
+
+.week-column .bar-track{
+  height:145px;
+}
+
+.week-label{
+  color:var(--dim);
+  font-size:10px;
+  font-weight:700;
+}
+
+/* =========================
+   EMPTY
+========================= */
+
+.empty{
+  padding:45px 20px;
+  text-align:center;
+  color:var(--muted);
+}
+
+.empty-icon{
+  width:50px;
+  height:50px;
+  margin:auto;
+  display:grid;
+  place-items:center;
+  border-radius:16px;
+  background:var(--panel2);
+  color:var(--accent);
+}
+
+.empty-title{
+  margin-top:14px;
+  color:var(--text);
+  font-weight:800;
+}
+
+.empty-text{
+  margin-top:5px;
+  font-size:13px;
+}
+
+/* =========================
+   MODALS
+========================= */
+
+.overlay{
+  position:fixed;
+  inset:0;
+  z-index:1000;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+  background:rgba(0,0,0,.52);
+  opacity:0;
+  visibility:hidden;
+  transition:.2s;
+}
+
+.overlay.open{
+  opacity:1;
+  visibility:visible;
+}
+
+.modal{
+  width:min(520px,100%);
+  max-height:90vh;
+  overflow:auto;
+  padding:27px;
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:23px;
+  transform:translateY(15px);
+  transition:.2s;
+}
+
+.overlay.open .modal{
+  transform:translateY(0);
+}
+
+.modal-head{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:15px;
+  margin-bottom:25px;
+}
+
+.modal-title{
+  font:800 25px/1 var(--display);
+  letter-spacing:-.03em;
+}
+
+.field{
+  margin-bottom:17px;
+}
+
+.field label{
+  display:block;
+  margin-bottom:7px;
+  color:var(--muted);
+  font-size:11px;
+  font-weight:800;
+  letter-spacing:.07em;
+  text-transform:uppercase;
+}
+
+.field input,
+.field textarea{
+  width:100%;
+  border:1px solid var(--line);
+  background:var(--panel2);
+  color:var(--text);
+  padding:13px 14px;
+  border-radius:13px;
+  outline:none;
+}
+
+.field textarea{
+  min-height:85px;
+  resize:vertical;
+}
+
+.field input:focus,
+.field textarea:focus{
+  border-color:var(--accent);
+}
+
+.modal-actions{
+  display:flex;
+  gap:9px;
+  margin-top:24px;
+}
+
+.modal-actions .btn{
+  flex:1;
+}
+
+.manage-list{
+  display:grid;
+  gap:9px;
+  max-height:430px;
+  overflow:auto;
+}
+
+.manage-item{
+  display:grid;
+  grid-template-columns:auto 1fr auto auto auto;
+  align-items:center;
+  gap:10px;
+  padding:12px;
+  border:1px solid var(--line);
+  background:var(--panel2);
+  border-radius:14px;
+}
+
+.manage-info{
+  min-width:0;
+}
+
+.manage-info b{
+  display:block;
+  font-size:13px;
+}
+
+.manage-info small{
+  color:var(--muted);
+  font-size:11px;
+}
+
+.manage-action{
+  width:34px;
+  height:34px;
+  display:grid;
+  place-items:center;
+  border:1px solid var(--line2);
+  background:var(--panel);
+  color:var(--text);
+  border-radius:10px;
+}
+
+.manage-action:hover{
+  color:var(--accent);
+  border-color:var(--accent);
+}
+
+.manage-action.danger:hover{
+  color:var(--red);
+  border-color:var(--red);
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media(max-width:900px){
+
+  .top{
+    grid-template-columns:1fr;
+  }
+
+  .nav{
+    width:100%;
+    justify-content:center;
+  }
+
+  .nav button{
+    flex:1;
+  }
+
+  .header-actions{
+    justify-content:flex-start;
+  }
+
+  .hero{
+    grid-template-columns:1fr;
+    justify-items:center;
+    text-align:center;
+  }
+
+  .hero-copy{
+    order:2;
+  }
+
+  .hero-stats{
+    order:3;
+    width:100%;
+    grid-template-columns:repeat(3,1fr);
+  }
+
+  .hero-stat{
+    min-width:0;
+    justify-content:center;
+  }
+
+  .hero-message{
+    margin-inline:auto;
+  }
+
+  .grid-2{
+    grid-template-columns:1fr;
+  }
+
+  .kpi-grid{
+    grid-template-columns:repeat(2,1fr);
+  }
+}
+
+@media(max-width:600px){
+
+  .app{
+    padding:16px 12px 45px;
+  }
+
+  .brand-title{
+    font-size:35px;
+  }
+
+  .brand-sub{
+    font-size:10px;
+  }
+
+  .subbar{
+    align-items:flex-start;
+    flex-direction:column;
+  }
+
+  .header-actions{
+    width:100%;
+  }
+
+  .header-actions .btn-primary{
+    flex:1;
+  }
+
+  .nav button{
+    padding:10px 8px;
+    font-size:12px;
+  }
+
+  .panel{
+    padding:18px;
+    border-radius:19px;
+  }
+
+  .hero{
+    padding:22px 17px;
+  }
+
+  .hero-title{
+    font-size:29px;
+  }
+
+  .hero-stats{
+    grid-template-columns:1fr;
+    width:100%;
+  }
+
+  .hero-stat{
+    justify-content:flex-start;
+  }
+
+  .habit-card{
+    grid-template-columns:auto 1fr auto;
+  }
+
+  .habit-card .streak{
+    grid-column:2;
+  }
+
+  .grid-3{
+    grid-template-columns:1fr;
+  }
+
+  .grid-4{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  .kpi-grid{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  .insight-score{
+    font-size:55px;
+  }
+
+  .ring{
+    width:165px;
+    height:165px;
+  }
+
+  .ring-number{
+    font-size:38px;
+  }
+
+  .modal{
+    padding:21px;
+  }
+}
+
+@media(prefers-reduced-motion:reduce){
+  *,
+  *::before,
+  *::after{
+    transition:none!important;
+    scroll-behavior:auto!important;
+  }
+}
+
+/* =========================
+   LOGIN SCREEN
+========================= */
+
+.login-screen{
+  position:fixed;
+  inset:0;
+  z-index:2000;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+  background:var(--bg);
+  opacity:1;
+  visibility:visible;
+  transition:opacity .3s,visibility .3s;
+}
+
+.login-screen.hidden{
+  opacity:0;
+  visibility:hidden;
+  pointer-events:none;
+}
+
+.login-card{
+  width:min(420px,100%);
+  padding:50px 40px;
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:28px;
+  text-align:center;
+  box-shadow:0 20px 60px rgba(50,30,20,.08);
+}
+
+.login-logo{
+  margin-bottom:35px;
+}
+
+.login-logo .brand-title{
+  font-size:48px;
+}
+
+.login-logo .brand-sub{
+  margin-top:10px;
+}
+
+.login-form{
+  text-align:left;
+}
+
+.login-form.hidden{
+  display:none;
+}
+
+.login-form-title{
+  font:800 24px/1.1 var(--display);
+  letter-spacing:-.025em;
+  margin-bottom:6px;
+}
+
+.login-form-sub{
+  color:var(--muted);
+  font-size:13px;
+  margin-bottom:28px;
+}
+
+.form-group{
+  margin-bottom:18px;
+}
+
+.form-group label{
+  display:block;
+  margin-bottom:7px;
+  color:var(--muted);
+  font-size:11px;
+  font-weight:800;
+  letter-spacing:.07em;
+  text-transform:uppercase;
+}
+
+.form-group input{
+  width:100%;
+  border:1px solid var(--line);
+  background:var(--panel2);
+  color:var(--text);
+  padding:13px 14px;
+  border-radius:13px;
+  outline:none;
+  font-size:14px;
+}
+
+.form-group input:focus{
+  border-color:var(--accent);
+}
+
+.form-group input::placeholder{
+  color:var(--dim);
+}
+
+.login-btn{
+  width:100%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:12px;
+  padding:14px 24px;
+  border-radius:14px;
+  color:var(--text);
+  font-size:14px;
+  font-weight:700;
+  transition:.15s;
+  border:1px solid var(--line2);
+  background:var(--panel2);
+}
+
+.login-btn:hover{
+  background:var(--panel3);
+  border-color:var(--accent);
+}
+
+.login-btn.btn-primary{
+  background:var(--accent);
+  border-color:var(--accent);
+  color:var(--on-accent);
+}
+
+.login-btn.btn-primary:hover{
+  background:var(--accent2);
+  border-color:var(--accent2);
+}
+
+.login-switch{
+  margin-top:22px;
+  color:var(--muted);
+  font-size:13px;
+  text-align:center;
+}
+
+.btn-link{
+  background:none;
+  border:none;
+  color:var(--accent);
+  font-weight:700;
+  padding:0;
+  margin-left:6px;
+}
+
+.btn-link:hover{
+  text-decoration:underline;
+}
+
+.login-footer{
+  margin-top:30px;
+  color:var(--dim);
+  font-size:11px;
+}
+
+.login-error{
+  margin-top:16px;
+  padding:12px 16px;
+  background:rgba(200,92,92,.15);
+  border:1px solid var(--red);
+  border-radius:10px;
+  color:var(--red);
+  font-size:13px;
+  text-align:left;
+}
+
+.login-error.hidden{
+  display:none;
+}
+
+/* App hidden when not logged in */
+
+.app{
+  opacity:1;
+  visibility:visible;
+  transition:opacity .3s,visibility .3s;
+}
+
+.app.hidden{
+  opacity:0;
+  visibility:hidden;
+  pointer-events:none;
+}
+</style>
+</head>
+
+<body>
+
+<!-- ICONS -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+<defs>
+
+<symbol id="home" viewBox="0 0 24 24">
+  <path d="M3 10.5 12 3l9 7.5"/>
+  <path d="M5 9.5V21h14V9.5"/>
+  <path d="M9 21v-7h6v7"/>
+</symbol>
+
+<symbol id="grid" viewBox="0 0 24 24">
+  <rect x="3" y="3" width="7" height="7" rx="1"/>
+  <rect x="14" y="3" width="7" height="7" rx="1"/>
+  <rect x="3" y="14" width="7" height="7" rx="1"/>
+  <rect x="14" y="14" width="7" height="7" rx="1"/>
+</symbol>
+
+<symbol id="chart" viewBox="0 0 24 24">
+  <path d="M4 19V5"/>
+  <path d="M4 19h17"/>
+  <path d="m7 15 4-5 3 3 6-8"/>
+</symbol>
+
+<symbol id="plus" viewBox="0 0 24 24">
+  <path d="M12 5v14M5 12h14"/>
+</symbol>
+
+<symbol id="moon" viewBox="0 0 24 24">
+  <path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"/>
+</symbol>
+
+<symbol id="sun" viewBox="0 0 24 24">
+  <circle cx="12" cy="12" r="4"/>
+  <path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M19.1 4.9l-1.4 1.4M6.3 17.7l-1.4 1.4"/>
+</symbol>
+
+<symbol id="settings" viewBox="0 0 24 24">
+  <circle cx="12" cy="12" r="3"/>
+  <path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1A2 2 0 1 1 4.2 17l.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.6-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9L4.3 7A2 2 0 1 1 7.1 4.2l.1.1a1.7 1.7 0 0 0 1.9.3h.1a1.7 1.7 0 0 0 1-1.6V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.6 1.7 1.7 0 0 0 1.9-.3l.1-.1A2 2 0 1 1 20 7.1l-.1.1a1.7 1.7 0 0 0-.3 1.9v.1a1.7 1.7 0 0 0 1.6 1h.1a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.6 1z"/>
+</symbol>
+
+<symbol id="edit" viewBox="0 0 24 24">
+  <path d="m4 20 4.5-1 10.8-10.8a2.1 2.1 0 0 0-3-3L5.5 16 4 20z"/>
+  <path d="m14.5 6.5 3 3"/>
+</symbol>
+
+<symbol id="trash" viewBox="0 0 24 24">
+  <path d="M4 7h16"/>
+  <path d="M10 11v6M14 11v6"/>
+  <path d="M6 7l1 14h10l1-14"/>
+  <path d="M9 7V4h6v3"/>
+</symbol>
+
+<symbol id="flame" viewBox="0 0 24 24">
+  <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.4-.5-2-1-3-1.1-2.1-.2-4.1 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.2.4-2.3 1-3a2.5 2.5 0 0 0 2.5 2.5z"/>
+</symbol>
+
+<symbol id="star" viewBox="0 0 24 24">
+  <path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-3-5.6 3 1.1-6.2L3 9.6l6.2-.9L12 3z"/>
+</symbol>
+
+<symbol id="download" viewBox="0 0 24 24">
+  <path d="M12 3v12"/>
+  <path d="m7 10 5 5 5-5"/>
+  <path d="M4 21h16"/>
+</symbol>
+
+<symbol id="upload" viewBox="0 0 24 24">
+  <path d="M12 16V4"/>
+  <path d="m7 9 5-5 5 5"/>
+  <path d="M4 20h16"/>
+</symbol>
+
+<symbol id="close" viewBox="0 0 24 24">
+  <path d="M6 6l12 12M18 6 6 18"/>
+</symbol>
+
+<symbol id="target" viewBox="0 0 24 24">
+  <circle cx="12" cy="12" r="9"/>
+  <circle cx="12" cy="12" r="5"/>
+  <circle cx="12" cy="12" r="1.5"/>
+</symbol>
+
+<symbol id="user" viewBox="0 0 24 24">
+  <circle cx="12" cy="8" r="4"/>
+  <path d="M4 21v-1a6 6 0 0 1 12 0v1"/>
+</symbol>
+
+<symbol id="logout" viewBox="0 0 24 24">
+  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+  <polyline points="16 17 21 12 16 7"/>
+  <line x1="21" y1="12" x2="9" y2="12"/>
+</symbol>
+
+</defs>
+</svg>
+
+
+<!-- LOGIN SCREEN -->
+<div class="login-screen" id="loginScreen">
+  <div class="login-card">
+    <div class="login-logo">
+      <div class="brand-title">The Arc</div>
+      <div class="brand-sub">Become who you said you would</div>
+    </div>
+
+    <div class="login-form" id="loginForm">
+      <h3 class="login-form-title" id="loginFormTitle">Sign In</h3>
+      <p class="login-form-sub" id="loginFormSub">Enter your email and password to continue</p>
+
+      <div class="form-group">
+        <label for="loginEmail">Email</label>
+        <input type="email" id="loginEmail" placeholder="you@example.com" autocomplete="email">
+      </div>
+
+      <div class="form-group">
+        <label for="loginPassword">Password</label>
+        <input type="password" id="loginPassword" placeholder="Enter password" autocomplete="current-password">
+      </div>
+
+      <button class="login-btn btn-primary" id="loginSubmitBtn">Sign In</button>
+
+      <p class="login-switch">
+        <span id="loginSwitchText">Don't have an account?</span>
+        <button type="button" class="btn-link" id="loginSwitchBtn">Create one</button>
+      </p>
+    </div>
+
+    <div class="login-form hidden" id="signupForm">
+      <h3 class="login-form-title">Create Account</h3>
+      <p class="login-form-sub">Start tracking your habits today</p>
+
+      <div class="form-group">
+        <label for="signupEmail">Email</label>
+        <input type="email" id="signupEmail" placeholder="you@example.com" autocomplete="email">
+      </div>
+
+      <div class="form-group">
+        <label for="signupPassword">Password</label>
+        <input type="password" id="signupPassword" placeholder="Min 6 characters" autocomplete="new-password" minlength="6">
+      </div>
+
+      <div class="form-group">
+        <label for="signupConfirm">Confirm Password</label>
+        <input type="password" id="signupConfirm" placeholder="Confirm password" autocomplete="new-password">
+      </div>
+
+      <button class="login-btn btn-primary" id="signupSubmitBtn">Create Account</button>
+
+      <p class="login-switch">
+        <span>Already have an account?</span>
+        <button type="button" class="btn-link" id="signupSwitchBtn">Sign In</button>
+      </p>
+    </div>
+
+    <div class="login-footer">
+      Your data is securely stored and synced
+    </div>
+
+    <div class="login-error hidden" id="loginError"></div>
+  </div>
+</div>
+
+
+<div class="app hidden" id="appContainer">
+
+  <!-- HEADER -->
+
+  <header class="top">
+
+    <div class="brand">
+      <div class="brand-title">The Arc</div>
+      <div class="brand-sub">Become who you said you would</div>
+    </div>
+
+    <nav class="nav" aria-label="Main navigation">
+
+      <button type="button" data-view="today" aria-current="page">
+        <svg class="icon icon-sm"><use href="#home"/></svg>
+        Today
+      </button>
+
+      <button type="button" data-view="habits">
+        <svg class="icon icon-sm"><use href="#grid"/></svg>
+        Habits
+      </button>
+
+      <button type="button" data-view="insights">
+        <svg class="icon icon-sm"><use href="#chart"/></svg>
+        Insights
+      </button>
+
+    </nav>
+
+    <div class="header-actions">
+
+      <button class="icon-btn" id="themeBtn" title="Toggle theme">
+        <svg class="icon"><use href="#moon"/></svg>
+      </button>
+
+      <button class="btn" id="manageBtn">
+        <svg class="icon icon-sm"><use href="#settings"/></svg>
+        Manage
+      </button>
+
+      <button class="btn btn-primary" id="addBtn">
+        <svg class="icon icon-sm"><use href="#plus"/></svg>
+        Add Habit
+      </button>
+
+      <button class="btn" id="logoutBtn" title="Sign out">
+        <svg class="icon icon-sm"><use href="#logout"/></svg>
+        <span id="userDisplayName">User</span>
+      </button>
+
+    </div>
+
+  </header>
+
+
+  <div class="subbar">
+
+    <div class="status" id="statusText">
+      Saved locally
+    </div>
+
+    <div style="display:flex;gap:8px">
+
+      <button class="btn" id="exportBtn">
+        <svg class="icon icon-sm"><use href="#download"/></svg>
+        Backup
+      </button>
+
+      <button class="btn" id="importBtn">
+        <svg class="icon icon-sm"><use href="#upload"/></svg>
+        Restore
+      </button>
+
+      <input
+        type="file"
+        id="importFile"
+        accept=".json"
+        hidden
+      >
+
+    </div>
+
+  </div>
+
+
+  <!-- =====================
+       TODAY
+  ====================== -->
+
+  <main>
+
+    <section id="page-today" class="view">
+
+      <div class="hero">
+
+        <div class="hero-copy">
+
+          <div class="hero-eyebrow">
+            Your arc · Today
+          </div>
+
+          <div class="hero-title" id="todayHeadline">
+            Show up.
+          </div>
+
+          <div class="hero-date" id="todayDate"></div>
+
+          <div class="hero-message" id="todayMessage">
+            Small actions compound. Keep the chain alive.
+          </div>
+
+        </div>
+
+
+        <div id="todayRing"></div>
+
+
+        <div class="hero-stats">
+
+          <div class="hero-stat">
+            <svg class="icon" style="color:var(--accent)">
+              <use href="#flame"/>
+            </svg>
+            <div>
+              <b id="todayStreak">0</b>
+              <span>day streak</span>
+            </div>
+          </div>
+
+          <div class="hero-stat">
+            <svg class="icon" style="color:var(--gold)">
+              <use href="#star"/>
+            </svg>
+            <div>
+              <b id="bestStreak">0</b>
+              <span>best streak</span>
+            </div>
+          </div>
+
+          <div class="hero-stat">
+            <svg class="icon" style="color:var(--green)">
+              <use href="#target"/>
+            </svg>
+            <div>
+              <b id="perfectDays">0</b>
+              <span>perfect days</span>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <div class="panel">
+
+        <div class="panel-heading">
+
+          <div>
+            <div class="section-label">Daily execution</div>
+            <div class="section-title">Today's commitments</div>
+          </div>
+
+          <div class="muted small" id="todayCount">
+            0 / 0
+          </div>
+
+        </div>
+
+        <div class="habit-list" id="todayHabits"></div>
+
+      </div>
+
+
+      <div class="grid-2">
+
+        <div class="panel">
+
+          <div class="panel-heading">
+
+            <div>
+              <div class="section-label">Consistency</div>
+              <div class="section-title">This week</div>
+            </div>
+
+            <div class="muted small" id="weekRange"></div>
+
+          </div>
+
+          <div class="week-bars" id="weekBars"></div>
+
+        </div>
+
+
+        <div class="panel">
+
+          <div class="panel-heading">
+
+            <div>
+              <div class="section-label">30-day view</div>
+              <div class="section-title">Progress</div>
+            </div>
+
+            <div class="muted small" id="overallRate">
+              0%
+            </div>
+
+          </div>
+
+          <div class="progress-list" id="overallProgress"></div>
+
+        </div>
+
+      </div>
+
+
+      <div class="grid-4" id="todayStats"></div>
+
+    </section>
+
+
+    <!-- =====================
+         HABITS
+    ====================== -->
+
+    <section id="page-habits" class="view" hidden>
+
+      <div class="panel">
+
+        <div class="toolbar">
+
+          <div>
+            <div class="section-label">Tracking history</div>
+            <div class="section-title">Your habits</div>
+          </div>
+
+          <select class="select" id="habitRange">
+            <option value="7">Last 7 days</option>
+            <option value="14" selected>Last 14 days</option>
+            <option value="30">Last 30 days</option>
+            <option value="60">Last 60 days</option>
+          </select>
+
+        </div>
+
+        <div id="habitCalendar"></div>
+
+      </div>
+
+    </section>
+
+
+    <!-- =====================
+         INSIGHTS
+    ====================== -->
+
+    <section id="page-insights" class="view" hidden>
+
+      <div class="panel">
+
+        <div class="insight-hero">
+
+          <div>
+
+            <div class="section-label" id="insightLabel">
+              Overall consistency
+            </div>
+
+            <div class="insight-score" id="insightScore">
+              0%
+            </div>
+
+            <div class="muted small" id="insightRangeText">
+              Last 14 days
+            </div>
+
+          </div>
+
+
+          <div class="filters">
+
+            <select class="select" id="insightHabit">
+              <option value="all">Overall</option>
+            </select>
+
+            <select class="select" id="insightRange">
+              <option value="7">Last 7 days</option>
+              <option value="14" selected>Last 14 days</option>
+              <option value="30">Last 30 days</option>
+              <option value="60">Last 60 days</option>
+            </select>
+
+          </div>
+
+        </div>
+
+        <div class="chart" id="insightChart"></div>
+
+      </div>
+
+
+      <div class="kpi-grid" id="insightKpis"></div>
+
+
+      <div class="grid-2">
+
+        <div class="panel">
+
+          <div class="panel-heading">
+
+            <div>
+              <div class="section-label">Ranking</div>
+              <div class="section-title">Leaderboard</div>
+            </div>
+
+            <select class="select" id="leaderRange">
+              <option value="7">7D</option>
+              <option value="14">14D</option>
+              <option value="30">30D</option>
+              <option value="60">60D</option>
+            </select>
+
+          </div>
+
+          <div class="leaderboard" id="leaderboard"></div>
+
+        </div>
+
+
+        <div class="panel">
+
+          <div class="panel-heading">
+
+            <div>
+              <div class="section-label">Momentum</div>
+              <div class="section-title">Streaks</div>
+            </div>
+
+          </div>
+
+          <div id="streakList"></div>
+
+        </div>
+
+      </div>
+
+
+      <div class="panel">
+
+        <div class="panel-heading">
+
+          <div>
+            <div class="section-label">Consistency over time</div>
+            <div class="section-title">Week by week</div>
+          </div>
+
+        </div>
+
+        <div class="weekly-grid" id="weeklyInsights"></div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+</div>
+
+
+<!-- =====================
+     ADD MODAL
+====================== -->
+
+<div class="overlay" id="addModal">
+
+  <div class="modal">
+
+    <div class="modal-head">
+
+      <div>
+        <div class="section-label">Build your arc</div>
+        <div class="modal-title">Add habit</div>
+      </div>
+
+      <button class="icon-btn" data-close="addModal">
+        <svg class="icon"><use href="#close"/></svg>
+      </button>
+
+    </div>
+
+    <div class="field">
+
+      <label for="newName">Habit name</label>
+
+      <input
+        id="newName"
+        maxlength="50"
+        placeholder="e.g. Gym"
+      >
+
+    </div>
+
+    <div class="field">
+
+      <label for="newDesc">Description</label>
+
+      <textarea
+        id="newDesc"
+        maxlength="120"
+        placeholder="What does completing this mean?"
+      ></textarea>
+
+    </div>
+
+    <div class="modal-actions">
+
+      <button class="btn" data-close="addModal">
+        Cancel
+      </button>
+
+      <button class="btn btn-primary" id="createHabit">
+        Add Habit
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- =====================
+     EDIT MODAL
+====================== -->
+
+<div class="overlay" id="editModal">
+
+  <div class="modal">
+
+    <div class="modal-head">
+
+      <div>
+        <div class="section-label">Habit</div>
+        <div class="modal-title">Edit habit</div>
+      </div>
+
+      <button class="icon-btn" data-close="editModal">
+        <svg class="icon"><use href="#close"/></svg>
+      </button>
+
+    </div>
+
+    <input type="hidden" id="editId">
+
+    <div class="field">
+
+      <label for="editName">Habit name</label>
+
+      <input id="editName" maxlength="50">
+
+    </div>
+
+    <div class="field">
+
+      <label for="editDesc">Description</label>
+
+      <textarea id="editDesc" maxlength="120"></textarea>
+
+    </div>
+
+    <div class="modal-actions">
+
+      <button class="btn" data-close="editModal">
+        Cancel
+      </button>
+
+      <button class="btn btn-primary" id="saveEdit">
+        Save changes
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- =====================
+     MANAGE MODAL
+====================== -->
+
+<div class="overlay" id="manageModal">
+
+  <div class="modal">
+
+    <div class="modal-head">
+
+      <div>
+        <div class="section-label">Customize</div>
+        <div class="modal-title">Manage habits</div>
+      </div>
+
+      <button class="icon-btn" data-close="manageModal">
+        <svg class="icon"><use href="#close"/></svg>
+      </button>
+
+    </div>
+
+    <div class="manage-list" id="manageList"></div>
+
+  </div>
+
+</div>
+
+
+<script>
+(function(){
+
+"use strict";
+
+/* =========================================================
+   CORE STATE
+========================================================= */
+
+const STORAGE_KEY = "the-arc-v4";
+
+const COLORS = [
+  "#722F37",
+  "#E87A3D",
+  "#D4A84B",
+  "#5D986D",
+  "#5B9BD5",
+  "#9B8CFF",
+  "#E67A8A",
+  "#4ECDC4",
+  "#845EC2",
+  "#FF6F61",
+  "#6B5B95",
+  "#88B04B"
+];
+
+// Supabase Configuration - Replace with your credentials
+const SUPABASE_URL = "https://stjscemgelpcuufuxyah.supabase.co/rest/v1/";
+const SUPABASE_ANON_KEY = "sb_publishable_qh5AXAKUrldv5uRrZb9j3g__0SgNJMz"
+
+let supabaseClient = null;
+let currentUser = null;
+
+let state = {
+  habits: [],
+  checkins: {},
+  dark: false
+};
+
+let currentView = "today";
+let habitRange = 14;
+let insightRange = 14;
+let insightHabit = "all";
+let leaderboardRange = 7;
+
+
+/* =========================================================
+   HELPERS
+========================================================= */
+
+const $ = id => document.getElementById(id);
+
+function uid(){
+  return Date.now().toString(36) +
+    Math.random().toString(36).slice(2,8);
+}
+
+function pad(n){
+  return String(n).padStart(2,"0");
+}
+
+function dateKey(date){
+  return [
+    date.getFullYear(),
+    pad(date.getMonth()+1),
+    pad(date.getDate())
+  ].join("-");
+}
+
+function todayKey(){
+  return dateKey(new Date());
+}
+
+function fromKey(key){
+  const p = key.split("-");
+  return new Date(
+    Number(p[0]),
+    Number(p[1])-1,
+    Number(p[2])
+  );
+}
+
+function addDays(date, amount){
+  const d = new Date(date);
+  d.setDate(d.getDate()+amount);
+  return d;
+}
+
+function daysAgo(amount){
+  return addDays(new Date(),-amount);
+}
+
+function dateList(range){
+  const result = [];
+
+  for(let i=range-1;i>=0;i--){
+    const d = daysAgo(i);
+
+    result.push({
+      date:d,
+      key:dateKey(d)
+    });
+  }
+
+  return result;
+}
+
+function formatDate(date, options){
+  return date.toLocaleDateString("en-US",options);
+}
+
+function escapeHTML(value){
+  return String(value)
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
+}
+
+function habitById(id){
+  return state.habits.find(h => h.id === id);
+}
+
+function visibleHabits(){
+  return state.habits.filter(h => h.visible !== false);
+}
+
+function isDone(key,id){
+  return !!(
+    state.checkins[key] &&
+    state.checkins[key][id] === true
+  );
+}
+
+function setDone(key,id,value){
+
+  if(!state.checkins[key]){
+    state.checkins[key] = {};
+  }
+
+  if(value){
+    state.checkins[key][id] = true;
+  }else{
+    delete state.checkins[key][id];
+  }
+
+  if(
+    state.checkins[key] &&
+    Object.keys(state.checkins[key]).length === 0
+  ){
+    delete state.checkins[key];
+  }
+
+  save();
+}
+
+function completedOnDay(key){
+  return visibleHabits().filter(
+    h => isDone(key,h.id)
+  ).length;
+}
+
+function dayPercent(key){
+  const habits = visibleHabits();
+
+  if(!habits.length){
+    return 0;
+  }
+
+  return Math.round(
+    completedOnDay(key) /
+    habits.length *
+    100
+  );
+}
+
+function overallPercent(days){
+  const habits = visibleHabits();
+
+  if(!habits.length || !days.length){
+    return 0;
+  }
+
+  let completed = 0;
+
+  days.forEach(d => {
+    completed += completedOnDay(d.key);
+  });
+
+  return Math.round(
+    completed /
+    (days.length * habits.length) *
+    100
+  );
+}
+
+
+/* =========================================================
+   STREAKS
+========================================================= */
+
+function currentStreak(habitId){
+
+  let count = 0;
+  let d = new Date();
+
+  /*
+    A habit can have a current streak even if today
+    has not been completed yet. In that case we start
+    from yesterday.
+  */
+
+  if(isDone(dateKey(d),habitId)){
+    count = 1;
+    d = addDays(d,-1);
+  }else{
+    d = addDays(d,-1);
+  }
+
+  while(isDone(dateKey(d),habitId)){
+    count++;
+    d = addDays(d,-1);
+  }
+
+  return count;
+}
+
+function bestStreak(habitId){
+
+  const days = dateList(365);
+  let best = 0;
+  let current = 0;
+
+  days.forEach(d => {
+
+    if(isDone(d.key,habitId)){
+      current++;
+      best = Math.max(best,current);
+    }else{
+      current = 0;
+    }
+
+  });
+
+  return best;
+}
+
+function streakForAll(){
+
+  const habits = visibleHabits();
+
+  if(!habits.length){
+    return 0;
+  }
+
+  let count = 0;
+  let d = new Date();
+
+  while(true){
+
+    const key = dateKey(d);
+
+    if(dayPercent(key) !== 100){
+      break;
+    }
+
+    count++;
+    d = addDays(d,-1);
+  }
+
+  return count;
+}
+
+function bestPerfectDays(){
+
+  const habits = visibleHabits();
+
+  if(!habits.length){
+    return 0;
+  }
+
+  const days = dateList(365);
+  let best = 0;
+  let current = 0;
+
+  days.forEach(d => {
+
+    if(dayPercent(d.key) === 100){
+      current++;
+      best = Math.max(best,current);
+    }else{
+      current = 0;
+    }
+
+  });
+
+  return best;
+}
+
+function countPerfectDays(days){
+
+  return days.filter(
+    d => dayPercent(d.key) === 100
+  ).length;
+}
+
+
+/* =========================================================
+   SUPABASE INTEGRATION
+========================================================= */
+
+async function initSupabase(){
+  if(!SUPABASE_URL || !SUPABASE_ANON_KEY){
+    console.error("Supabase is not configured.");
+    return false;
+  }
+
+  try{
+    if(typeof window.supabase === "undefined"){
+      const script = document.createElement("script");
+      script.src = "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2";
+      document.head.appendChild(script);
+
+      await new Promise((resolve,reject) => {
+        script.onload = resolve;
+        script.onerror = reject;
+      });
+    }
+
+    supabaseClient = window.supabase.createClient(
+      SUPABASE_URL,
+      SUPABASE_ANON_KEY
+    );
+
+    supabaseClient.auth.onAuthStateChange(
+      async (_event,session) => {
+        if(session){
+          currentUser = session.user;
+          await loadAuthenticatedData();
+        }else{
+          currentUser = null;
+          showLogin();
+        }
+      }
+    );
+
+    return true;
+  }catch(error){
+    console.error("Supabase init error:",error);
+    return false;
+  }
+}
+
+function defaultState(){
+  return {
+    habits:[
+      {
+        id:uid(),
+        name:"Gym",
+        desc:"Complete today's training",
+        color:COLORS[0],
+        visible:true
+      },
+      {
+        id:uid(),
+        name:"Calories",
+        desc:"Stay within today's calorie target",
+        color:COLORS[1],
+        visible:true
+      }
+    ],
+    checkins:{},
+    dark:false
+  };
+}
+
+function localStorageKey(){
+  return currentUser
+    ? `${STORAGE_KEY}:${currentUser.id}`
+    : STORAGE_KEY;
+}
+
+function showLogin(){
+  $("appContainer").classList.add("hidden");
+  $("loginScreen").classList.remove("hidden");
+  clearLoginError();
+}
+
+function showApp(){
+  $("loginScreen").classList.add("hidden");
+  $("appContainer").classList.remove("hidden");
+  $("userDisplayName").textContent =
+    currentUser?.email || "User";
+}
+
+function clearLoginError(){
+  $("loginError").textContent = "";
+  $("loginError").classList.add("hidden");
+}
+
+function showLoginError(message){
+  $("loginError").textContent = message;
+  $("loginError").classList.remove("hidden");
+}
+
+function switchAuthForm(mode){
+  clearLoginError();
+
+  const login = mode === "login";
+
+  $("loginForm").classList.toggle("hidden",!login);
+  $("signupForm").classList.toggle("hidden",login);
+}
+
+async function signInWithEmail(){
+  clearLoginError();
+
+  const email = $("loginEmail").value.trim();
+  const password = $("loginPassword").value;
+
+  if(!email || !password){
+    showLoginError("Enter your email and password.");
+    return;
+  }
+
+  const button = $("loginSubmitBtn");
+  button.disabled = true;
+  button.textContent = "Signing in...";
+
+  try{
+    const {data,error} = await supabaseClient.auth.signInWithPassword({
+      email,
+      password
+    });
+
+    if(error) throw error;
+
+    if(data.user){
+      currentUser = data.user;
+      await loadAuthenticatedData();
+    }
+  }catch(error){
+    console.error("Sign in error:",error);
+    showLoginError(error.message || "Could not sign in. Please try again.");
+  }finally{
+    button.disabled = false;
+    button.textContent = "Sign In";
+  }
+}
+
+async function signUpWithEmail(){
+  clearLoginError();
+
+  const email = $("signupEmail").value.trim();
+  const password = $("signupPassword").value;
+  const confirmPassword = $("signupConfirm").value;
+
+  if(!email || !password || !confirmPassword){
+    showLoginError("Complete all fields.");
+    return;
+  }
+
+  if(password.length < 6){
+    showLoginError("Password must be at least 6 characters.");
+    return;
+  }
+
+  if(password !== confirmPassword){
+    showLoginError("Passwords do not match.");
+    return;
+  }
+
+  const button = $("signupSubmitBtn");
+  button.disabled = true;
+  button.textContent = "Creating...";
+
+  try{
+    const {data,error} = await supabaseClient.auth.signUp({
+      email,
+      password
+    });
+
+    if(error) throw error;
+
+    if(data.session && data.user){
+      currentUser = data.user;
+      await loadAuthenticatedData();
+    }else{
+      switchAuthForm("login");
+      $("loginEmail").value = email;
+      showLoginError("Account created. Check your email to confirm your account, then sign in.");
+    }
+  }catch(error){
+    console.error("Sign up error:",error);
+    showLoginError(error.message || "Could not create your account. Please try again.");
+  }finally{
+    button.disabled = false;
+    button.textContent = "Create Account";
+  }
+}
+
+async function signOut(){
+  if(!supabaseClient) return;
+
+  try{
+    await supabaseClient.auth.signOut();
+  }catch(error){
+    console.error("Sign out error:",error);
+  }
+
+  currentUser = null;
+  state = defaultState();
+  applyTheme();
+  showLogin();
+}
+
+async function syncToCloud(){
+  if(!supabaseClient || !currentUser) return false;
+
+  try{
+    const updatedAt = new Date().toISOString();
+
+    const {error} = await supabaseClient
+      .from("arc_data")
+      .upsert({
+        user_id:currentUser.id,
+        data:state,
+        updated_at:updatedAt
+      },{onConflict:"user_id"});
+
+    if(error) throw error;
+
+    localStorage.setItem(
+      localStorageKey() + "_updated",
+      String(Date.parse(updatedAt))
+    );
+
+    $("statusText").textContent = "Synced to cloud";
+    return true;
+  }catch(error){
+    console.error("Sync to cloud error:",error);
+    $("statusText").textContent = "Saved locally (sync failed)";
+    return false;
+  }
+}
+
+async function syncFromCloud(){
+  if(!supabaseClient || !currentUser) return false;
+
+  try{
+    const {data,error} = await supabaseClient
+      .from("arc_data")
+      .select("data,updated_at")
+      .eq("user_id",currentUser.id)
+      .maybeSingle();
+
+    if(error) throw error;
+
+    if(data && data.data){
+      const cloudState = data.data;
+
+      state = {
+        habits:Array.isArray(cloudState.habits)
+          ? cloudState.habits
+          : [],
+        checkins:cloudState.checkins || {},
+        dark:!!cloudState.dark
+      };
+
+      localStorage.setItem(
+        localStorageKey(),
+        JSON.stringify(state)
+      );
+
+      if(data.updated_at){
+        localStorage.setItem(
+          localStorageKey() + "_updated",
+          String(Date.parse(data.updated_at))
+        );
+      }
+
+      applyTheme();
+      $("statusText").textContent = "Synced from cloud";
+      return true;
+    }
+  }catch(error){
+    console.error("Sync from cloud error:",error);
+  }
+
+  return false;
+}
+
+async function loadAuthenticatedData(){
+  if(!currentUser) return;
+
+  const localLoaded = load();
+  const cloudLoaded = await syncFromCloud();
+
+  if(!cloudLoaded){
+    await syncToCloud();
+  }
+
+  if(!localLoaded && !cloudLoaded){
+    state = defaultState();
+    applyTheme();
+    save();
+    await syncToCloud();
+  }
+
+  showApp();
+  renderAll();
+
+  const initialHash = location.hash.replace("#","");
+  showView(
+    ["today","habits","insights"].includes(initialHash)
+      ? initialHash
+      : "today"
+  );
+}
+
+/* =========================================================
+   SAVE / LOAD
+========================================================= */
+
+function save(){
+
+  const key = localStorageKey();
+
+  localStorage.setItem(
+    key,
+    JSON.stringify(state)
+  );
+
+  localStorage.setItem(
+    key + "_updated",
+    Date.now().toString()
+  );
+
+  $("statusText").textContent = currentUser
+    ? "Saving..."
+    : "Saved locally";
+
+  if(currentUser){
+    syncToCloud();
+  }
+}
+
+function load(){
+
+  let loaded = false;
+
+  try{
+    const raw = localStorage.getItem(localStorageKey());
+
+    if(raw){
+      const parsed = JSON.parse(raw);
+
+      state = {
+        habits:Array.isArray(parsed.habits)
+          ? parsed.habits
+          : [],
+        checkins:parsed.checkins || {},
+        dark:!!parsed.dark
+      };
+
+      loaded = true;
+    }
+  }catch(error){
+    console.error("Load error:",error);
+  }
+
+  if(!loaded){
+    state = defaultState();
+  }
+
+  applyTheme();
+  return loaded;
+}
+
+/* =========================================================
+   THEME
+========================================================= */
+
+function applyTheme(){
+
+  document.documentElement.classList.toggle(
+    "dark",
+    state.dark
+  );
+
+  $("themeBtn").innerHTML =
+    `<svg class="icon">
+      <use href="#${state.dark ? "sun" : "moon"}"/>
+    </svg>`;
+}
+
+function toggleTheme(){
+
+  state.dark = !state.dark;
+
+  applyTheme();
+  save();
+
+  if(currentView === "insights"){
+    renderInsights();
+  }
+}
+
+
+/* =========================================================
+   RING
+========================================================= */
+
+function ringHTML(percent){
+
+  const size = 190;
+  const stroke = 14;
+  const radius = (size-stroke)/2;
+  const circumference = 2*Math.PI*radius;
+
+  const offset =
+    circumference *
+    (1-percent/100);
+
+  return `
+    <div class="ring">
+
+      <svg
+        viewBox="0 0 ${size} ${size}"
+        aria-hidden="true"
+      >
+
+        <circle
+          class="ring-bg"
+          cx="${size/2}"
+          cy="${size/2}"
+          r="${radius}"
+          stroke-width="${stroke}"
+        />
+
+        <circle
+          class="ring-progress"
+          cx="${size/2}"
+          cy="${size/2}"
+          r="${radius}"
+          stroke-width="${stroke}"
+          stroke-dasharray="${circumference}"
+          stroke-dashoffset="${offset}"
+        />
+
+      </svg>
+
+      <div class="ring-center">
+        <div class="ring-number">${percent}%</div>
+        <div class="ring-label">Today</div>
+      </div>
+
+    </div>
+  `;
+}
+
+
+/* =========================================================
+   TODAY
+========================================================= */
+
+function todayMessage(percent){
+
+  if(percent === 100){
+    return "Every commitment is done. You kept the promise today.";
+  }
+
+  if(percent >= 75){
+    return "You're close. Finish the arc before the day ends.";
+  }
+
+  if(percent >= 50){
+    return "Halfway there. Don't let an unfinished day become a zero.";
+  }
+
+  if(percent > 0){
+    return "You started. Now keep moving.";
+  }
+
+  return "The day is still yours. Make the first move.";
+}
+
+function todayHeadline(percent){
+
+  if(percent === 100) return "Arc complete.";
+  if(percent >= 75) return "Finish strong.";
+  if(percent >= 50) return "Stay in motion.";
+  if(percent > 0) return "Keep going.";
+  return "Show up.";
+}
+
+function renderToday(){
+
+  const habits = visibleHabits();
+  const today = todayKey();
+  const percent = dayPercent(today);
+
+  $("todayRing").innerHTML =
+    ringHTML(percent);
+
+  $("todayDate").textContent =
+    formatDate(
+      new Date(),
+      {
+        weekday:"long",
+        month:"long",
+        day:"numeric",
+        year:"numeric"
+      }
+    );
+
+  $("todayHeadline").textContent =
+    todayHeadline(percent);
+
+  $("todayMessage").textContent =
+    todayMessage(percent);
+
+  $("todayStreak").textContent =
+    streakForAll();
+
+  $("bestStreak").textContent =
+    bestPerfectDays();
+
+  $("perfectDays").textContent =
+    countPerfectDays(dateList(30));
+
+  $("todayCount").textContent =
+    `${completedOnDay(today)} / ${habits.length} completed`;
+
+  renderTodayHabits();
+  renderWeek();
+  renderOverall();
+  renderTodayStats();
+}
+
+function renderTodayHabits(){
+
+  const container = $("todayHabits");
+  const habits = visibleHabits();
+
+  if(!habits.length){
+
+    container.innerHTML = emptyHTML(
+      "No habits yet",
+      "Add your first commitment to start your arc."
+    );
+
+    return;
+  }
+
+  container.innerHTML =
+    habits.map(h => {
+
+      const done = isDone(todayKey(),h.id);
+      const streak = currentStreak(h.id);
+
+      return `
+        <div
+          class="habit-card ${done ? "completed" : ""}"
+          data-habit-card="${h.id}"
+        >
+
+          <label class="check">
+
+            <input
+              type="checkbox"
+              data-check
+              data-key="${todayKey()}"
+              data-habit="${h.id}"
+              ${done ? "checked" : ""}
+            >
+
+            <span class="check-mark"></span>
+
+          </label>
+
+          <div class="habit-info">
+
+            <div class="habit-name">
+
+              <span
+                class="dot"
+                style="background:${h.color}"
+              ></span>
+
+              <b>${escapeHTML(h.name)}</b>
+
+            </div>
+
+            <div class="habit-desc">
+              ${escapeHTML(h.desc || "Keep this commitment.")}
+            </div>
+
+          </div>
+
+          <div class="streak ${streak ? "" : "zero"}">
+
+            <svg class="icon icon-sm">
+              <use href="#flame"/>
+            </svg>
+
+            ${streak}d
+
+          </div>
+
+        </div>
+      `;
+
+    }).join("");
+}
+
+function renderWeek(){
+
+  const days = dateList(7);
+
+  $("weekRange").textContent =
+    `${formatDate(days[0].date,{month:"short",day:"numeric"})} – ${formatDate(days[6].date,{month:"short",day:"numeric"})}`;
+
+  $("weekBars").innerHTML =
+    days.map(d => {
+
+      const percent = dayPercent(d.key);
+      const today = d.key === todayKey();
+
+      return `
+        <div class="day-bar ${today ? "today" : ""}">
+
+          <div class="day-percent">
+            ${percent}%
+          </div>
+
+          <div class="bar-track">
+
+            <div
+              class="bar-fill"
+              style="height:${percent}%"
+            ></div>
+
+          </div>
+
+          <div class="day-name">
+            ${formatDate(d.date,{weekday:"short"})}
+          </div>
+
+        </div>
+      `;
+
+    }).join("");
+}
+
+function renderOverall(){
+
+  const days = dateList(30);
+  const habits = visibleHabits();
+
+  const total = overallPercent(days);
+
+  $("overallRate").textContent =
+    `${total}%`;
+
+  if(!habits.length){
+
+    $("overallProgress").innerHTML =
+      `<div class="muted small">No habits.</div>`;
+
+    return;
+  }
+
+  $("overallProgress").innerHTML =
+    habits.map(h => {
+
+      const done =
+        days.filter(d => isDone(d.key,h.id)).length;
+
+      const percent =
+        Math.round(done/days.length*100);
+
+      return `
+        <div class="progress-row">
+
+          <div class="progress-head">
+
+            <div class="progress-name">
+
+              <span
+                class="dot"
+                style="background:${h.color}"
+              ></span>
+
+              ${escapeHTML(h.name)}
+
+            </div>
+
+            <div class="progress-value">
+              ${done}/${days.length} · ${percent}%
+            </div>
+
+          </div>
+
+          <div class="progress-track">
+            <div
+              class="progress-fill"
+              style="width:${percent}%"
+            ></div>
+          </div>
+
+        </div>
+      `;
+
+    }).join("");
+}
+
+function renderTodayStats(){
+
+  const days = dateList(30);
+  const habits = visibleHabits();
+
+  let totalCompleted = 0;
+
+  days.forEach(d => {
+    totalCompleted += completedOnDay(d.key);
+  });
+
+  const possible =
+    days.length * habits.length;
+
+  const perfect =
+    countPerfectDays(days);
+
+  const bestCurrent =
+    habits.length
+      ? Math.max(...habits.map(h => currentStreak(h.id)))
+      : 0;
+
+  const bestHistorical =
+    habits.length
+      ? Math.max(...habits.map(h => bestStreak(h.id)))
+      : 0;
+
+  const stats = [
+
+    {
+      label:"Completed",
+      value:totalCompleted,
+      caption:"check-ins in 30 days",
+      icon:"target"
+    },
+
+    {
+      label:"Consistency",
+      value:possible
+        ? Math.round(totalCompleted/possible*100)+"%"
+        : "0%",
+      caption:"overall completion",
+      icon:"chart"
+    },
+
+    {
+      label:"Perfect days",
+      value:perfect,
+      caption:"100% completed",
+      icon:"star"
+    },
+
+    {
+      label:"Best streak",
+      value:bestHistorical+"d",
+      caption:"single habit record",
+      icon:"flame"
+    }
+
+  ];
+
+  $("todayStats").innerHTML =
+    stats.map(s => `
+      <div class="stat-card">
+
+        <div class="stat-top">
+
+          <div class="section-label">
+            ${s.label}
+          </div>
+
+          <div class="stat-icon">
+            <svg class="icon icon-sm">
+              <use href="#${s.icon}"/>
+            </svg>
+          </div>
+
+        </div>
+
+        <div class="stat-value">
+          ${s.value}
+        </div>
+
+        <div class="stat-caption">
+          ${s.caption}
+        </div>
+
+      </div>
+    `).join("");
+}
+
+
+/* =========================================================
+   HABITS CALENDAR
+========================================================= */
+
+function renderHabitsPage(){
+
+  const days = dateList(habitRange);
+  const habits = visibleHabits();
+
+  if(!habits.length){
+
+    $("habitCalendar").innerHTML =
+      emptyHTML(
+        "Nothing to track",
+        "Add a habit first."
+      );
+
+    return;
+  }
+
+  let html = `
+    <div class="calendar-wrap">
+      <div
+        class="calendar"
+        style="--days:${days.length}"
+      >
+
+        <div class="calendar-row calendar-header">
+
+          <div style="text-align:left;padding-left:8px">
+            HABIT
+          </div>
+  `;
+
+  days.forEach((d, i) => {
+
+    const showMonth = i === 0 ||
+      (d.date.getMonth() !== days[i-1].date.getMonth());
+
+    const monthName = d.date.toLocaleDateString("en-US", {month:"short"});
+
+    html += `
+      <div
+        class="calendar-date ${d.key===todayKey() ? "today" : ""}"
+      >
+        <div class="calendar-day-num">${d.date.getDate()}</div>
+        ${showMonth ? `<div class="calendar-month">${monthName}</div>` : ""}
+      </div>
+    `;
+
+  });
+
+  html += `
+          <div>STATS</div>
+        </div>
+  `;
+
+  habits.forEach(h => {
+
+    const done =
+      days.filter(d => isDone(d.key,h.id)).length;
+
+    const percent =
+      Math.round(done/days.length*100);
+
+    html += `
+      <div class="calendar-row">
+
+        <div class="calendar-habit">
+
+          <span
+            class="dot"
+            style="background:${h.color}"
+          ></span>
+
+          ${escapeHTML(h.name)}
+
+        </div>
+    `;
+
+    days.forEach(d => {
+
+      const checked =
+        isDone(d.key,h.id);
+
+      const future =
+        d.key > todayKey();
+
+      html += `
+        <div class="calendar-day">
+
+          <label class="calendar-check">
+
+            <input
+              type="checkbox"
+              data-check
+              data-key="${d.key}"
+              data-habit="${h.id}"
+              ${checked ? "checked" : ""}
+              ${future ? "disabled" : ""}
+            >
+
+            <span class="calendar-mark"></span>
+
+          </label>
+
+        </div>
+      `;
+
+    });
+
+    html += `
+        <div class="calendar-stats">
+          ${percent}%
+          <span>
+            ${currentStreak(h.id)}d
+          </span>
+        </div>
+
+      </div>
+    `;
+
+  });
+
+  html += `
+      </div>
+    </div>
+  `;
+
+  $("habitCalendar").innerHTML = html;
+}
+
+
+/* =========================================================
+   INSIGHTS
+========================================================= */
+
+function populateInsightHabit(){
+
+  const select = $("insightHabit");
+
+  const current = insightHabit;
+
+  select.innerHTML =
+    `<option value="all">Overall</option>` +
+    visibleHabits().map(h =>
+      `<option value="${h.id}">
+        ${escapeHTML(h.name)}
+      </option>`
+    ).join("");
+
+  if(
+    current === "all" ||
+    visibleHabits().some(h => h.id === current)
+  ){
+    select.value = current;
+  }else{
+    insightHabit = "all";
+    select.value = "all";
+  }
+}
+
+function selectedPercent(days){
+
+  if(insightHabit === "all"){
+    return overallPercent(days);
+  }
+
+  const h = habitById(insightHabit);
+
+  if(!h){
+    return 0;
+  }
+
+  const done =
+    days.filter(d =>
+      isDone(d.key,h.id)
+    ).length;
+
+  return Math.round(done/days.length*100);
+}
+
+function renderInsights(){
+
+  populateInsightHabit();
+
+  const days = dateList(insightRange);
+
+  const percent =
+    selectedPercent(days);
+
+  const selectedHabit =
+    insightHabit === "all"
+      ? null
+      : habitById(insightHabit);
+
+  $("insightLabel").textContent =
+    selectedHabit
+      ? `${selectedHabit.name} consistency`
+      : "Overall consistency";
+
+  $("insightScore").textContent =
+    `${percent}%`;
+
+  $("insightRangeText").textContent =
+    `Last ${insightRange} days`;
+
+  renderInsightChart(days);
+  renderInsightKpis(days);
+  renderLeaderboard();
+  renderStreaks();
+  renderWeeklyInsights();
+}
+
+function renderInsightChart(days){
+
+  const host = $("insightChart");
+
+  const width =
+    Math.max(
+      host.clientWidth || 700,
+      500
+    );
+
+  const height = 270;
+
+  const padLeft = 40;
+  const padRight = 15;
+  const padTop = 15;
+  const padBottom = 30;
+
+  const innerWidth =
+    width-padLeft-padRight;
+
+  const innerHeight =
+    height-padTop-padBottom;
+
+  const values =
+    days.map(d =>
+      selectedPercent([d])
+    );
+
+  const x = i =>
+    padLeft +
+    (
+      days.length === 1
+        ? 0
+        : i/(days.length-1)
+    ) * innerWidth;
+
+  const y = value =>
+    padTop +
+    (1-value/100)*innerHeight;
+
+  let svg = `
+    <svg
+      viewBox="0 0 ${width} ${height}"
+      preserveAspectRatio="none"
+    >
+  `;
+
+  [0,25,50,75,100].forEach(value => {
+
+    const yy = y(value);
+
+    svg += `
+      <line
+        x1="${padLeft}"
+        x2="${width-padRight}"
+        y1="${yy}"
+        y2="${yy}"
+        stroke="var(--line)"
+      />
+
+      <text
+        x="${padLeft-8}"
+        y="${yy+4}"
+        text-anchor="end"
+      >
+        ${value}
+      </text>
+    `;
+
+  });
+
+  const points =
+    values.map((v,i) =>
+      `${x(i).toFixed(1)},${y(v).toFixed(1)}`
+    );
+
+  const line =
+    points.map((p,i) =>
+      `${i===0 ? "M" : "L"}${p}`
+    ).join(" ");
+
+  const area =
+    `${line}
+     L${x(values.length-1)} ${y(0)}
+     L${x(0)} ${y(0)}
+     Z`;
+
+  svg += `
+    <path
+      d="${area}"
+      fill="var(--accent-soft)"
+    />
+
+    <path
+      d="${line}"
+      fill="none"
+      stroke="var(--accent)"
+      stroke-width="3"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    />
+  `;
+
+  const step =
+    Math.max(
+      1,
+      Math.ceil(days.length/7)
+    );
+
+  days.forEach((d,i) => {
+
+    if(
+      i % step === 0 ||
+      i === days.length-1
+    ){
+
+      svg += `
+        <text
+          x="${x(i)}"
+          y="${height-8}"
+          text-anchor="middle"
+        >
+          ${d.date.getDate()}
+        </text>
+      `;
+
+    }
+
+  });
+
+  svg += "</svg>";
+
+  host.innerHTML = svg;
+}
+
+function renderInsightKpis(days){
+
+  const week =
+    days.slice(-Math.min(7,days.length));
+
+  const previous =
+    days.length >= 14
+      ? days.slice(-14,-7)
+      : [];
+
+  const current =
+    selectedPercent(week);
+
+  const previousPercent =
+    previous.length
+      ? selectedPercent(previous)
+      : null;
+
+  const delta =
+    previousPercent === null
+      ? null
+      : current-previousPercent;
+
+  let best = 0;
+
+  if(insightHabit === "all"){
+
+    best = Math.max(
+      0,
+      ...visibleHabits().map(
+        h => bestStreak(h.id)
+      )
+    );
+
+  }else{
+
+    best = selectedHabitBestStreak();
+  }
+
+  const perfect =
+    countPerfectDays(days);
+
+  const cards = [
+
+    {
+      label:"This week",
+      value:`${current}%`
+    },
+
+    {
+      label:"Vs previous",
+      value:
+        delta === null
+          ? "—"
+          : `${delta >= 0 ? "+" : ""}${delta}%`,
+      cls:
+        delta === null
+          ? ""
+          : delta >= 0
+            ? "positive"
+            : "negative"
+    },
+
+    {
+      label:"Best streak",
+      value:`${best}d`
+    },
+
+    {
+      label:"Perfect days",
+      value:perfect
+    }
+
+  ];
+
+  $("insightKpis").innerHTML =
+    cards.map(c => `
+      <div class="kpi">
+
+        <div class="kpi-label">
+          ${c.label}
+        </div>
+
+        <div class="kpi-value ${c.cls || ""}">
+          ${c.value}
+        </div>
+
+      </div>
+    `).join("");
+}
+
+function selectedHabitBestStreak(){
+
+  if(insightHabit === "all"){
+    return 0;
+  }
+
+  const h = habitById(insightHabit);
+
+  return h ? bestStreak(h.id) : 0;
+}
+
+function renderLeaderboard(){
+
+  const days =
+    dateList(leaderboardRange);
+
+  const habits = visibleHabits();
+
+  const rows =
+    habits.map(h => {
+
+      const done =
+        days.filter(
+          d => isDone(d.key,h.id)
+        ).length;
+
+      return {
+        habit:h,
+        percent:Math.round(done/days.length*100)
+      };
+
+    }).sort(
+      (a,b) => b.percent-a.percent
+    );
+
+  if(!rows.length){
+
+    $("leaderboard").innerHTML =
+      `<div class="muted small">
+        No habits.
+      </div>`;
+
+    return;
+  }
+
+  $("leaderboard").innerHTML =
+    rows.map((r,index) => `
+      <div class="rank-row">
+
+        <div class="rank-top">
+
+          <span
+            class="dot"
+            style="background:${r.habit.color}"
+          ></span>
+
+          <span class="rank-name">
+            ${index+1}. ${escapeHTML(r.habit.name)}
+          </span>
+
+          <span class="rank-score">
+            ${r.percent}%
+          </span>
+
+        </div>
+
+        <div class="progress-track">
+
+          <div
+            class="progress-fill"
+            style="width:${r.percent}%"
+          ></div>
+
+        </div>
+
+      </div>
+    `).join("");
+}
+
+function renderStreaks(){
+
+  const habits =
+    visibleHabits()
+      .map(h => ({
+        habit:h,
+        current:currentStreak(h.id),
+        best:bestStreak(h.id)
+      }))
+      .sort(
+        (a,b) => b.current-a.current
+      );
+
+  if(!habits.length){
+
+    $("streakList").innerHTML =
+      `<div class="muted small">
+        No habits.
+      </div>`;
+
+    return;
+  }
+
+  $("streakList").innerHTML =
+    habits.map(r => `
+      <div class="streak-row">
+
+        <div class="streak-left">
+
+          <span
+            class="dot"
+            style="background:${r.habit.color}"
+          ></span>
+
+          <div>
+            <b>${escapeHTML(r.habit.name)}</b>
+            <div class="muted small">
+              Best: ${r.best} days
+            </div>
+          </div>
+
+        </div>
+
+        <div class="streak-number">
+          ${r.current}d
+        </div>
+
+      </div>
+    `).join("");
+}
+
+function renderWeeklyInsights(){
+
+  const weeks =
+    Math.min(
+      8,
+      Math.ceil(insightRange/7)
+    );
+
+  const allDays =
+    dateList(weeks*7);
+
+  const result = [];
+
+  for(let i=0;i<weeks;i++){
+
+    const slice =
+      allDays.slice(i*7,i*7+7);
+
+    result.push({
+      label:`W${i+1}`,
+      percent:selectedPercent(slice)
+    });
+
+  }
+
+  $("weeklyInsights").innerHTML =
+    result.map(w => `
+      <div class="week-column">
+
+        <div class="day-percent">
+          ${w.percent}%
+        </div>
+
+        <div class="bar-track">
+
+          <div
+            class="bar-fill"
+            style="height:${w.percent}%"
+          ></div>
+
+        </div>
+
+        <div class="week-label">
+          ${w.label}
+        </div>
+
+      </div>
+    `).join("");
+}
+
+
+/* =========================================================
+   MANAGE
+========================================================= */
+
+function renderManage(){
+
+  const habits = state.habits;
+
+  if(!habits.length){
+
+    $("manageList").innerHTML =
+      emptyHTML(
+        "No habits",
+        "Add a habit to begin."
+      );
+
+    return;
+  }
+
+  $("manageList").innerHTML =
+    habits.map(h => `
+      <div class="manage-item">
+
+        <span
+          class="dot"
+          style="background:${h.color}"
+        ></span>
+
+        <div class="manage-info">
+
+          <b>${escapeHTML(h.name)}</b>
+
+          <small>
+            ${h.visible === false
+              ? "Hidden"
+              : escapeHTML(h.desc || "No description")}
+          </small>
+
+        </div>
+
+        <button
+          class="manage-action"
+          data-edit="${h.id}"
+          title="Edit"
+        >
+          <svg class="icon icon-sm">
+            <use href="#edit"/>
+          </svg>
+        </button>
+
+        <button
+          class="manage-action"
+          data-toggle="${h.id}"
+          title="${h.visible === false ? "Show" : "Hide"}"
+        >
+          ${h.visible === false ? "○" : "●"}
+        </button>
+
+        <button
+          class="manage-action danger"
+          data-delete="${h.id}"
+          title="Delete"
+        >
+          <svg class="icon icon-sm">
+            <use href="#trash"/>
+          </svg>
+        </button>
+
+      </div>
+    `).join("");
+}
+
+function addHabit(name,desc){
+
+  const color =
+    COLORS[state.habits.length % COLORS.length];
+
+  state.habits.push({
+    id:uid(),
+    name,
+    desc,
+    color,
+    visible:true
+  });
+
+  save();
+  renderAll();
+}
+
+function updateHabit(id,name,desc){
+
+  const habit =
+    habitById(id);
+
+  if(!habit)return;
+
+  habit.name = name;
+  habit.desc = desc;
+
+  save();
+  renderAll();
+}
+
+function toggleHabit(id){
+
+  const habit =
+    habitById(id);
+
+  if(!habit)return;
+
+  habit.visible =
+    habit.visible === false;
+
+  save();
+  renderAll();
+  renderManage();
+}
+
+function deleteHabit(id){
+
+  const habit =
+    habitById(id);
+
+  if(!habit)return;
+
+  if(
+    !confirm(
+      `Delete "${habit.name}"?\n\nIts history will also be removed.`
+    )
+  ){
+    return;
+  }
+
+  state.habits =
+    state.habits.filter(
+      h => h.id !== id
+    );
+
+  Object.keys(state.checkins)
+    .forEach(key => {
+
+      if(state.checkins[key]){
+        delete state.checkins[key][id];
+      }
+
+    });
+
+  save();
+  renderAll();
+  renderManage();
+}
+
+
+/* =========================================================
+   EMPTY
+========================================================= */
+
+function emptyHTML(title,text){
+
+  return `
+    <div class="empty">
+
+      <div class="empty-icon">
+
+        <svg class="icon">
+          <use href="#target"/>
+        </svg>
+
+      </div>
+
+      <div class="empty-title">
+        ${title}
+      </div>
+
+      <div class="empty-text">
+        ${text}
+      </div>
+
+    </div>
+  `;
+}
+
+
+/* =========================================================
+   NAVIGATION
+========================================================= */
+
+function showView(view){
+
+  const valid =
+    ["today","habits","insights"];
+
+  if(!valid.includes(view)){
+    view = "today";
+  }
+
+  currentView = view;
+
+  $("page-today").hidden =
+    view !== "today";
+
+  $("page-habits").hidden =
+    view !== "habits";
+
+  $("page-insights").hidden =
+    view !== "insights";
+
+  document
+    .querySelectorAll("[data-view]")
+    .forEach(button => {
+
+      if(button.dataset.view === view){
+        button.setAttribute(
+          "aria-current",
+          "page"
+        );
+      }else{
+        button.removeAttribute(
+          "aria-current"
+        );
+      }
+
+    });
+
+  if(view === "today"){
+    renderToday();
+  }
+
+  if(view === "habits"){
+    renderHabitsPage();
+  }
+
+  if(view === "insights"){
+    renderInsights();
+
+    setTimeout(
+      renderInsights,
+      30
+    );
+  }
+
+  history.replaceState(
+    null,
+    "",
+    "#" + view
+  );
+}
+
+
+/* =========================================================
+   RENDER EVERYTHING
+========================================================= */
+
+function renderAll(){
+
+  renderToday();
+  renderHabitsPage();
+  renderInsights();
+
+  if(
+    $("manageModal").classList.contains("open")
+  ){
+    renderManage();
+  }
+}
+
+
+/* =========================================================
+   MODALS
+========================================================= */
+
+function openModal(id){
+
+  $(id).classList.add("open");
+
+}
+
+function closeModal(id){
+
+  $(id).classList.remove("open");
+
+}
+
+function closeAllModals(){
+
+  document
+    .querySelectorAll(".overlay")
+    .forEach(m =>
+      m.classList.remove("open")
+    );
+
+}
+
+
+/* =========================================================
+   EXPORT / IMPORT
+========================================================= */
+
+function exportData(){
+
+  const data = JSON.stringify(
+    {
+      ...state,
+      exportedAt:new Date().toISOString(),
+      app:"The Arc"
+    },
+    null,
+    2
+  );
+
+  const blob =
+    new Blob(
+      [data],
+      {type:"application/json"}
+    );
+
+  const url =
+    URL.createObjectURL(blob);
+
+  const a =
+    document.createElement("a");
+
+  a.href = url;
+
+  a.download =
+    `the-arc-backup-${todayKey()}.json`;
+
+  a.click();
+
+  URL.revokeObjectURL(url);
+}
+
+function importData(file){
+
+  const reader =
+    new FileReader();
+
+  reader.onload = event => {
+
+    try{
+
+      const imported =
+        JSON.parse(event.target.result);
+
+      if(
+        !Array.isArray(imported.habits) ||
+        typeof imported.checkins !== "object"
+      ){
+        throw new Error(
+          "Invalid backup"
+        );
+      }
+
+      if(
+        !confirm(
+          "Restore this backup?\n\nYour current data will be replaced."
+        )
+      ){
+        return;
+      }
+
+      state = {
+        habits:imported.habits,
+        checkins:imported.checkins || {},
+        dark:!!imported.dark
+      };
+
+      applyTheme();
+      save();
+      renderAll();
+
+      alert("Backup restored.");
+
+    }catch(error){
+
+      alert(
+        "Could not restore this backup."
+      );
+
+    }
+
+  };
+
+  reader.readAsText(file);
+}
+
+
+/* =========================================================
+   EVENTS
+========================================================= */
+
+/* NAVIGATION */
+
+document.addEventListener(
+  "click",
+  event => {
+
+    const nav =
+      event.target.closest("[data-view]");
+
+    if(nav){
+
+      showView(
+        nav.dataset.view
+      );
+
+      return;
+    }
+
+  }
+);
+
+
+/* CHECKBOXES */
+
+document.addEventListener(
+  "change",
+  event => {
+
+    const input =
+      event.target.closest(
+        "input[data-check]"
+      );
+
+    if(!input){
+      return;
+    }
+
+    if(input.disabled){
+      input.checked = false;
+      return;
+    }
+
+    setDone(
+      input.dataset.key,
+      input.dataset.habit,
+      input.checked
+    );
+
+    renderAll();
+
+  }
+);
+
+
+/* HABIT RANGE */
+
+$("habitRange").addEventListener(
+  "change",
+  event => {
+
+    habitRange =
+      Number(event.target.value);
+
+    renderHabitsPage();
+
+  }
+);
+
+
+/* INSIGHT HABIT */
+
+$("insightHabit").addEventListener(
+  "change",
+  event => {
+
+    insightHabit =
+      event.target.value;
+
+    renderInsights();
+
+  }
+);
+
+
+/* INSIGHT RANGE */
+
+$("insightRange").addEventListener(
+  "change",
+  event => {
+
+    insightRange =
+      Number(event.target.value);
+
+    renderInsights();
+
+  }
+);
+
+
+/* LEADERBOARD */
+
+$("leaderRange").addEventListener(
+  "change",
+  event => {
+
+    leaderboardRange =
+      Number(event.target.value);
+
+    renderLeaderboard();
+
+  }
+);
+
+
+/* THEME */
+
+$("themeBtn").addEventListener(
+  "click",
+  toggleTheme
+);
+
+
+/* ADD */
+
+$("addBtn").addEventListener(
+  "click",
+  () => {
+
+    $("newName").value = "";
+    $("newDesc").value = "";
+
+    openModal("addModal");
+
+    setTimeout(
+      () => $("newName").focus(),
+      50
+    );
+
+  }
+);
+
+
+/* CREATE HABIT */
+
+$("createHabit").addEventListener(
+  "click",
+  () => {
+
+    const name =
+      $("newName").value.trim();
+
+    const desc =
+      $("newDesc").value.trim();
+
+    if(!name){
+      $("newName").focus();
+      return;
+    }
+
+    addHabit(name,desc);
+
+    closeModal("addModal");
+
+  }
+);
+
+
+/* MANAGE */
+
+$("manageBtn").addEventListener(
+  "click",
+  () => {
+
+    renderManage();
+    openModal("manageModal");
+
+  }
+);
+
+
+/* MODAL CLOSE */
+
+document.addEventListener(
+  "click",
+  event => {
+
+    const close =
+      event.target.closest(
+        "[data-close]"
+      );
+
+    if(close){
+
+      closeModal(
+        close.dataset.close
+      );
+
+    }
+
+  }
+);
+
+
+/* MANAGE ACTIONS */
+
+document.addEventListener(
+  "click",
+  event => {
+
+    const edit =
+      event.target.closest(
+        "[data-edit]"
+      );
+
+    if(edit){
+
+      const habit =
+        habitById(
+          edit.dataset.edit
+        );
+
+      if(!habit)return;
+
+      $("editId").value =
+        habit.id;
+
+      $("editName").value =
+        habit.name;
+
+      $("editDesc").value =
+        habit.desc || "";
+
+      openModal("editModal");
+
+      return;
+    }
+
+
+    const toggle =
+      event.target.closest(
+        "[data-toggle]"
+      );
+
+    if(toggle){
+
+      toggleHabit(
+        toggle.dataset.toggle
+      );
+
+      return;
+    }
+
+
+    const del =
+      event.target.closest(
+        "[data-delete]"
+      );
+
+    if(del){
+
+      deleteHabit(
+        del.dataset.delete
+      );
+
+      return;
+    }
+
+  }
+);
+
+
+/* SAVE EDIT */
+
+$("saveEdit").addEventListener(
+  "click",
+  () => {
+
+    const id =
+      $("editId").value;
+
+    const name =
+      $("editName").value.trim();
+
+    const desc =
+      $("editDesc").value.trim();
+
+    if(!name){
+      $("editName").focus();
+      return;
+    }
+
+    updateHabit(
+      id,
+      name,
+      desc
+    );
+
+    closeModal("editModal");
+
+  }
+);
+
+
+/* EXPORT */
+
+$("exportBtn").addEventListener(
+  "click",
+  exportData
+);
+
+
+/* IMPORT */
+
+$("importBtn").addEventListener(
+  "click",
+  () => {
+    $("importFile").click();
+  }
+);
+
+$("importFile").addEventListener(
+  "change",
+  event => {
+
+    const file =
+      event.target.files[0];
+
+    if(file){
+      importData(file);
+    }
+
+    event.target.value = "";
+
+  }
+);
+
+
+/* CLICK OUTSIDE MODAL */
+
+document.addEventListener(
+  "click",
+  event => {
+
+    if(
+      event.target.classList.contains(
+        "overlay"
+      )
+    ){
+      event.target.classList.remove(
+        "open"
+      );
+    }
+
+  }
+);
+
+
+/* ESCAPE */
+
+document.addEventListener(
+  "keydown",
+  event => {
+
+    if(event.key === "Escape"){
+      closeAllModals();
+    }
+
+  }
+);
+
+
+/* ENTER TO ADD */
+
+$("newName").addEventListener(
+  "keydown",
+  event => {
+
+    if(
+      event.key === "Enter" &&
+      !event.shiftKey
+    ){
+
+      event.preventDefault();
+
+      $("createHabit").click();
+
+    }
+
+  }
+);
+
+
+/* AUTH */
+
+$("loginSwitchBtn").addEventListener(
+  "click",
+  () => switchAuthForm("signup")
+);
+
+$("signupSwitchBtn").addEventListener(
+  "click",
+  () => switchAuthForm("login")
+);
+
+$("loginSubmitBtn").addEventListener(
+  "click",
+  signInWithEmail
+);
+
+$("signupSubmitBtn").addEventListener(
+  "click",
+  signUpWithEmail
+);
+
+$("loginPassword").addEventListener(
+  "keydown",
+  event => {
+    if(event.key === "Enter"){
+      event.preventDefault();
+      signInWithEmail();
+    }
+  }
+);
+
+$("signupConfirm").addEventListener(
+  "keydown",
+  event => {
+    if(event.key === "Enter"){
+      event.preventDefault();
+      signUpWithEmail();
+    }
+  }
+);
+
+$("logoutBtn").addEventListener(
+  "click",
+  signOut
+);
+
+/* RESIZE */
+
+let resizeTimer;
+
+window.addEventListener(
+  "resize",
+  () => {
+
+    clearTimeout(resizeTimer);
+
+    resizeTimer =
+      setTimeout(
+        () => {
+
+          if(currentView === "insights"){
+            renderInsights();
+          }
+
+        },
+        120
+      );
+
+  }
+);
+
+
+/* =========================================================
+   NEW DAY DETECTION
+========================================================= */
+
+let lastDate =
+  todayKey();
+
+setInterval(
+  () => {
+
+    const now =
+      todayKey();
+
+    if(now !== lastDate){
+
+      lastDate = now;
+
+      renderAll();
+
+    }
+
+  },
+  30000
+);
+
+
+/* =========================================================
+   START
+========================================================= */
+
+async function init(){
+
+  showLogin();
+
+  const ready = await initSupabase();
+
+  if(!ready){
+    showLoginError("Unable to connect to the account service. Check your Supabase configuration.");
+    return;
+  }
+
+  const {data:{session}} =
+    await supabaseClient.auth.getSession();
+
+  if(session){
+    currentUser = session.user;
+    await loadAuthenticatedData();
+  }else{
+    switchAuthForm("login");
+  }
+}
+
+init();
+
+})();
+</script>
+
+</body>
+</html>
