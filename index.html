@@ -5819,6 +5819,14 @@ function renderWeeklyInsights(){
     const endDate =
       slice[slice.length-1].date;
 
+    // Calculate total done days for the week
+    let totalDone = 0;
+    slice.forEach(d => {
+      totalDone += completedOnDay(d.key);
+    });
+    const totalPossible = slice.length * habits.length;
+    const doneDaysText = `${totalDone}/${totalPossible}`;
+
     result.push({
 
       label:
@@ -5835,6 +5843,10 @@ function renderWeeklyInsights(){
 
       percent:
         overallPercent(slice),
+
+      doneDays: totalDone,
+      totalDays: totalPossible,
+      doneDaysText: doneDaysText,
 
       habits:
         habits.map(h => ({
@@ -5873,6 +5885,10 @@ function renderWeeklyInsights(){
 
         <div class="day-percent">
           ${w.percent}%
+        </div>
+
+        <div class="muted small" style="font-size:9px;margin-top:2px;font-weight:600;">
+          ${w.doneDaysText}
         </div>
 
         <div class="bar-group">
@@ -5978,6 +5994,11 @@ function weeklyTooltipHTML(week){
     </div>
 
     <div class="tooltip-grid">
+
+      <div class="tooltip-row" style="font-weight:700;">
+        <span>Done days</span>
+        <b>${week.doneDaysText}</b>
+      </div>
 
       ${week.habits.map(item => `
 
