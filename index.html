@@ -235,6 +235,32 @@ button:disabled{
   border-color:var(--accent2);
 }
 
+/* Header actions: same height for every control, same width for text buttons */
+
+.header-actions .icon-btn,
+.header-actions .btn{
+  height:42px;
+}
+
+.header-actions .icon-btn{
+  width:42px;
+  border-radius:999px;
+}
+
+.header-actions .btn{
+  width:128px;
+  flex:none;
+  padding:0 14px;
+  font-size:13px;
+  white-space:nowrap;
+}
+
+.btn-label{
+  min-width:0;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
 .subbar{
   display:flex;
   align-items:center;
@@ -805,6 +831,7 @@ button:disabled{
 }
 
 .calendar-wrap{
+  position:relative;
   overflow-x:auto;
   -webkit-overflow-scrolling:touch;
 }
@@ -828,13 +855,35 @@ button:disabled{
 }
 
 .calendar-habit{
+  position:sticky;
+  left:0;
+  z-index:5;
   display:flex;
   align-items:center;
   gap:9px;
   min-height:52px;
   padding-left:8px;
+  padding-right:8px;
+  background:var(--panel);
   font-size:12px;
   font-weight:750;
+}
+
+.calendar-head-habit{
+  position:sticky;
+  left:0;
+  z-index:5;
+  padding-left:8px;
+  background:var(--panel);
+  text-align:left;
+}
+
+.calendar-day.future{
+  opacity:.4;
+}
+
+.range-text{
+  margin-top:6px;
 }
 
 .calendar-day{
@@ -1093,6 +1142,8 @@ button:disabled{
   grid-template-columns:repeat(8,minmax(40px,1fr));
   gap:10px;
   align-items:end;
+  overflow-x:auto;
+  padding-bottom:4px;
 }
 
 .week-column{
@@ -1111,6 +1162,56 @@ button:disabled{
   font-weight:700;
   line-height:1.25;
   text-align:center;
+}
+
+.legend{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px 18px;
+  margin-top:20px;
+}
+
+.legend-top{
+  margin:0 0 20px;
+}
+
+.legend-item{
+  display:inline-flex;
+  align-items:center;
+  gap:7px;
+  color:var(--muted);
+  font-size:12px;
+  font-weight:700;
+}
+
+.chart-note{
+  margin-top:6px;
+}
+
+.bar-group{
+  display:flex;
+  align-items:flex-end;
+  justify-content:center;
+  gap:3px;
+  width:100%;
+  height:145px;
+}
+
+.bar-group .bar-track,
+.bar-group .bar-fill{
+  border-radius:7px;
+}
+
+.bar-group .bar-track{
+  flex:1;
+  width:auto;
+  min-width:4px;
+  max-width:22px;
+  height:145px;
+}
+
+.day-bar.future{
+  opacity:.5;
 }
 
 /* =========================
@@ -1372,11 +1473,18 @@ button:disabled{
   }
 
   .header-actions{
+    display:grid;
+    grid-template-columns:42px repeat(3,minmax(0,1fr));
+    gap:6px;
     width:100%;
   }
 
-  .header-actions .btn-primary{
-    flex:1;
+  .header-actions .btn{
+    width:auto;
+    min-width:0;
+    padding:0 8px;
+    gap:6px;
+    font-size:12px;
   }
 
   .nav button{
@@ -1419,7 +1527,7 @@ button:disabled{
   }
 
   .grid-4{
-    grid-template-columns:repeat(2,1fr);
+    grid-template-columns:repeat(2,minmax(0,1fr));
   }
 
   .kpi-grid{
@@ -1441,6 +1549,12 @@ button:disabled{
 
   .modal{
     padding:21px;
+  }
+}
+
+@media(max-width:420px){
+  .header-actions .btn .icon{
+    display:none;
   }
 }
 
@@ -1845,17 +1959,17 @@ button:disabled{
 
       <button class="btn" id="manageBtn">
         <svg class="icon icon-sm"><use href="#settings"/></svg>
-        Manage
+        <span class="btn-label">Manage</span>
       </button>
 
       <button class="btn btn-primary" id="addBtn">
         <svg class="icon icon-sm"><use href="#plus"/></svg>
-        Add Habit
+        <span class="btn-label">Add Habit</span>
       </button>
 
       <button class="btn" id="logoutBtn" title="Sign out">
         <svg class="icon icon-sm"><use href="#logout"/></svg>
-        <span id="userDisplayName">User</span>
+        <span class="btn-label" id="userDisplayName">User</span>
       </button>
 
     </div>
@@ -1867,27 +1981,6 @@ button:disabled{
 
     <div class="status" id="statusText">
       Saved locally
-    </div>
-
-    <div style="display:flex;gap:8px">
-
-      <button class="btn" id="exportBtn">
-        <svg class="icon icon-sm"><use href="#download"/></svg>
-        Backup
-      </button>
-
-      <button class="btn" id="importBtn">
-        <svg class="icon icon-sm"><use href="#upload"/></svg>
-        Restore
-      </button>
-
-      <input
-        type="file"
-        id="importFile"
-        accept=".json"
-        hidden
-      >
-
     </div>
 
   </div>
@@ -2042,13 +2135,14 @@ button:disabled{
           <div>
             <div class="section-label">Tracking history</div>
             <div class="section-title">Your habits</div>
+            <div class="muted small range-text" id="habitRangeText"></div>
           </div>
 
-          <select class="select" id="habitRange">
-            <option value="7">Last 7 days</option>
-            <option value="14" selected>Last 14 days</option>
-            <option value="30">Last 30 days</option>
-            <option value="60">Last 60 days</option>
+          <select class="select" id="habitRange" aria-label="Days shown around today">
+            <option value="7">7 days</option>
+            <option value="14" selected>14 days</option>
+            <option value="30">30 days</option>
+            <option value="60">60 days</option>
           </select>
 
         </div>
@@ -2089,10 +2183,6 @@ button:disabled{
 
           <div class="filters">
 
-            <select class="select" id="insightHabit">
-              <option value="all">Overall</option>
-            </select>
-
             <select class="select" id="insightRange">
               <option value="7">Last 7 days</option>
               <option value="14" selected>Last 14 days</option>
@@ -2104,7 +2194,13 @@ button:disabled{
 
         </div>
 
+        <div class="legend" id="insightLegend"></div>
+
         <div class="chart" id="insightChart"></div>
+
+        <div class="muted small chart-note">
+          Each line is one habit's 7-day rolling completion rate.
+        </div>
 
       </div>
 
@@ -2165,6 +2261,8 @@ button:disabled{
           </div>
 
         </div>
+
+        <div class="legend legend-top" id="weeklyLegend"></div>
 
         <div class="weekly-grid" id="weeklyInsights"></div>
 
@@ -2363,8 +2461,8 @@ let state = {
 
 let currentView = "today";
 let habitRange = 14;
+let habitCenterToday = true;
 let insightRange = 14;
-let insightHabit = "all";
 let leaderboardRange = 7;
 
 
@@ -2419,6 +2517,46 @@ function dateList(range){
 
   for(let i=range-1;i>=0;i--){
     const d = daysAgo(i);
+
+    result.push({
+      date:d,
+      key:dateKey(d)
+    });
+  }
+
+  return result;
+}
+
+/*
+  Window centred on today: the first half of the range is
+  before today, the rest starts with today.
+  7 days  -> 3 before, today, 3 after
+  14 days -> 7 before, today, 6 after
+*/
+
+function windowList(range){
+  const before = Math.floor(range/2);
+  const result = [];
+
+  for(let i=-before;i<range-before;i++){
+    const d = addDays(new Date(),i);
+
+    result.push({
+      date:d,
+      key:dateKey(d)
+    });
+  }
+
+  return result;
+}
+
+function currentWeekDays(){
+  const now = new Date();
+  const sinceMonday = (now.getDay()+6)%7;
+  const result = [];
+
+  for(let i=0;i<7;i++){
+    const d = addDays(now,i-sinceMonday);
 
     result.push({
       date:d,
@@ -2716,6 +2854,10 @@ function showApp(){
   $("appContainer").classList.remove("hidden");
   $("userDisplayName").textContent =
     currentUser?.email || "User";
+  $("logoutBtn").title =
+    currentUser?.email
+      ? "Sign out " + currentUser.email
+      : "Sign out";
 }
 
 function clearLoginError(){
@@ -3241,7 +3383,8 @@ function renderTodayHabits(){
 
 function renderWeek(){
 
-  const days = dateList(7);
+  const days = currentWeekDays();
+  const today = todayKey();
 
   $("weekRange").textContent =
     `${formatDate(days[0].date,{month:"short",day:"numeric"})} – ${formatDate(days[6].date,{month:"short",day:"numeric"})}`;
@@ -3249,14 +3392,15 @@ function renderWeek(){
   $("weekBars").innerHTML =
     days.map(d => {
 
-      const percent = dayPercent(d.key);
-      const today = d.key === todayKey();
+      const future = d.key > today;
+      const isToday = d.key === today;
+      const percent = future ? 0 : dayPercent(d.key);
 
       return `
-        <div class="day-bar ${today ? "today" : ""}">
+        <div class="day-bar ${isToday ? "today" : ""} ${future ? "future" : ""}">
 
           <div class="day-percent">
-            ${percent}%
+            ${future ? "–" : percent + "%"}
           </div>
 
           <div class="bar-track">
@@ -3438,8 +3582,21 @@ function renderTodayStats(){
 
 function renderHabitsPage(){
 
-  const days = dateList(habitRange);
+  const days = windowList(habitRange);
   const habits = visibleHabits();
+  const today = todayKey();
+
+  const before = Math.floor(habitRange/2);
+  const after = habitRange-before-1;
+
+  $("habitRangeText").textContent =
+    `${formatDate(days[0].date,{month:"short",day:"numeric"})} – ${formatDate(days[days.length-1].date,{month:"short",day:"numeric"})} · ${before} days before, today, ${after} days after`;
+
+  const oldWrap =
+    document.querySelector("#habitCalendar .calendar-wrap");
+
+  const oldScroll =
+    oldWrap ? oldWrap.scrollLeft : 0;
 
   if(!habits.length){
 
@@ -3461,7 +3618,7 @@ function renderHabitsPage(){
 
         <div class="calendar-row calendar-header">
 
-          <div style="text-align:left;padding-left:8px">
+          <div class="calendar-head-habit">
             HABIT
           </div>
   `;
@@ -3491,11 +3648,18 @@ function renderHabitsPage(){
 
   habits.forEach(h => {
 
+    /* Percent counts only days up to today, not the days still ahead */
+
+    const elapsed =
+      days.filter(d => d.key <= today);
+
     const done =
-      days.filter(d => isDone(d.key,h.id)).length;
+      elapsed.filter(d => isDone(d.key,h.id)).length;
 
     const percent =
-      Math.round(done/days.length*100);
+      elapsed.length
+        ? Math.round(done/elapsed.length*100)
+        : 0;
 
     html += `
       <div class="calendar-row">
@@ -3521,7 +3685,7 @@ function renderHabitsPage(){
         d.key > todayKey();
 
       html += `
-        <div class="calendar-day">
+        <div class="calendar-day ${future ? "future" : ""}">
 
           <label class="calendar-check">
 
@@ -3562,6 +3726,30 @@ function renderHabitsPage(){
   `;
 
   $("habitCalendar").innerHTML = html;
+
+  const wrap =
+    document.querySelector("#habitCalendar .calendar-wrap");
+
+  const todayCell =
+    document.querySelector("#habitCalendar .calendar-date.today");
+
+  if(wrap && wrap.clientWidth){
+
+    if(habitCenterToday && todayCell){
+
+      wrap.scrollLeft = Math.max(
+        0,
+        todayCell.offsetLeft -
+        (wrap.clientWidth-todayCell.offsetWidth)/2
+      );
+
+      habitCenterToday = false;
+
+    }else{
+      wrap.scrollLeft = oldScroll;
+    }
+
+  }
 }
 
 
@@ -3569,75 +3757,75 @@ function renderHabitsPage(){
    INSIGHTS
 ========================================================= */
 
-function populateInsightHabit(){
+function firstCheckinKey(){
 
-  const select = $("insightHabit");
+  const keys =
+    Object.keys(state.checkins)
+      .filter(key =>
+        state.checkins[key] &&
+        Object.keys(state.checkins[key]).length
+      )
+      .sort();
 
-  const current = insightHabit;
-
-  select.innerHTML =
-    `<option value="all">Overall</option>` +
-    visibleHabits().map(h =>
-      `<option value="${h.id}">
-        ${escapeHTML(h.name)}
-      </option>`
-    ).join("");
-
-  if(
-    current === "all" ||
-    visibleHabits().some(h => h.id === current)
-  ){
-    select.value = current;
-  }else{
-    insightHabit = "all";
-    select.value = "all";
-  }
+  return keys.length ? keys[0] : null;
 }
 
-function selectedPercent(days){
+/*
+  Rolling completion rate over the 7 days ending on `date`.
+  Days before the first check-in are not counted, so the
+  line starts honestly instead of at a low number.
+*/
 
-  if(insightHabit === "all"){
-    return overallPercent(days);
+function rollingPercent(habitId,date,firstKey){
+
+  let done = 0;
+  let total = 0;
+
+  for(let i=0;i<7;i++){
+
+    const key = dateKey(addDays(date,-i));
+
+    if(!firstKey || key < firstKey){
+      break;
+    }
+
+    total++;
+
+    if(isDone(key,habitId)){
+      done++;
+    }
   }
 
-  const h = habitById(insightHabit);
+  return total
+    ? Math.round(done/total*100)
+    : null;
+}
 
-  if(!h){
-    return 0;
-  }
+function legendHTML(){
 
-  const done =
-    days.filter(d =>
-      isDone(d.key,h.id)
-    ).length;
-
-  return Math.round(done/days.length*100);
+  return visibleHabits().map(h => `
+    <span class="legend-item">
+      <span
+        class="dot"
+        style="background:${h.color}"
+      ></span>
+      ${escapeHTML(h.name)}
+    </span>
+  `).join("");
 }
 
 function renderInsights(){
 
-  populateInsightHabit();
-
   const days = dateList(insightRange);
 
-  const percent =
-    selectedPercent(days);
-
-  const selectedHabit =
-    insightHabit === "all"
-      ? null
-      : habitById(insightHabit);
-
-  $("insightLabel").textContent =
-    selectedHabit
-      ? `${selectedHabit.name} consistency`
-      : "Overall consistency";
-
   $("insightScore").textContent =
-    `${percent}%`;
+    `${overallPercent(days)}%`;
 
   $("insightRangeText").textContent =
     `Last ${insightRange} days`;
+
+  $("insightLegend").innerHTML = legendHTML();
+  $("weeklyLegend").innerHTML = legendHTML();
 
   renderInsightChart(days);
   renderInsightKpis(days);
@@ -3649,12 +3837,11 @@ function renderInsights(){
 function renderInsightChart(days){
 
   const host = $("insightChart");
+  const habits = visibleHabits();
+  const firstKey = firstCheckinKey();
 
   const width =
-    Math.max(
-      host.clientWidth || 700,
-      500
-    );
+    host.clientWidth || 700;
 
   const height = 270;
 
@@ -3668,11 +3855,6 @@ function renderInsightChart(days){
 
   const innerHeight =
     height-padTop-padBottom;
-
-  const values =
-    days.map(d =>
-      selectedPercent([d])
-    );
 
   const x = i =>
     padLeft +
@@ -3689,7 +3871,8 @@ function renderInsightChart(days){
   let svg = `
     <svg
       viewBox="0 0 ${width} ${height}"
-      preserveAspectRatio="none"
+      role="img"
+      aria-label="Habit consistency over time"
     >
   `;
 
@@ -3717,62 +3900,147 @@ function renderInsightChart(days){
 
   });
 
-  const points =
-    values.map((v,i) =>
-      `${x(i).toFixed(1)},${y(v).toFixed(1)}`
-    );
+  if(!habits.length || !firstKey){
 
-  const line =
-    points.map((p,i) =>
-      `${i===0 ? "M" : "L"}${p}`
-    ).join(" ");
+    svg += `
+      <text
+        x="${padLeft+innerWidth/2}"
+        y="${padTop+innerHeight/2}"
+        text-anchor="middle"
+      >
+        Check in to a habit and its line appears here.
+      </text>
+    `;
 
-  const area =
-    `${line}
-     L${x(values.length-1)} ${y(0)}
-     L${x(0)} ${y(0)}
-     Z`;
+  }else{
 
-  svg += `
-    <path
-      d="${area}"
-      fill="var(--accent-soft)"
-    />
+    habits.forEach((h,index) => {
 
-    <path
-      d="${line}"
-      fill="none"
-      stroke="var(--accent)"
-      stroke-width="3"
-      stroke-linecap="round"
-      stroke-linejoin="round"
-    />
-  `;
+      const values =
+        days.map(d =>
+          rollingPercent(h.id,d.date,firstKey)
+        );
+
+      let path = "";
+      let pen = false;
+      let last = -1;
+
+      values.forEach((v,i) => {
+
+        if(v === null){
+          pen = false;
+          return;
+        }
+
+        path +=
+          `${pen ? "L" : "M"}${x(i).toFixed(1)} ${y(v).toFixed(1)} `;
+
+        pen = true;
+        last = i;
+
+      });
+
+      if(last < 0){
+        return;
+      }
+
+      /*
+        Earlier habits get a thicker stroke and are drawn first,
+        so two habits with the same value both stay visible.
+      */
+
+      const strokeWidth =
+        Math.max(2,4-index*0.6);
+
+      svg += `
+        <path
+          d="${path.trim()}"
+          fill="none"
+          stroke="${h.color}"
+          stroke-width="${strokeWidth}"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
+      `;
+
+      values.forEach((v,i) => {
+
+        if(v === null){
+          return;
+        }
+
+        const isLast = i === last;
+
+        if(!isLast && days.length > 31){
+          return;
+        }
+
+        svg += `
+          <circle
+            cx="${x(i).toFixed(1)}"
+            cy="${y(v).toFixed(1)}"
+            r="${isLast ? 4.5 : 2.5}"
+            fill="${isLast ? h.color : "var(--panel)"}"
+            stroke="${h.color}"
+            stroke-width="2"
+          >
+            <title>${escapeHTML(h.name)} · ${formatDate(days[i].date,{month:"short",day:"numeric"})} · ${v}%</title>
+          </circle>
+        `;
+
+      });
+
+    });
+
+  }
 
   const step =
     Math.max(
       1,
-      Math.ceil(days.length/7)
+      Math.ceil(days.length/(width < 500 ? 4 : 7))
     );
 
-  days.forEach((d,i) => {
+  const labelled = [];
 
-    if(
-      i % step === 0 ||
-      i === days.length-1
-    ){
+  for(let i=0;i<days.length;i+=step){
+    labelled.push(i);
+  }
 
-      svg += `
-        <text
-          x="${x(i)}"
-          y="${height-8}"
-          text-anchor="middle"
-        >
-          ${d.date.getDate()}
-        </text>
-      `;
+  const lastIndex = days.length-1;
 
+  if(labelled[labelled.length-1] !== lastIndex){
+
+    if(lastIndex-labelled[labelled.length-1] < step*0.6){
+      labelled[labelled.length-1] = lastIndex;
+    }else{
+      labelled.push(lastIndex);
     }
+
+  }
+
+  let previousMonth = null;
+
+  labelled.forEach(i => {
+
+    const d = days[i];
+    const month = d.date.getMonth();
+
+    const label =
+      month !== previousMonth
+        ? formatDate(d.date,{month:"short",day:"numeric"})
+        : d.date.getDate();
+
+    previousMonth = month;
+
+    svg += `
+      <text
+        x="${x(i)}"
+        y="${height-8}"
+        text-anchor="${i === lastIndex && i !== 0 ? "end" : i === 0 ? "start" : "middle"}"
+      >
+        ${label}
+      </text>
+    `;
 
   });
 
@@ -3792,11 +4060,11 @@ function renderInsightKpis(days){
       : [];
 
   const current =
-    selectedPercent(week);
+    overallPercent(week);
 
   const previousPercent =
     previous.length
-      ? selectedPercent(previous)
+      ? overallPercent(previous)
       : null;
 
   const delta =
@@ -3804,21 +4072,12 @@ function renderInsightKpis(days){
       ? null
       : current-previousPercent;
 
-  let best = 0;
-
-  if(insightHabit === "all"){
-
-    best = Math.max(
-      0,
-      ...visibleHabits().map(
-        h => bestStreak(h.id)
-      )
-    );
-
-  }else{
-
-    best = selectedHabitBestStreak();
-  }
+  const best = Math.max(
+    0,
+    ...visibleHabits().map(
+      h => bestStreak(h.id)
+    )
+  );
 
   const perfect =
     countPerfectDays(days);
@@ -3870,17 +4129,6 @@ function renderInsightKpis(days){
 
       </div>
     `).join("");
-}
-
-function selectedHabitBestStreak(){
-
-  if(insightHabit === "all"){
-    return 0;
-  }
-
-  const h = habitById(insightHabit);
-
-  return h ? bestStreak(h.id) : 0;
 }
 
 function renderLeaderboard(){
@@ -4004,6 +4252,8 @@ function renderStreaks(){
 
 function renderWeeklyInsights(){
 
+  const habits = visibleHabits();
+
   const weeks =
     Math.min(
       8,
@@ -4030,10 +4280,21 @@ function renderWeeklyInsights(){
     result.push({
       label:`W${i+1}`,
       dates:`${formatDate(startDate,{month:"short",day:"numeric"})} – ${formatDate(endDate,{month:"short",day:"numeric"})}`,
-      percent:selectedPercent(slice)
+      percent:overallPercent(slice),
+      habits:habits.map(h => ({
+        habit:h,
+        percent:Math.round(
+          slice.filter(d => isDone(d.key,h.id)).length /
+          slice.length *
+          100
+        )
+      }))
     });
 
   }
+
+  $("weeklyInsights").style.gridTemplateColumns =
+    `repeat(${Math.max(1,result.length)},minmax(56px,1fr))`;
 
   $("weeklyInsights").innerHTML =
     result.map(w => `
@@ -4043,12 +4304,19 @@ function renderWeeklyInsights(){
           ${w.percent}%
         </div>
 
-        <div class="bar-track">
+        <div class="bar-group">
 
-          <div
-            class="bar-fill"
-            style="height:${w.percent}%"
-          ></div>
+          ${w.habits.map(item => `
+            <div
+              class="bar-track"
+              title="${escapeHTML(item.habit.name)}: ${item.percent}%"
+            >
+              <div
+                class="bar-fill"
+                style="height:${item.percent}%;background:${item.habit.color}"
+              ></div>
+            </div>
+          `).join("")}
 
         </div>
 
@@ -4292,6 +4560,7 @@ function showView(view){
   }
 
   if(view === "habits"){
+    habitCenterToday = true;
     renderHabitsPage();
   }
 
@@ -4354,99 +4623,6 @@ function closeAllModals(){
       m.classList.remove("open")
     );
 
-}
-
-
-/* =========================================================
-   EXPORT / IMPORT
-========================================================= */
-
-function exportData(){
-
-  const data = JSON.stringify(
-    {
-      ...state,
-      exportedAt:new Date().toISOString(),
-      app:"The Arc"
-    },
-    null,
-    2
-  );
-
-  const blob =
-    new Blob(
-      [data],
-      {type:"application/json"}
-    );
-
-  const url =
-    URL.createObjectURL(blob);
-
-  const a =
-    document.createElement("a");
-
-  a.href = url;
-
-  a.download =
-    `the-arc-backup-${todayKey()}.json`;
-
-  a.click();
-
-  URL.revokeObjectURL(url);
-}
-
-function importData(file){
-
-  const reader =
-    new FileReader();
-
-  reader.onload = event => {
-
-    try{
-
-      const imported =
-        JSON.parse(event.target.result);
-
-      if(
-        !Array.isArray(imported.habits) ||
-        typeof imported.checkins !== "object"
-      ){
-        throw new Error(
-          "Invalid backup"
-        );
-      }
-
-      if(
-        !confirm(
-          "Restore this backup?\n\nYour current data will be replaced."
-        )
-      ){
-        return;
-      }
-
-      state = {
-        habits:imported.habits,
-        checkins:imported.checkins || {},
-        dark:!!imported.dark
-      };
-
-      applyTheme();
-      save();
-      renderAll();
-
-      alert("Backup restored.");
-
-    }catch(error){
-
-      alert(
-        "Could not restore this backup."
-      );
-
-    }
-
-  };
-
-  reader.readAsText(file);
 }
 
 
@@ -4517,22 +4693,9 @@ $("habitRange").addEventListener(
     habitRange =
       Number(event.target.value);
 
+    habitCenterToday = true;
+
     renderHabitsPage();
-
-  }
-);
-
-
-/* INSIGHT HABIT */
-
-$("insightHabit").addEventListener(
-  "change",
-  event => {
-
-    insightHabit =
-      event.target.value;
-
-    renderInsights();
 
   }
 );
@@ -4752,40 +4915,6 @@ $("saveEdit").addEventListener(
     );
 
     closeModal("editModal");
-
-  }
-);
-
-
-/* EXPORT */
-
-$("exportBtn").addEventListener(
-  "click",
-  exportData
-);
-
-
-/* IMPORT */
-
-$("importBtn").addEventListener(
-  "click",
-  () => {
-    $("importFile").click();
-  }
-);
-
-$("importFile").addEventListener(
-  "change",
-  event => {
-
-    const file =
-      event.target.files[0];
-
-    if(file){
-      importData(file);
-    }
-
-    event.target.value = "";
 
   }
 );
