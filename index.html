@@ -1002,6 +1002,31 @@ button:disabled{
 .leaderboard{
   display:grid;
   gap:18px;
+  max-height:300px;
+  overflow-y:auto;
+  padding-right:8px;
+}
+
+.leaderboard::-webkit-scrollbar,
+#streakList::-webkit-scrollbar{
+  width:6px;
+}
+
+.leaderboard::-webkit-scrollbar-track,
+#streakList::-webkit-scrollbar-track{
+  background:var(--panel2);
+  border-radius:999px;
+}
+
+.leaderboard::-webkit-scrollbar-thumb,
+#streakList::-webkit-scrollbar-thumb{
+  background:var(--line2);
+  border-radius:999px;
+}
+
+.leaderboard::-webkit-scrollbar-thumb:hover,
+#streakList::-webkit-scrollbar-thumb:hover{
+  background:var(--dim);
 }
 
 .rank-row{
@@ -1026,6 +1051,12 @@ button:disabled{
   color:var(--accent);
   font-size:12px;
   font-weight:800;
+}
+
+#streakList{
+  max-height:300px;
+  overflow-y:auto;
+  padding-right:8px;
 }
 
 .streak-row{
@@ -1078,6 +1109,8 @@ button:disabled{
   color:var(--dim);
   font-size:10px;
   font-weight:700;
+  line-height:1.25;
+  text-align:center;
 }
 
 /* =========================
@@ -2091,10 +2124,10 @@ button:disabled{
             </div>
 
             <select class="select" id="leaderRange">
-              <option value="7">7D</option>
+              <option value="1">1D</option>
+              <option value="7" selected>7D</option>
               <option value="14">14D</option>
               <option value="30">30D</option>
-              <option value="60">60D</option>
             </select>
 
           </div>
@@ -3909,7 +3942,7 @@ function renderLeaderboard(){
 
           <div
             class="progress-fill"
-            style="width:${r.percent}%"
+            style="width:${r.percent}%;background:${r.habit.color}"
           ></div>
 
         </div>
@@ -3987,8 +4020,16 @@ function renderWeeklyInsights(){
     const slice =
       allDays.slice(i*7,i*7+7);
 
+    if(!slice.length){
+      continue;
+    }
+
+    const startDate = slice[0].date;
+    const endDate = slice[slice.length-1].date;
+
     result.push({
       label:`W${i+1}`,
+      dates:`${formatDate(startDate,{month:"short",day:"numeric"})} – ${formatDate(endDate,{month:"short",day:"numeric"})}`,
       percent:selectedPercent(slice)
     });
 
@@ -4012,12 +4053,14 @@ function renderWeeklyInsights(){
         </div>
 
         <div class="week-label">
-          ${w.label}
+          <div>${w.label}</div>
+          <div>${w.dates}</div>
         </div>
 
       </div>
     `).join("");
 }
+
 
 
 /* =========================================================
