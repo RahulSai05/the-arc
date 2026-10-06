@@ -1517,6 +1517,13 @@ button:disabled{
   font:800 22px/1 var(--display);
 }
 
+.detail-stat-sub{
+  margin-top:3px;
+  color:var(--muted);
+  font-size:10px;
+  font-weight:600;
+}
+
 .detail-list{
   display:grid;
   gap:9px;
@@ -1930,6 +1937,32 @@ button:disabled{
   opacity:0;
   visibility:hidden;
   pointer-events:none;
+}
+
+/* =========================
+   COUNT BADGES
+========================= */
+
+.count-badge{
+  color:var(--muted);
+  font-size:10px;
+  font-weight:700;
+  margin-left:4px;
+  white-space:nowrap;
+}
+
+.count-line{
+  color:var(--muted);
+  font-size:10px;
+  font-weight:600;
+  margin-top:2px;
+}
+
+.week-count{
+  color:var(--muted);
+  font-size:9px;
+  font-weight:700;
+  margin-top:1px;
 }
 </style>
 </head>
@@ -2401,6 +2434,10 @@ button:disabled{
 
             <div class="muted small" id="insightRangeText">
               Last 14 days
+            </div>
+
+            <div class="muted small" id="insightCountText" style="margin-top:4px;">
+              0 / 0 done
             </div>
 
           </div>
@@ -2946,6 +2983,18 @@ function overallPercent(days){
     (days.length * habits.length) *
     100
   );
+}
+
+function totalDoneInDays(days){
+  let total = 0;
+  days.forEach(d => {
+    total += completedOnDay(d.key);
+  });
+  return total;
+}
+
+function totalPossibleInDays(days){
+  return days.length * visibleHabits().length;
 }
 
 
@@ -3824,7 +3873,7 @@ function toggleTheme(){
    RING
 ========================================================= */
 
-function ringHTML(percent){
+function ringHTML(percent, done, total){
 
   const size = 190;
   const stroke = 14;
@@ -3874,7 +3923,7 @@ function ringHTML(percent){
         </div>
 
         <div class="ring-label">
-          Today
+          ${done}/${total} done
         </div>
 
       </div>
@@ -3949,8 +3998,14 @@ function renderToday(){
   const percent =
     dayPercent(today);
 
+  const doneCount =
+    completedOnDay(today);
+
+  const totalCount =
+    habits.length;
+
   $("todayRing").innerHTML =
-    ringHTML(percent);
+    ringHTML(percent, doneCount, totalCount);
 
   $("todayDate").textContent =
     formatDate(
@@ -3981,7 +4036,7 @@ function renderToday(){
     );
 
   $("todayCount").textContent =
-    `${completedOnDay(today)} / ${habits.length} completed`;
+    `${doneCount} / ${totalCount} completed`;
 
   renderTodayHabits();
   renderWeek();
@@ -4008,12 +4063,21 @@ function renderTodayHabits(){
     return;
   }
 
+  const today =
+    todayKey();
+
+  const doneCount =
+    completedOnDay(today);
+
+  const totalCount =
+    habits.length;
+
   container.innerHTML =
     habits.map(h => {
 
       const done =
         isDone(
-          todayKey(),
+          today,
           h.id
         );
 
@@ -4032,7 +4096,7 @@ function renderTodayHabits(){
             <input
               type="checkbox"
               data-check
-              data-key="${todayKey()}"
+              data-key="${today}"
               data-habit="${h.id}"
               ${done ? "checked" : ""}
             >
@@ -4089,6 +4153,12 @@ function renderWeek(){
   const today =
     todayKey();
 
+  const habits =
+    visibleHabits();
+
+  const totalHabits =
+    habits.length;
+
   $("weekRange").textContent =
     `${formatDate(days[0].date,{month:"short",day:"numeric"})} – ${formatDate(days[6].date,{month:"short",day:"numeric"})}`;
 
@@ -4106,6 +4176,11 @@ function renderWeek(){
           ? 0
           : dayPercent(d.key);
 
+      const doneCount =
+        future
+          ? 0
+          : completedOnDay(d.key);
+
       return `
 
         <div
@@ -4114,6 +4189,10 @@ function renderWeek(){
 
           <div class="day-percent">
             ${future ? "–" : percent + "%"}
+          </div>
+
+          <div class="week-count">
+            ${future ? "" : `${doneCount}/${totalHabits}`}
           </div>
 
           <div class="bar-track">
@@ -4149,8 +4228,14 @@ function renderOverall(){
   const total =
     overallPercent(days);
 
+  const totalDone =
+    totalDoneInDays(days);
+
+  const totalPossible =
+    totalPossibleInDays(days);
+
   $("overallRate").textContent =
-    `${total}%`;
+    `${total}% · ${totalDone}/${totalPossible}`;
 
   if(!habits.length){
 
@@ -4199,7 +4284,7 @@ function renderOverall(){
             </div>
 
             <div class="progress-value">
-              ${done}/${days.length} · ${percent}%
+              ${done}/${days.length} days · ${percent}%
             </div>
 
           </div>
@@ -4258,12 +4343,18 @@ function renderTodayStats(){
   const sevenDayConsistency =
     overallPercent(sevenDays);
 
+  const sevenDayDone =
+    totalDoneInDays(sevenDays);
+
+  const sevenDayPossible =
+    totalPossibleInDays(sevenDays);
+
   const stats = [
 
     {
       label:"Completed",
       value:totalCompleted,
-      caption:"check-ins in 30 days",
+      caption:`of ${possible} check-ins in 30 days`,
       icon:"target"
     },
 
@@ -4285,7 +4376,7 @@ function renderTodayStats(){
       label:"7-day",
       value:
         sevenDayConsistency + "%",
-      caption:"recent consistency",
+      caption:`${sevenDayDone}/${sevenDayPossible} done`,
       icon:"flame"
     },
 
@@ -4526,7 +4617,7 @@ function renderHabitsPage(){
           ${percent}%
 
           <span>
-            ${currentStreak(h.id)}d
+            ${done}/${elapsed.length}d
           </span>
 
         </div>
@@ -4690,11 +4781,20 @@ function renderInsights(){
   const days =
     dateList(insightRange);
 
+  const totalDone =
+    totalDoneInDays(days);
+
+  const totalPossible =
+    totalPossibleInDays(days);
+
   $("insightScore").textContent =
     `${overallPercent(days)}%`;
 
   $("insightRangeText").textContent =
     `Last ${insightRange} days`;
+
+  $("insightCountText").textContent =
+    `${totalDone} / ${totalPossible} done`;
 
   $("insightLegend").innerHTML =
     legendHTML();
@@ -4866,10 +4966,6 @@ function renderInsightChart(days){
           2,
           4-index*0.6
         );
-
-      /*
-        Visible line.
-      */
 
       svg += `
 
@@ -5088,6 +5184,12 @@ function attachChartInteractions(days){
               firstCheckinKey()
             );
 
+          const doneToday =
+            isDone(
+              days[index].key,
+              habit.id
+            );
+
           showChartTooltip(
             tooltip,
             event.clientX,
@@ -5113,6 +5215,11 @@ function attachChartInteractions(days){
                 <div class="tooltip-row">
                   <span>7-day rolling</span>
                   <b>${value ?? 0}%</b>
+                </div>
+
+                <div class="tooltip-row">
+                  <span>Today</span>
+                  <b>${doneToday ? "Done" : "Missed"}</b>
                 </div>
 
                 <div class="tooltip-row">
@@ -5187,11 +5294,6 @@ function attachChartInteractions(days){
       );
 
     });
-
-  /*
-    On touch devices, tapping a line opens
-    the detailed stats directly.
-  */
 
 }
 
@@ -5414,6 +5516,10 @@ function showHabitInsight(habitId){
         ${completion}%
       </div>
 
+      <div class="detail-stat-sub">
+        ${completed}/${days.length} days
+      </div>
+
     </div>
 
     <div class="detail-stat">
@@ -5426,6 +5532,10 @@ function showHabitInsight(habitId){
         ${recentRate}%
       </div>
 
+      <div class="detail-stat-sub">
+        ${recentCompleted}/${recentDays.length} days
+      </div>
+
     </div>
 
     <div class="detail-stat">
@@ -5436,6 +5546,10 @@ function showHabitInsight(habitId){
 
       <div class="detail-stat-value">
         ${best}d
+      </div>
+
+      <div class="detail-stat-sub">
+        Current: ${currentStreak(habit.id)}d
       </div>
 
     </div>
@@ -5530,6 +5644,12 @@ function renderInsightKpis(days){
   const current =
     overallPercent(week);
 
+  const weekDone =
+    totalDoneInDays(week);
+
+  const weekPossible =
+    totalPossibleInDays(week);
+
   const previousPercent =
     previous.length
       ? overallPercent(previous)
@@ -5553,11 +5673,18 @@ function renderInsightKpis(days){
   const perfect =
     countPerfectDays(days);
 
+  const totalDone =
+    totalDoneInDays(days);
+
+  const totalPossible =
+    totalPossibleInDays(days);
+
   const cards = [
 
     {
       label:"This week",
-      value:`${current}%`
+      value:`${current}%`,
+      sub:`${weekDone}/${weekPossible} done`
     },
 
     {
@@ -5581,7 +5708,8 @@ function renderInsightKpis(days){
 
     {
       label:"Perfect days",
-      value:perfect
+      value:perfect,
+      sub:`${totalDone}/${totalPossible} total`
     }
 
   ];
@@ -5598,6 +5726,12 @@ function renderInsightKpis(days){
         <div class="kpi-value ${c.cls || ""}">
           ${c.value}
         </div>
+
+        ${
+          c.sub
+            ? `<div class="kpi-sub muted small" style="margin-top:4px;">${c.sub}</div>`
+            : ""
+        }
 
       </div>
 
@@ -5634,6 +5768,8 @@ function renderLeaderboard(){
 
         return {
           habit:h,
+          done,
+          total:days.length,
           percent:
             Math.round(
               done /
@@ -5678,6 +5814,7 @@ function renderLeaderboard(){
 
           <span class="rank-score">
             ${r.percent}%
+            <span class="count-badge">${r.done}/${r.total}</span>
           </span>
 
         </div>
@@ -5819,13 +5956,11 @@ function renderWeeklyInsights(){
     const endDate =
       slice[slice.length-1].date;
 
-    // Calculate total done days for the week
-    let totalDone = 0;
-    slice.forEach(d => {
-      totalDone += completedOnDay(d.key);
-    });
-    const totalPossible = slice.length * habits.length;
-    const doneDaysText = `${totalDone}/${totalPossible}`;
+    const totalDone =
+      totalDoneInDays(slice);
+
+    const totalPossible =
+      totalPossibleInDays(slice);
 
     result.push({
 
@@ -5844,14 +5979,24 @@ function renderWeeklyInsights(){
       percent:
         overallPercent(slice),
 
-      doneDays: totalDone,
-      totalDays: totalPossible,
-      doneDaysText: doneDaysText,
+      done: totalDone,
+      possible: totalPossible,
 
       habits:
         habits.map(h => ({
 
           habit:h,
+
+          done:
+            slice.filter(
+              d =>
+                isDone(
+                  d.key,
+                  h.id
+                )
+            ).length,
+
+          total: slice.length,
 
           percent:
             Math.round(
@@ -5887,8 +6032,8 @@ function renderWeeklyInsights(){
           ${w.percent}%
         </div>
 
-        <div class="muted small" style="font-size:9px;margin-top:2px;font-weight:600;">
-          ${w.doneDaysText}
+        <div class="week-count">
+          ${w.done}/${w.possible}
         </div>
 
         <div class="bar-group">
@@ -5995,9 +6140,9 @@ function weeklyTooltipHTML(week){
 
     <div class="tooltip-grid">
 
-      <div class="tooltip-row" style="font-weight:700;">
-        <span>Done days</span>
-        <b>${week.doneDaysText}</b>
+      <div class="tooltip-row" style="font-weight:700;border-bottom:1px solid rgba(255,255,255,.15);padding-bottom:4px;margin-bottom:2px;">
+        <span>Total done</span>
+        <b>${week.done}/${week.possible}</b>
       </div>
 
       ${week.habits.map(item => `
@@ -6022,7 +6167,7 @@ function weeklyTooltipHTML(week){
           </span>
 
           <b>
-            ${item.percent}%
+            ${item.done}/${item.total} · ${item.percent}%
           </b>
 
         </div>
@@ -6103,13 +6248,6 @@ function attachWeeklyInteractions(
 
         }
       );
-
-      /*
-        Mobile/touch support:
-        tapping the week shows the same
-        information and keeps it visible
-        until another week is tapped.
-      */
 
       column.addEventListener(
         "click",
