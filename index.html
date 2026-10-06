@@ -235,8 +235,6 @@ button:disabled{
   border-color:var(--accent2);
 }
 
-/* Header actions: same height for every control, same width for text buttons */
-
 .header-actions .icon-btn,
 .header-actions .btn{
   height:42px;
@@ -997,6 +995,7 @@ button:disabled{
 }
 
 .chart{
+  position:relative;
   margin-top:25px;
   width:100%;
   min-height:270px;
@@ -1006,11 +1005,101 @@ button:disabled{
   width:100%;
   height:270px;
   display:block;
+  overflow:visible;
 }
 
 .chart text{
   fill:var(--muted);
   font:500 10px var(--body);
+}
+
+.chart-line{
+  cursor:pointer;
+  transition:opacity .15s,stroke-width .15s;
+}
+
+.chart-line:hover{
+  opacity:.78;
+}
+
+.chart-hit{
+  fill:none;
+  stroke:transparent;
+  stroke-width:14;
+  cursor:pointer;
+}
+
+.chart-point{
+  cursor:pointer;
+  transition:r .15s;
+}
+
+.chart-point:hover{
+  r:5.5;
+}
+
+.chart-tooltip,
+.week-tooltip{
+  position:fixed;
+  z-index:3000;
+  pointer-events:none;
+  width:min(290px,calc(100vw - 30px));
+  padding:13px 15px;
+  background:var(--text);
+  color:var(--panel);
+  border-radius:13px;
+  box-shadow:0 12px 35px rgba(0,0,0,.2);
+  font-size:11px;
+  opacity:0;
+  visibility:hidden;
+  transform:translateY(5px);
+  transition:opacity .12s,transform .12s,visibility .12s;
+}
+
+.chart-tooltip.show,
+.week-tooltip.show{
+  opacity:1;
+  visibility:visible;
+  transform:translateY(0);
+}
+
+.tooltip-title{
+  font-weight:800;
+  font-size:12px;
+}
+
+.tooltip-sub{
+  margin-top:3px;
+  opacity:.72;
+}
+
+.tooltip-grid{
+  display:grid;
+  gap:5px;
+  margin-top:9px;
+}
+
+.tooltip-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:15px;
+}
+
+.tooltip-row span:first-child{
+  opacity:.78;
+}
+
+.tooltip-row b{
+  font-weight:800;
+}
+
+.week-column{
+  cursor:pointer;
+}
+
+.week-column:hover .week-label{
+  color:var(--accent);
 }
 
 .kpi-grid{
@@ -1150,6 +1239,7 @@ button:disabled{
   display:grid;
   gap:7px;
   justify-items:center;
+  min-width:56px;
 }
 
 .week-column .bar-track{
@@ -1397,6 +1487,79 @@ button:disabled{
 }
 
 /* =========================
+   INSIGHT DETAIL
+========================= */
+
+.detail-summary{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;
+  margin-bottom:20px;
+}
+
+.detail-stat{
+  padding:14px;
+  background:var(--panel2);
+  border:1px solid var(--line);
+  border-radius:14px;
+}
+
+.detail-stat-label{
+  color:var(--muted);
+  font-size:9px;
+  font-weight:800;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+}
+
+.detail-stat-value{
+  margin-top:6px;
+  font:800 22px/1 var(--display);
+}
+
+.detail-list{
+  display:grid;
+  gap:9px;
+  max-height:300px;
+  overflow:auto;
+  padding-right:5px;
+}
+
+.detail-day{
+  display:grid;
+  grid-template-columns:1fr auto;
+  align-items:center;
+  gap:15px;
+  padding:11px 12px;
+  border:1px solid var(--line);
+  border-radius:12px;
+  background:var(--panel2);
+}
+
+.detail-day-date{
+  font-size:12px;
+  font-weight:750;
+}
+
+.detail-day-sub{
+  margin-top:2px;
+  color:var(--muted);
+  font-size:10px;
+}
+
+.detail-day-percent{
+  font:800 15px/1 var(--display);
+}
+
+.detail-day-percent.done{
+  color:var(--green);
+}
+
+.detail-day-percent.missed{
+  color:var(--muted);
+}
+
+/* =========================
    RESPONSIVE
 ========================= */
 
@@ -1550,15 +1713,33 @@ button:disabled{
   .modal{
     padding:21px;
   }
+
+  .detail-summary{
+    grid-template-columns:1fr 1fr;
+  }
+
+  .detail-summary .detail-stat:last-child{
+    grid-column:1 / -1;
+  }
 }
 
 @media(max-width:420px){
+
   .header-actions .btn .icon{
     display:none;
+  }
+
+  .detail-summary{
+    grid-template-columns:1fr;
+  }
+
+  .detail-summary .detail-stat:last-child{
+    grid-column:auto;
   }
 }
 
 @media(prefers-reduced-motion:reduce){
+
   *,
   *::before,
   *::after{
@@ -1739,8 +1920,6 @@ button:disabled{
   display:none;
 }
 
-/* App hidden when not logged in */
-
 .app{
   opacity:1;
   visibility:visible;
@@ -1858,6 +2037,7 @@ button:disabled{
 <!-- LOGIN SCREEN -->
 <div class="login-screen" id="loginScreen">
   <div class="login-card">
+
     <div class="login-logo">
       <div class="brand-title">The Arc</div>
       <div class="brand-sub">Become who you said you would</div>
@@ -1865,51 +2045,92 @@ button:disabled{
 
     <div class="login-form" id="loginForm">
       <h3 class="login-form-title" id="loginFormTitle">Sign In</h3>
-      <p class="login-form-sub" id="loginFormSub">Enter your email and password to continue</p>
+      <p class="login-form-sub" id="loginFormSub">
+        Enter your email and password to continue
+      </p>
 
       <div class="form-group">
         <label for="loginEmail">Email</label>
-        <input type="email" id="loginEmail" placeholder="you@example.com" autocomplete="email">
+        <input
+          type="email"
+          id="loginEmail"
+          placeholder="you@example.com"
+          autocomplete="email"
+        >
       </div>
 
       <div class="form-group">
         <label for="loginPassword">Password</label>
-        <input type="password" id="loginPassword" placeholder="Enter password" autocomplete="current-password">
+        <input
+          type="password"
+          id="loginPassword"
+          placeholder="Enter password"
+          autocomplete="current-password"
+        >
       </div>
 
-      <button class="login-btn btn-primary" id="loginSubmitBtn">Sign In</button>
+      <button class="login-btn btn-primary" id="loginSubmitBtn">
+        Sign In
+      </button>
 
       <p class="login-switch">
         <span id="loginSwitchText">Don't have an account?</span>
-        <button type="button" class="btn-link" id="loginSwitchBtn">Create one</button>
+        <button type="button" class="btn-link" id="loginSwitchBtn">
+          Create one
+        </button>
       </p>
     </div>
 
     <div class="login-form hidden" id="signupForm">
+
       <h3 class="login-form-title">Create Account</h3>
-      <p class="login-form-sub">Start tracking your habits today</p>
+
+      <p class="login-form-sub">
+        Start tracking your habits today
+      </p>
 
       <div class="form-group">
         <label for="signupEmail">Email</label>
-        <input type="email" id="signupEmail" placeholder="you@example.com" autocomplete="email">
+        <input
+          type="email"
+          id="signupEmail"
+          placeholder="you@example.com"
+          autocomplete="email"
+        >
       </div>
 
       <div class="form-group">
         <label for="signupPassword">Password</label>
-        <input type="password" id="signupPassword" placeholder="Min 6 characters" autocomplete="new-password" minlength="6">
+        <input
+          type="password"
+          id="signupPassword"
+          placeholder="Min 6 characters"
+          autocomplete="new-password"
+          minlength="6"
+        >
       </div>
 
       <div class="form-group">
         <label for="signupConfirm">Confirm Password</label>
-        <input type="password" id="signupConfirm" placeholder="Confirm password" autocomplete="new-password">
+        <input
+          type="password"
+          id="signupConfirm"
+          placeholder="Confirm password"
+          autocomplete="new-password"
+        >
       </div>
 
-      <button class="login-btn btn-primary" id="signupSubmitBtn">Create Account</button>
+      <button class="login-btn btn-primary" id="signupSubmitBtn">
+        Create Account
+      </button>
 
       <p class="login-switch">
         <span>Already have an account?</span>
-        <button type="button" class="btn-link" id="signupSwitchBtn">Sign In</button>
+        <button type="button" class="btn-link" id="signupSwitchBtn">
+          Sign In
+        </button>
       </p>
+
     </div>
 
     <div class="login-footer">
@@ -1917,6 +2138,7 @@ button:disabled{
     </div>
 
     <div class="login-error hidden" id="loginError"></div>
+
   </div>
 </div>
 
@@ -2024,6 +2246,7 @@ button:disabled{
             <svg class="icon" style="color:var(--accent)">
               <use href="#flame"/>
             </svg>
+
             <div>
               <b id="todayStreak">0</b>
               <span>day streak</span>
@@ -2034,6 +2257,7 @@ button:disabled{
             <svg class="icon" style="color:var(--gold)">
               <use href="#star"/>
             </svg>
+
             <div>
               <b id="bestStreak">0</b>
               <span>best streak</span>
@@ -2044,6 +2268,7 @@ button:disabled{
             <svg class="icon" style="color:var(--green)">
               <use href="#target"/>
             </svg>
+
             <div>
               <b id="perfectDays">0</b>
               <span>perfect days</span>
@@ -2199,7 +2424,7 @@ button:disabled{
         <div class="chart" id="insightChart"></div>
 
         <div class="muted small chart-note">
-          Each line is one habit's 7-day rolling completion rate.
+          Click any habit line for detailed stats. Hover points for daily rolling data.
         </div>
 
       </div>
@@ -2265,6 +2490,10 @@ button:disabled{
         <div class="legend legend-top" id="weeklyLegend"></div>
 
         <div class="weekly-grid" id="weeklyInsights"></div>
+
+        <div class="muted small chart-note">
+          Hover over a week to see the full breakdown.
+        </div>
 
       </div>
 
@@ -2421,6 +2650,45 @@ button:disabled{
 </div>
 
 
+<!-- =====================
+     INSIGHT DETAIL MODAL
+====================== -->
+
+<div class="overlay" id="insightDetailModal">
+
+  <div class="modal">
+
+    <div class="modal-head">
+
+      <div>
+        <div class="section-label" id="detailSectionLabel">
+          Habit performance
+        </div>
+
+        <div class="modal-title" id="detailTitle">
+          Habit
+        </div>
+      </div>
+
+      <button class="icon-btn" data-close="insightDetailModal">
+        <svg class="icon"><use href="#close"/></svg>
+      </button>
+
+    </div>
+
+    <div class="detail-summary" id="detailSummary"></div>
+
+    <div class="section-label" style="margin-bottom:10px;">
+      Recent performance
+    </div>
+
+    <div class="detail-list" id="detailList"></div>
+
+  </div>
+
+</div>
+
+
 <script>
 (function(){
 
@@ -2495,6 +2763,7 @@ function todayKey(){
 
 function fromKey(key){
   const p = key.split("-");
+
   return new Date(
     Number(p[0]),
     Number(p[1])-1,
@@ -2516,62 +2785,72 @@ function dateList(range){
   const result = [];
 
   for(let i=range-1;i>=0;i--){
+
     const d = daysAgo(i);
 
     result.push({
       date:d,
       key:dateKey(d)
     });
+
   }
 
   return result;
 }
 
-/*
-  Window centred on today: the first half of the range is
-  before today, the rest starts with today.
-  7 days  -> 3 before, today, 3 after
-  14 days -> 7 before, today, 6 after
-*/
-
 function windowList(range){
+
   const before = Math.floor(range/2);
   const result = [];
 
   for(let i=-before;i<range-before;i++){
+
     const d = addDays(new Date(),i);
 
     result.push({
       date:d,
       key:dateKey(d)
     });
+
   }
 
   return result;
 }
 
 function currentWeekDays(){
+
   const now = new Date();
   const sinceMonday = (now.getDay()+6)%7;
   const result = [];
 
   for(let i=0;i<7;i++){
-    const d = addDays(now,i-sinceMonday);
+
+    const d =
+      addDays(
+        now,
+        i-sinceMonday
+      );
 
     result.push({
       date:d,
       key:dateKey(d)
     });
+
   }
 
   return result;
 }
 
-function formatDate(date, options){
-  return date.toLocaleDateString("en-US",options);
+function formatDate(date,options){
+
+  return date.toLocaleDateString(
+    "en-US",
+    options
+  );
 }
 
 function escapeHTML(value){
+
   return String(value)
     .replaceAll("&","&amp;")
     .replaceAll("<","&lt;")
@@ -2581,14 +2860,21 @@ function escapeHTML(value){
 }
 
 function habitById(id){
-  return state.habits.find(h => h.id === id);
+
+  return state.habits.find(
+    h => h.id === id
+  );
 }
 
 function visibleHabits(){
-  return state.habits.filter(h => h.visible !== false);
+
+  return state.habits.filter(
+    h => h.visible !== false
+  );
 }
 
 function isDone(key,id){
+
   return !!(
     state.checkins[key] &&
     state.checkins[key][id] === true
@@ -2618,13 +2904,16 @@ function setDone(key,id,value){
 }
 
 function completedOnDay(key){
+
   return visibleHabits().filter(
     h => isDone(key,h.id)
   ).length;
 }
 
 function dayPercent(key){
-  const habits = visibleHabits();
+
+  const habits =
+    visibleHabits();
 
   if(!habits.length){
     return 0;
@@ -2638,7 +2927,9 @@ function dayPercent(key){
 }
 
 function overallPercent(days){
-  const habits = visibleHabits();
+
+  const habits =
+    visibleHabits();
 
   if(!habits.length || !days.length){
     return 0;
@@ -2667,22 +2958,27 @@ function currentStreak(habitId){
   let count = 0;
   let d = new Date();
 
-  /*
-    A habit can have a current streak even if today
-    has not been completed yet. In that case we start
-    from yesterday.
-  */
-
   if(isDone(dateKey(d),habitId)){
+
     count = 1;
     d = addDays(d,-1);
+
   }else{
+
     d = addDays(d,-1);
+
   }
 
-  while(isDone(dateKey(d),habitId)){
+  while(
+    isDone(
+      dateKey(d),
+      habitId
+    )
+  ){
+
     count++;
     d = addDays(d,-1);
+
   }
 
   return count;
@@ -2690,17 +2986,27 @@ function currentStreak(habitId){
 
 function bestStreak(habitId){
 
-  const days = dateList(365);
+  const days =
+    dateList(365);
+
   let best = 0;
   let current = 0;
 
   days.forEach(d => {
 
     if(isDone(d.key,habitId)){
+
       current++;
-      best = Math.max(best,current);
+      best =
+        Math.max(
+          best,
+          current
+        );
+
     }else{
+
       current = 0;
+
     }
 
   });
@@ -2710,7 +3016,8 @@ function bestStreak(habitId){
 
 function streakForAll(){
 
-  const habits = visibleHabits();
+  const habits =
+    visibleHabits();
 
   if(!habits.length){
     return 0;
@@ -2721,7 +3028,8 @@ function streakForAll(){
 
   while(true){
 
-    const key = dateKey(d);
+    const key =
+      dateKey(d);
 
     if(dayPercent(key) !== 100){
       break;
@@ -2729,6 +3037,7 @@ function streakForAll(){
 
     count++;
     d = addDays(d,-1);
+
   }
 
   return count;
@@ -2736,23 +3045,34 @@ function streakForAll(){
 
 function bestPerfectDays(){
 
-  const habits = visibleHabits();
+  const habits =
+    visibleHabits();
 
   if(!habits.length){
     return 0;
   }
 
-  const days = dateList(365);
+  const days =
+    dateList(365);
+
   let best = 0;
   let current = 0;
 
   days.forEach(d => {
 
     if(dayPercent(d.key) === 100){
+
       current++;
-      best = Math.max(best,current);
+      best =
+        Math.max(
+          best,
+          current
+        );
+
     }else{
+
       current = 0;
+
     }
 
   });
@@ -2763,59 +3083,101 @@ function bestPerfectDays(){
 function countPerfectDays(days){
 
   return days.filter(
-    d => dayPercent(d.key) === 100
+    d =>
+      dayPercent(d.key) === 100
   ).length;
 }
 
 
 /* =========================================================
-   SUPABASE INTEGRATION
+   SUPABASE
 ========================================================= */
 
 async function initSupabase(){
-  if(!SUPABASE_URL || !SUPABASE_ANON_KEY){
-    console.error("Supabase is not configured.");
+
+  if(
+    !SUPABASE_URL ||
+    !SUPABASE_ANON_KEY ||
+    SUPABASE_URL.includes("%VITE_") ||
+    SUPABASE_ANON_KEY.includes("%VITE_")
+  ){
+
+    console.error(
+      "Supabase is not configured."
+    );
+
     return false;
   }
 
   try{
-    if(typeof window.supabase === "undefined"){
-      const script = document.createElement("script");
-      script.src = "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2";
+
+    if(
+      typeof window.supabase === "undefined"
+    ){
+
+      const script =
+        document.createElement("script");
+
+      script.src =
+        "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2";
+
       document.head.appendChild(script);
 
-      await new Promise((resolve,reject) => {
-        script.onload = resolve;
-        script.onerror = reject;
-      });
+      await new Promise(
+        (resolve,reject) => {
+
+          script.onload = resolve;
+          script.onerror = reject;
+
+        }
+      );
+
     }
 
-    supabaseClient = window.supabase.createClient(
-      SUPABASE_URL,
-      SUPABASE_ANON_KEY
-    );
+    supabaseClient =
+      window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_ANON_KEY
+      );
 
     supabaseClient.auth.onAuthStateChange(
       async (_event,session) => {
+
         if(session){
-          currentUser = session.user;
+
+          currentUser =
+            session.user;
+
           await loadAuthenticatedData();
+
         }else{
+
           currentUser = null;
+
           showLogin();
+
         }
+
       }
     );
 
     return true;
+
   }catch(error){
-    console.error("Supabase init error:",error);
+
+    console.error(
+      "Supabase init error:",
+      error
+    );
+
     return false;
   }
 }
 
 function defaultState(){
+
   return {
+
     habits:[
       {
         id:uid(),
@@ -2832,28 +3194,43 @@ function defaultState(){
         visible:true
       }
     ],
+
     checkins:{},
     dark:false
+
   };
 }
 
 function localStorageKey(){
+
   return currentUser
     ? `${STORAGE_KEY}:${currentUser.id}`
     : STORAGE_KEY;
 }
 
 function showLogin(){
-  $("appContainer").classList.add("hidden");
-  $("loginScreen").classList.remove("hidden");
+
+  $("appContainer")
+    .classList.add("hidden");
+
+  $("loginScreen")
+    .classList.remove("hidden");
+
   clearLoginError();
 }
 
 function showApp(){
-  $("loginScreen").classList.add("hidden");
-  $("appContainer").classList.remove("hidden");
+
+  $("loginScreen")
+    .classList.add("hidden");
+
+  $("appContainer")
+    .classList.remove("hidden");
+
   $("userDisplayName").textContent =
-    currentUser?.email || "User";
+    currentUser?.email ||
+    "User";
+
   $("logoutBtn").title =
     currentUser?.email
       ? "Sign out " + currentUser.email
@@ -2861,177 +3238,367 @@ function showApp(){
 }
 
 function clearLoginError(){
+
   $("loginError").textContent = "";
-  $("loginError").classList.add("hidden");
+
+  $("loginError")
+    .classList.add("hidden");
 }
 
 function showLoginError(message){
-  $("loginError").textContent = message;
-  $("loginError").classList.remove("hidden");
+
+  $("loginError").textContent =
+    message;
+
+  $("loginError")
+    .classList.remove("hidden");
 }
 
 function switchAuthForm(mode){
+
   clearLoginError();
 
-  const login = mode === "login";
+  const login =
+    mode === "login";
 
-  $("loginForm").classList.toggle("hidden",!login);
-  $("signupForm").classList.toggle("hidden",login);
+  $("loginForm")
+    .classList.toggle(
+      "hidden",
+      !login
+    );
+
+  $("signupForm")
+    .classList.toggle(
+      "hidden",
+      login
+    );
 }
 
 async function signInWithEmail(){
+
   clearLoginError();
 
-  const email = $("loginEmail").value.trim();
-  const password = $("loginPassword").value;
+  const email =
+    $("loginEmail").value.trim();
+
+  const password =
+    $("loginPassword").value;
 
   if(!email || !password){
-    showLoginError("Enter your email and password.");
+
+    showLoginError(
+      "Enter your email and password."
+    );
+
     return;
   }
 
-  const button = $("loginSubmitBtn");
+  const button =
+    $("loginSubmitBtn");
+
   button.disabled = true;
-  button.textContent = "Signing in...";
+  button.textContent =
+    "Signing in...";
 
   try{
-    const {data,error} = await supabaseClient.auth.signInWithPassword({
-      email,
-      password
-    });
 
-    if(error) throw error;
+    const {
+      data,
+      error
+    } =
+      await supabaseClient.auth.signInWithPassword({
+        email,
+        password
+      });
+
+    if(error){
+      throw error;
+    }
 
     if(data.user){
-      currentUser = data.user;
+
+      currentUser =
+        data.user;
+
       await loadAuthenticatedData();
+
     }
+
   }catch(error){
-    console.error("Sign in error:",error);
-    showLoginError(error.message || "Could not sign in. Please try again.");
+
+    console.error(
+      "Sign in error:",
+      error
+    );
+
+    showLoginError(
+      error.message ||
+      "Could not sign in. Please try again."
+    );
+
   }finally{
+
     button.disabled = false;
-    button.textContent = "Sign In";
+    button.textContent =
+      "Sign In";
+
   }
 }
 
 async function signUpWithEmail(){
+
   clearLoginError();
 
-  const email = $("signupEmail").value.trim();
-  const password = $("signupPassword").value;
-  const confirmPassword = $("signupConfirm").value;
+  const email =
+    $("signupEmail").value.trim();
 
-  if(!email || !password || !confirmPassword){
-    showLoginError("Complete all fields.");
+  const password =
+    $("signupPassword").value;
+
+  const confirmPassword =
+    $("signupConfirm").value;
+
+  if(
+    !email ||
+    !password ||
+    !confirmPassword
+  ){
+
+    showLoginError(
+      "Complete all fields."
+    );
+
     return;
   }
 
   if(password.length < 6){
-    showLoginError("Password must be at least 6 characters.");
+
+    showLoginError(
+      "Password must be at least 6 characters."
+    );
+
     return;
   }
 
   if(password !== confirmPassword){
-    showLoginError("Passwords do not match.");
+
+    showLoginError(
+      "Passwords do not match."
+    );
+
     return;
   }
 
-  const button = $("signupSubmitBtn");
+  const button =
+    $("signupSubmitBtn");
+
   button.disabled = true;
-  button.textContent = "Creating...";
+  button.textContent =
+    "Creating...";
 
   try{
-    const {data,error} = await supabaseClient.auth.signUp({
-      email,
-      password
-    });
 
-    if(error) throw error;
+    const {
+      data,
+      error
+    } =
+      await supabaseClient.auth.signUp({
+        email,
+        password
+      });
 
-    if(data.session && data.user){
-      currentUser = data.user;
-      await loadAuthenticatedData();
-    }else{
-      switchAuthForm("login");
-      $("loginEmail").value = email;
-      showLoginError("Account created. Check your email to confirm your account, then sign in.");
+    if(error){
+      throw error;
     }
+
+    if(
+      data.session &&
+      data.user
+    ){
+
+      currentUser =
+        data.user;
+
+      await loadAuthenticatedData();
+
+    }else{
+
+      switchAuthForm("login");
+
+      $("loginEmail").value =
+        email;
+
+      showLoginError(
+        "Account created. Check your email to confirm your account, then sign in."
+      );
+
+    }
+
   }catch(error){
-    console.error("Sign up error:",error);
-    showLoginError(error.message || "Could not create your account. Please try again.");
+
+    console.error(
+      "Sign up error:",
+      error
+    );
+
+    showLoginError(
+      error.message ||
+      "Could not create your account. Please try again."
+    );
+
   }finally{
+
     button.disabled = false;
-    button.textContent = "Create Account";
+
+    button.textContent =
+      "Create Account";
+
   }
 }
 
 async function signOut(){
-  if(!supabaseClient) return;
+
+  if(!supabaseClient){
+    return;
+  }
 
   try{
+
     await supabaseClient.auth.signOut();
+
   }catch(error){
-    console.error("Sign out error:",error);
+
+    console.error(
+      "Sign out error:",
+      error
+    );
+
   }
 
   currentUser = null;
-  state = defaultState();
+
+  state =
+    defaultState();
+
   applyTheme();
+
   showLogin();
 }
 
 async function syncToCloud(){
-  if(!supabaseClient || !currentUser) return false;
+
+  if(
+    !supabaseClient ||
+    !currentUser
+  ){
+    return false;
+  }
 
   try{
-    const updatedAt = new Date().toISOString();
 
-    const {error} = await supabaseClient
-      .from("arc_data")
-      .upsert({
-        user_id:currentUser.id,
-        data:state,
-        updated_at:updatedAt
-      },{onConflict:"user_id"});
+    const updatedAt =
+      new Date().toISOString();
 
-    if(error) throw error;
+    const {
+      error
+    } =
+      await supabaseClient
+        .from("arc_data")
+        .upsert(
+          {
+            user_id:currentUser.id,
+            data:state,
+            updated_at:updatedAt
+          },
+          {
+            onConflict:"user_id"
+          }
+        );
+
+    if(error){
+      throw error;
+    }
 
     localStorage.setItem(
       localStorageKey() + "_updated",
-      String(Date.parse(updatedAt))
+      String(
+        Date.parse(updatedAt)
+      )
     );
 
-    $("statusText").textContent = "Synced to cloud";
+    $("statusText").textContent =
+      "Synced to cloud";
+
     return true;
+
   }catch(error){
-    console.error("Sync to cloud error:",error);
-    $("statusText").textContent = "Saved locally (sync failed)";
+
+    console.error(
+      "Sync to cloud error:",
+      error
+    );
+
+    $("statusText").textContent =
+      "Saved locally (sync failed)";
+
     return false;
   }
 }
 
 async function syncFromCloud(){
-  if(!supabaseClient || !currentUser) return false;
+
+  if(
+    !supabaseClient ||
+    !currentUser
+  ){
+    return false;
+  }
 
   try{
-    const {data,error} = await supabaseClient
-      .from("arc_data")
-      .select("data,updated_at")
-      .eq("user_id",currentUser.id)
-      .maybeSingle();
 
-    if(error) throw error;
+    const {
+      data,
+      error
+    } =
+      await supabaseClient
+        .from("arc_data")
+        .select(
+          "data,updated_at"
+        )
+        .eq(
+          "user_id",
+          currentUser.id
+        )
+        .maybeSingle();
 
-    if(data && data.data){
-      const cloudState = data.data;
+    if(error){
+      throw error;
+    }
+
+    if(
+      data &&
+      data.data
+    ){
+
+      const cloudState =
+        data.data;
 
       state = {
-        habits:Array.isArray(cloudState.habits)
-          ? cloudState.habits
-          : [],
-        checkins:cloudState.checkins || {},
-        dark:!!cloudState.dark
+
+        habits:
+          Array.isArray(
+            cloudState.habits
+          )
+            ? cloudState.habits
+            : [],
+
+        checkins:
+          cloudState.checkins ||
+          {},
+
+        dark:
+          !!cloudState.dark
+
       };
 
       localStorage.setItem(
@@ -3040,50 +3607,91 @@ async function syncFromCloud(){
       );
 
       if(data.updated_at){
+
         localStorage.setItem(
-          localStorageKey() + "_updated",
-          String(Date.parse(data.updated_at))
+          localStorageKey() +
+          "_updated",
+          String(
+            Date.parse(
+              data.updated_at
+            )
+          )
         );
+
       }
 
       applyTheme();
-      $("statusText").textContent = "Synced from cloud";
+
+      $("statusText").textContent =
+        "Synced from cloud";
+
       return true;
     }
+
   }catch(error){
-    console.error("Sync from cloud error:",error);
+
+    console.error(
+      "Sync from cloud error:",
+      error
+    );
+
   }
 
   return false;
 }
 
 async function loadAuthenticatedData(){
-  if(!currentUser) return;
 
-  const localLoaded = load();
-  const cloudLoaded = await syncFromCloud();
-
-  if(!cloudLoaded){
-    await syncToCloud();
+  if(!currentUser){
+    return;
   }
 
-  if(!localLoaded && !cloudLoaded){
-    state = defaultState();
-    applyTheme();
-    save();
+  const localLoaded =
+    load();
+
+  const cloudLoaded =
+    await syncFromCloud();
+
+  if(!cloudLoaded){
+
     await syncToCloud();
+
+  }
+
+  if(
+    !localLoaded &&
+    !cloudLoaded
+  ){
+
+    state =
+      defaultState();
+
+    applyTheme();
+
+    save();
+
+    await syncToCloud();
+
   }
 
   showApp();
+
   renderAll();
 
-  const initialHash = location.hash.replace("#","");
+  const initialHash =
+    location.hash.replace("#","");
+
   showView(
-    ["today","habits","insights"].includes(initialHash)
+    [
+      "today",
+      "habits",
+      "insights"
+    ].includes(initialHash)
       ? initialHash
       : "today"
   );
 }
+
 
 /* =========================================================
    SAVE / LOAD
@@ -3091,7 +3699,8 @@ async function loadAuthenticatedData(){
 
 function save(){
 
-  const key = localStorageKey();
+  const key =
+    localStorageKey();
 
   localStorage.setItem(
     key,
@@ -3103,9 +3712,10 @@ function save(){
     Date.now().toString()
   );
 
-  $("statusText").textContent = currentUser
-    ? "Saving..."
-    : "Saved locally";
+  $("statusText").textContent =
+    currentUser
+      ? "Saving..."
+      : "Saved locally";
 
   if(currentUser){
     syncToCloud();
@@ -3117,32 +3727,60 @@ function load(){
   let loaded = false;
 
   try{
-    const raw = localStorage.getItem(localStorageKey());
+
+    const raw =
+      localStorage.getItem(
+        localStorageKey()
+      );
 
     if(raw){
-      const parsed = JSON.parse(raw);
+
+      const parsed =
+        JSON.parse(raw);
 
       state = {
-        habits:Array.isArray(parsed.habits)
-          ? parsed.habits
-          : [],
-        checkins:parsed.checkins || {},
-        dark:!!parsed.dark
+
+        habits:
+          Array.isArray(
+            parsed.habits
+          )
+            ? parsed.habits
+            : [],
+
+        checkins:
+          parsed.checkins ||
+          {},
+
+        dark:
+          !!parsed.dark
+
       };
 
       loaded = true;
+
     }
+
   }catch(error){
-    console.error("Load error:",error);
+
+    console.error(
+      "Load error:",
+      error
+    );
+
   }
 
   if(!loaded){
-    state = defaultState();
+
+    state =
+      defaultState();
+
   }
 
   applyTheme();
+
   return loaded;
 }
+
 
 /* =========================================================
    THEME
@@ -3150,10 +3788,11 @@ function load(){
 
 function applyTheme(){
 
-  document.documentElement.classList.toggle(
-    "dark",
-    state.dark
-  );
+  document.documentElement
+    .classList.toggle(
+      "dark",
+      state.dark
+    );
 
   $("themeBtn").innerHTML =
     `<svg class="icon">
@@ -3163,13 +3802,20 @@ function applyTheme(){
 
 function toggleTheme(){
 
-  state.dark = !state.dark;
+  state.dark =
+    !state.dark;
 
   applyTheme();
+
   save();
 
-  if(currentView === "insights"){
+  if(
+    currentView ===
+    "insights"
+  ){
+
     renderInsights();
+
   }
 }
 
@@ -3182,14 +3828,18 @@ function ringHTML(percent){
 
   const size = 190;
   const stroke = 14;
-  const radius = (size-stroke)/2;
-  const circumference = 2*Math.PI*radius;
+  const radius =
+    (size-stroke)/2;
+
+  const circumference =
+    2*Math.PI*radius;
 
   const offset =
     circumference *
     (1-percent/100);
 
   return `
+
     <div class="ring">
 
       <svg
@@ -3218,8 +3868,15 @@ function ringHTML(percent){
       </svg>
 
       <div class="ring-center">
-        <div class="ring-number">${percent}%</div>
-        <div class="ring-label">Today</div>
+
+        <div class="ring-number">
+          ${percent}%
+        </div>
+
+        <div class="ring-label">
+          Today
+        </div>
+
       </div>
 
     </div>
@@ -3234,19 +3891,27 @@ function ringHTML(percent){
 function todayMessage(percent){
 
   if(percent === 100){
+
     return "Every commitment is done. You kept the promise today.";
+
   }
 
   if(percent >= 75){
+
     return "You're close. Finish the arc before the day ends.";
+
   }
 
   if(percent >= 50){
+
     return "Halfway there. Don't let an unfinished day become a zero.";
+
   }
 
   if(percent > 0){
+
     return "You started. Now keep moving.";
+
   }
 
   return "The day is still yours. Make the first move.";
@@ -3254,18 +3919,35 @@ function todayMessage(percent){
 
 function todayHeadline(percent){
 
-  if(percent === 100) return "Arc complete.";
-  if(percent >= 75) return "Finish strong.";
-  if(percent >= 50) return "Stay in motion.";
-  if(percent > 0) return "Keep going.";
+  if(percent === 100){
+    return "Arc complete.";
+  }
+
+  if(percent >= 75){
+    return "Finish strong.";
+  }
+
+  if(percent >= 50){
+    return "Stay in motion.";
+  }
+
+  if(percent > 0){
+    return "Keep going.";
+  }
+
   return "Show up.";
 }
 
 function renderToday(){
 
-  const habits = visibleHabits();
-  const today = todayKey();
-  const percent = dayPercent(today);
+  const habits =
+    visibleHabits();
+
+  const today =
+    todayKey();
+
+  const percent =
+    dayPercent(today);
 
   $("todayRing").innerHTML =
     ringHTML(percent);
@@ -3294,7 +3976,9 @@ function renderToday(){
     bestPerfectDays();
 
   $("perfectDays").textContent =
-    countPerfectDays(dateList(30));
+    countPerfectDays(
+      dateList(30)
+    );
 
   $("todayCount").textContent =
     `${completedOnDay(today)} / ${habits.length} completed`;
@@ -3307,15 +3991,19 @@ function renderToday(){
 
 function renderTodayHabits(){
 
-  const container = $("todayHabits");
-  const habits = visibleHabits();
+  const container =
+    $("todayHabits");
+
+  const habits =
+    visibleHabits();
 
   if(!habits.length){
 
-    container.innerHTML = emptyHTML(
-      "No habits yet",
-      "Add your first commitment to start your arc."
-    );
+    container.innerHTML =
+      emptyHTML(
+        "No habits yet",
+        "Add your first commitment to start your arc."
+      );
 
     return;
   }
@@ -3323,10 +4011,17 @@ function renderTodayHabits(){
   container.innerHTML =
     habits.map(h => {
 
-      const done = isDone(todayKey(),h.id);
-      const streak = currentStreak(h.id);
+      const done =
+        isDone(
+          todayKey(),
+          h.id
+        );
+
+      const streak =
+        currentStreak(h.id);
 
       return `
+
         <div
           class="habit-card ${done ? "completed" : ""}"
           data-habit-card="${h.id}"
@@ -3355,12 +4050,17 @@ function renderTodayHabits(){
                 style="background:${h.color}"
               ></span>
 
-              <b>${escapeHTML(h.name)}</b>
+              <b>
+                ${escapeHTML(h.name)}
+              </b>
 
             </div>
 
             <div class="habit-desc">
-              ${escapeHTML(h.desc || "Keep this commitment.")}
+              ${escapeHTML(
+                h.desc ||
+                "Keep this commitment."
+              )}
             </div>
 
           </div>
@@ -3383,8 +4083,11 @@ function renderTodayHabits(){
 
 function renderWeek(){
 
-  const days = currentWeekDays();
-  const today = todayKey();
+  const days =
+    currentWeekDays();
+
+  const today =
+    todayKey();
 
   $("weekRange").textContent =
     `${formatDate(days[0].date,{month:"short",day:"numeric"})} – ${formatDate(days[6].date,{month:"short",day:"numeric"})}`;
@@ -3392,12 +4095,22 @@ function renderWeek(){
   $("weekBars").innerHTML =
     days.map(d => {
 
-      const future = d.key > today;
-      const isToday = d.key === today;
-      const percent = future ? 0 : dayPercent(d.key);
+      const future =
+        d.key > today;
+
+      const isToday =
+        d.key === today;
+
+      const percent =
+        future
+          ? 0
+          : dayPercent(d.key);
 
       return `
-        <div class="day-bar ${isToday ? "today" : ""} ${future ? "future" : ""}">
+
+        <div
+          class="day-bar ${isToday ? "today" : ""} ${future ? "future" : ""}"
+        >
 
           <div class="day-percent">
             ${future ? "–" : percent + "%"}
@@ -3413,7 +4126,10 @@ function renderWeek(){
           </div>
 
           <div class="day-name">
-            ${formatDate(d.date,{weekday:"short"})}
+            ${formatDate(
+              d.date,
+              {weekday:"short"}
+            )}
           </div>
 
         </div>
@@ -3424,10 +4140,14 @@ function renderWeek(){
 
 function renderOverall(){
 
-  const days = dateList(30);
-  const habits = visibleHabits();
+  const days =
+    dateList(30);
 
-  const total = overallPercent(days);
+  const habits =
+    visibleHabits();
+
+  const total =
+    overallPercent(days);
 
   $("overallRate").textContent =
     `${total}%`;
@@ -3435,7 +4155,9 @@ function renderOverall(){
   if(!habits.length){
 
     $("overallProgress").innerHTML =
-      `<div class="muted small">No habits.</div>`;
+      `<div class="muted small">
+        No habits.
+      </div>`;
 
     return;
   }
@@ -3444,12 +4166,23 @@ function renderOverall(){
     habits.map(h => {
 
       const done =
-        days.filter(d => isDone(d.key,h.id)).length;
+        days.filter(
+          d =>
+            isDone(
+              d.key,
+              h.id
+            )
+        ).length;
 
       const percent =
-        Math.round(done/days.length*100);
+        Math.round(
+          done /
+          days.length *
+          100
+        );
 
       return `
+
         <div class="progress-row">
 
           <div class="progress-head">
@@ -3472,10 +4205,12 @@ function renderOverall(){
           </div>
 
           <div class="progress-track">
+
             <div
               class="progress-fill"
               style="width:${percent}%"
             ></div>
+
           </div>
 
         </div>
@@ -3486,30 +4221,42 @@ function renderOverall(){
 
 function renderTodayStats(){
 
-  const days = dateList(30);
-  const habits = visibleHabits();
+  const days =
+    dateList(30);
+
+  const sevenDays =
+    dateList(7);
+
+  const habits =
+    visibleHabits();
 
   let totalCompleted = 0;
 
   days.forEach(d => {
-    totalCompleted += completedOnDay(d.key);
+
+    totalCompleted +=
+      completedOnDay(d.key);
+
   });
 
   const possible =
-    days.length * habits.length;
+    days.length *
+    habits.length;
 
   const perfect =
     countPerfectDays(days);
 
-  const bestCurrent =
-    habits.length
-      ? Math.max(...habits.map(h => currentStreak(h.id)))
-      : 0;
-
   const bestHistorical =
     habits.length
-      ? Math.max(...habits.map(h => bestStreak(h.id)))
+      ? Math.max(
+          ...habits.map(
+            h => bestStreak(h.id)
+          )
+        )
       : 0;
+
+  const sevenDayConsistency =
+    overallPercent(sevenDays);
 
   const stats = [
 
@@ -3522,11 +4269,24 @@ function renderTodayStats(){
 
     {
       label:"Consistency",
-      value:possible
-        ? Math.round(totalCompleted/possible*100)+"%"
-        : "0%",
+      value:
+        possible
+          ? Math.round(
+              totalCompleted /
+              possible *
+              100
+            ) + "%"
+          : "0%",
       caption:"overall completion",
       icon:"chart"
+    },
+
+    {
+      label:"7-day",
+      value:
+        sevenDayConsistency + "%",
+      caption:"recent consistency",
+      icon:"flame"
     },
 
     {
@@ -3534,19 +4294,13 @@ function renderTodayStats(){
       value:perfect,
       caption:"100% completed",
       icon:"star"
-    },
-
-    {
-      label:"Best streak",
-      value:bestHistorical+"d",
-      caption:"single habit record",
-      icon:"flame"
     }
 
   ];
 
   $("todayStats").innerHTML =
     stats.map(s => `
+
       <div class="stat-card">
 
         <div class="stat-top">
@@ -3556,9 +4310,11 @@ function renderTodayStats(){
           </div>
 
           <div class="stat-icon">
+
             <svg class="icon icon-sm">
               <use href="#${s.icon}"/>
             </svg>
+
           </div>
 
         </div>
@@ -3572,6 +4328,7 @@ function renderTodayStats(){
         </div>
 
       </div>
+
     `).join("");
 }
 
@@ -3582,21 +4339,37 @@ function renderTodayStats(){
 
 function renderHabitsPage(){
 
-  const days = windowList(habitRange);
-  const habits = visibleHabits();
-  const today = todayKey();
+  const days =
+    windowList(habitRange);
 
-  const before = Math.floor(habitRange/2);
-  const after = habitRange-before-1;
+  const habits =
+    visibleHabits();
+
+  const today =
+    todayKey();
+
+  const before =
+    Math.floor(
+      habitRange/2
+    );
+
+  const after =
+    habitRange -
+    before -
+    1;
 
   $("habitRangeText").textContent =
     `${formatDate(days[0].date,{month:"short",day:"numeric"})} – ${formatDate(days[days.length-1].date,{month:"short",day:"numeric"})} · ${before} days before, today, ${after} days after`;
 
   const oldWrap =
-    document.querySelector("#habitCalendar .calendar-wrap");
+    document.querySelector(
+      "#habitCalendar .calendar-wrap"
+    );
 
   const oldScroll =
-    oldWrap ? oldWrap.scrollLeft : 0;
+    oldWrap
+      ? oldWrap.scrollLeft
+      : 0;
 
   if(!habits.length){
 
@@ -3610,7 +4383,9 @@ function renderHabitsPage(){
   }
 
   let html = `
+
     <div class="calendar-wrap">
+
       <div
         class="calendar"
         style="--days:${days.length}"
@@ -3623,45 +4398,76 @@ function renderHabitsPage(){
           </div>
   `;
 
-  days.forEach((d, i) => {
+  days.forEach((d,i) => {
 
-    const showMonth = i === 0 ||
-      (d.date.getMonth() !== days[i-1].date.getMonth());
+    const showMonth =
+      i === 0 ||
+      (
+        d.date.getMonth() !==
+        days[i-1].date.getMonth()
+      );
 
-    const monthName = d.date.toLocaleDateString("en-US", {month:"short"});
+    const monthName =
+      d.date.toLocaleDateString(
+        "en-US",
+        {month:"short"}
+      );
 
     html += `
+
       <div
         class="calendar-date ${d.key===todayKey() ? "today" : ""}"
       >
-        <div class="calendar-day-num">${d.date.getDate()}</div>
-        ${showMonth ? `<div class="calendar-month">${monthName}</div>` : ""}
+
+        <div class="calendar-day-num">
+          ${d.date.getDate()}
+        </div>
+
+        ${
+          showMonth
+            ? `<div class="calendar-month">${monthName}</div>`
+            : ""
+        }
+
       </div>
     `;
 
   });
 
   html += `
+
           <div>STATS</div>
+
         </div>
   `;
 
   habits.forEach(h => {
 
-    /* Percent counts only days up to today, not the days still ahead */
-
     const elapsed =
-      days.filter(d => d.key <= today);
+      days.filter(
+        d => d.key <= today
+      );
 
     const done =
-      elapsed.filter(d => isDone(d.key,h.id)).length;
+      elapsed.filter(
+        d =>
+          isDone(
+            d.key,
+            h.id
+          )
+      ).length;
 
     const percent =
       elapsed.length
-        ? Math.round(done/elapsed.length*100)
+        ? Math.round(
+            done /
+            elapsed.length *
+            100
+          )
         : 0;
 
     html += `
+
       <div class="calendar-row">
 
         <div class="calendar-habit">
@@ -3679,13 +4485,19 @@ function renderHabitsPage(){
     days.forEach(d => {
 
       const checked =
-        isDone(d.key,h.id);
+        isDone(
+          d.key,
+          h.id
+        );
 
       const future =
         d.key > todayKey();
 
       html += `
-        <div class="calendar-day ${future ? "future" : ""}">
+
+        <div
+          class="calendar-day ${future ? "future" : ""}"
+        >
 
           <label class="calendar-check">
 
@@ -3708,11 +4520,15 @@ function renderHabitsPage(){
     });
 
     html += `
+
         <div class="calendar-stats">
+
           ${percent}%
+
           <span>
             ${currentStreak(h.id)}d
           </span>
+
         </div>
 
       </div>
@@ -3721,32 +4537,52 @@ function renderHabitsPage(){
   });
 
   html += `
+
       </div>
+
     </div>
   `;
 
-  $("habitCalendar").innerHTML = html;
+  $("habitCalendar").innerHTML =
+    html;
 
   const wrap =
-    document.querySelector("#habitCalendar .calendar-wrap");
+    document.querySelector(
+      "#habitCalendar .calendar-wrap"
+    );
 
   const todayCell =
-    document.querySelector("#habitCalendar .calendar-date.today");
+    document.querySelector(
+      "#habitCalendar .calendar-date.today"
+    );
 
-  if(wrap && wrap.clientWidth){
+  if(
+    wrap &&
+    wrap.clientWidth
+  ){
 
-    if(habitCenterToday && todayCell){
+    if(
+      habitCenterToday &&
+      todayCell
+    ){
 
-      wrap.scrollLeft = Math.max(
-        0,
-        todayCell.offsetLeft -
-        (wrap.clientWidth-todayCell.offsetWidth)/2
-      );
+      wrap.scrollLeft =
+        Math.max(
+          0,
+          todayCell.offsetLeft -
+          (
+            wrap.clientWidth -
+            todayCell.offsetWidth
+          )/2
+        );
 
       habitCenterToday = false;
 
     }else{
-      wrap.scrollLeft = oldScroll;
+
+      wrap.scrollLeft =
+        oldScroll;
+
     }
 
   }
@@ -3760,63 +4596,99 @@ function renderHabitsPage(){
 function firstCheckinKey(){
 
   const keys =
-    Object.keys(state.checkins)
-      .filter(key =>
-        state.checkins[key] &&
-        Object.keys(state.checkins[key]).length
+    Object.keys(
+      state.checkins
+    )
+      .filter(
+        key =>
+          state.checkins[key] &&
+          Object.keys(
+            state.checkins[key]
+          ).length
       )
       .sort();
 
-  return keys.length ? keys[0] : null;
+  return keys.length
+    ? keys[0]
+    : null;
 }
 
-/*
-  Rolling completion rate over the 7 days ending on `date`.
-  Days before the first check-in are not counted, so the
-  line starts honestly instead of at a low number.
-*/
-
-function rollingPercent(habitId,date,firstKey){
+function rollingPercent(
+  habitId,
+  date,
+  firstKey
+){
 
   let done = 0;
   let total = 0;
 
   for(let i=0;i<7;i++){
 
-    const key = dateKey(addDays(date,-i));
+    const key =
+      dateKey(
+        addDays(
+          date,
+          -i
+        )
+      );
 
-    if(!firstKey || key < firstKey){
+    if(
+      !firstKey ||
+      key < firstKey
+    ){
+
       break;
+
     }
 
     total++;
 
-    if(isDone(key,habitId)){
+    if(
+      isDone(
+        key,
+        habitId
+      )
+    ){
+
       done++;
+
     }
+
   }
 
   return total
-    ? Math.round(done/total*100)
+    ? Math.round(
+        done /
+        total *
+        100
+      )
     : null;
 }
 
 function legendHTML(){
 
-  return visibleHabits().map(h => `
-    <span class="legend-item">
-      <span
-        class="dot"
-        style="background:${h.color}"
-      ></span>
-      ${escapeHTML(h.name)}
-    </span>
-  `).join("");
+  return visibleHabits()
+    .map(h => `
+
+      <span class="legend-item">
+
+        <span
+          class="dot"
+          style="background:${h.color}"
+        ></span>
+
+        ${escapeHTML(h.name)}
+
+      </span>
+
+    `)
+    .join("");
 }
 
 function renderInsights(){
 
-  const days = dateList(insightRange);
+  const days =
+    dateList(insightRange);
 
   $("insightScore").textContent =
     `${overallPercent(days)}%`;
@@ -3824,24 +4696,39 @@ function renderInsights(){
   $("insightRangeText").textContent =
     `Last ${insightRange} days`;
 
-  $("insightLegend").innerHTML = legendHTML();
-  $("weeklyLegend").innerHTML = legendHTML();
+  $("insightLegend").innerHTML =
+    legendHTML();
+
+  $("weeklyLegend").innerHTML =
+    legendHTML();
 
   renderInsightChart(days);
   renderInsightKpis(days);
   renderLeaderboard();
   renderStreaks();
   renderWeeklyInsights();
+
 }
+
+
+/* =========================================================
+   INSIGHT CHART
+========================================================= */
 
 function renderInsightChart(days){
 
-  const host = $("insightChart");
-  const habits = visibleHabits();
-  const firstKey = firstCheckinKey();
+  const host =
+    $("insightChart");
+
+  const habits =
+    visibleHabits();
+
+  const firstKey =
+    firstCheckinKey();
 
   const width =
-    host.clientWidth || 700;
+    host.clientWidth ||
+    700;
 
   const height = 270;
 
@@ -3851,24 +4738,35 @@ function renderInsightChart(days){
   const padBottom = 30;
 
   const innerWidth =
-    width-padLeft-padRight;
+    width -
+    padLeft -
+    padRight;
 
   const innerHeight =
-    height-padTop-padBottom;
+    height -
+    padTop -
+    padBottom;
 
   const x = i =>
     padLeft +
     (
       days.length === 1
         ? 0
-        : i/(days.length-1)
-    ) * innerWidth;
+        : i /
+          (days.length-1)
+    ) *
+    innerWidth;
 
   const y = value =>
     padTop +
-    (1-value/100)*innerHeight;
+    (
+      1 -
+      value/100
+    ) *
+    innerHeight;
 
   let svg = `
+
     <svg
       viewBox="0 0 ${width} ${height}"
       role="img"
@@ -3876,33 +4774,40 @@ function renderInsightChart(days){
     >
   `;
 
-  [0,25,50,75,100].forEach(value => {
+  [0,25,50,75,100]
+    .forEach(value => {
 
-    const yy = y(value);
+      const yy =
+        y(value);
+
+      svg += `
+
+        <line
+          x1="${padLeft}"
+          x2="${width-padRight}"
+          y1="${yy}"
+          y2="${yy}"
+          stroke="var(--line)"
+        />
+
+        <text
+          x="${padLeft-8}"
+          y="${yy+4}"
+          text-anchor="end"
+        >
+          ${value}
+        </text>
+      `;
+
+    });
+
+  if(
+    !habits.length ||
+    !firstKey
+  ){
 
     svg += `
-      <line
-        x1="${padLeft}"
-        x2="${width-padRight}"
-        y1="${yy}"
-        y2="${yy}"
-        stroke="var(--line)"
-      />
 
-      <text
-        x="${padLeft-8}"
-        y="${yy+4}"
-        text-anchor="end"
-      >
-        ${value}
-      </text>
-    `;
-
-  });
-
-  if(!habits.length || !firstKey){
-
-    svg += `
       <text
         x="${padLeft+innerWidth/2}"
         y="${padTop+innerHeight/2}"
@@ -3917,8 +4822,13 @@ function renderInsightChart(days){
     habits.forEach((h,index) => {
 
       const values =
-        days.map(d =>
-          rollingPercent(h.id,d.date,firstKey)
+        days.map(
+          d =>
+            rollingPercent(
+              h.id,
+              d.date,
+              firstKey
+            )
         );
 
       let path = "";
@@ -3928,12 +4838,19 @@ function renderInsightChart(days){
       values.forEach((v,i) => {
 
         if(v === null){
+
           pen = false;
+
           return;
+
         }
 
         path +=
-          `${pen ? "L" : "M"}${x(i).toFixed(1)} ${y(v).toFixed(1)} `;
+          `${
+            pen
+              ? "L"
+              : "M"
+          }${x(i).toFixed(1)} ${y(v).toFixed(1)} `;
 
         pen = true;
         last = i;
@@ -3944,22 +4861,33 @@ function renderInsightChart(days){
         return;
       }
 
+      const strokeWidth =
+        Math.max(
+          2,
+          4-index*0.6
+        );
+
       /*
-        Earlier habits get a thicker stroke and are drawn first,
-        so two habits with the same value both stay visible.
+        Visible line.
       */
 
-      const strokeWidth =
-        Math.max(2,4-index*0.6);
-
       svg += `
+
         <path
+          class="chart-line"
+          data-chart-habit="${h.id}"
           d="${path.trim()}"
           fill="none"
           stroke="${h.color}"
           stroke-width="${strokeWidth}"
           stroke-linecap="round"
           stroke-linejoin="round"
+        />
+
+        <path
+          class="chart-hit"
+          data-chart-habit="${h.id}"
+          d="${path.trim()}"
         />
       `;
 
@@ -3969,23 +4897,32 @@ function renderInsightChart(days){
           return;
         }
 
-        const isLast = i === last;
+        const isLast =
+          i === last;
 
-        if(!isLast && days.length > 31){
+        if(
+          !isLast &&
+          days.length > 31
+        ){
+
           return;
+
         }
 
         svg += `
+
           <circle
+            class="chart-point"
+            data-chart-habit="${h.id}"
+            data-chart-index="${i}"
             cx="${x(i).toFixed(1)}"
             cy="${y(v).toFixed(1)}"
             r="${isLast ? 4.5 : 2.5}"
             fill="${isLast ? h.color : "var(--panel)"}"
             stroke="${h.color}"
             stroke-width="2"
-          >
-            <title>${escapeHTML(h.name)} · ${formatDate(days[i].date,{month:"short",day:"numeric"})} · ${v}%</title>
-          </circle>
+          />
+
         `;
 
       });
@@ -3997,46 +4934,98 @@ function renderInsightChart(days){
   const step =
     Math.max(
       1,
-      Math.ceil(days.length/(width < 500 ? 4 : 7))
+      Math.ceil(
+        days.length /
+        (
+          width < 500
+            ? 4
+            : 7
+        )
+      )
     );
 
   const labelled = [];
 
-  for(let i=0;i<days.length;i+=step){
+  for(
+    let i=0;
+    i<days.length;
+    i+=step
+  ){
+
     labelled.push(i);
+
   }
 
-  const lastIndex = days.length-1;
+  const lastIndex =
+    days.length-1;
 
-  if(labelled[labelled.length-1] !== lastIndex){
+  if(
+    labelled[
+      labelled.length-1
+    ] !== lastIndex
+  ){
 
-    if(lastIndex-labelled[labelled.length-1] < step*0.6){
-      labelled[labelled.length-1] = lastIndex;
+    if(
+      lastIndex -
+      labelled[
+        labelled.length-1
+      ] <
+      step*0.6
+    ){
+
+      labelled[
+        labelled.length-1
+      ] =
+        lastIndex;
+
     }else{
-      labelled.push(lastIndex);
+
+      labelled.push(
+        lastIndex
+      );
+
     }
 
   }
 
-  let previousMonth = null;
+  let previousMonth =
+    null;
 
   labelled.forEach(i => {
 
-    const d = days[i];
-    const month = d.date.getMonth();
+    const d =
+      days[i];
+
+    const month =
+      d.date.getMonth();
 
     const label =
       month !== previousMonth
-        ? formatDate(d.date,{month:"short",day:"numeric"})
+        ? formatDate(
+            d.date,
+            {
+              month:"short",
+              day:"numeric"
+            }
+          )
         : d.date.getDate();
 
-    previousMonth = month;
+    previousMonth =
+      month;
 
     svg += `
+
       <text
         x="${x(i)}"
         y="${height-8}"
-        text-anchor="${i === lastIndex && i !== 0 ? "end" : i === 0 ? "start" : "middle"}"
+        text-anchor="${
+          i === lastIndex &&
+          i !== 0
+            ? "end"
+            : i === 0
+              ? "start"
+              : "middle"
+        }"
       >
         ${label}
       </text>
@@ -4044,15 +5033,494 @@ function renderInsightChart(days){
 
   });
 
-  svg += "</svg>";
+  svg +=
+    "</svg>";
 
-  host.innerHTML = svg;
+  host.innerHTML =
+    svg;
+
+  attachChartInteractions(
+    days
+  );
 }
+
+
+/* =========================================================
+   LINE CHART INTERACTIONS
+========================================================= */
+
+function attachChartInteractions(days){
+
+  const host =
+    $("insightChart");
+
+  const tooltip =
+    getChartTooltip();
+
+  host
+    .querySelectorAll(
+      ".chart-point"
+    )
+    .forEach(point => {
+
+      point.addEventListener(
+        "mouseenter",
+        event => {
+
+          const habit =
+            habitById(
+              point.dataset.chartHabit
+            );
+
+          const index =
+            Number(
+              point.dataset.chartIndex
+            );
+
+          if(!habit || !days[index]){
+            return;
+          }
+
+          const value =
+            rollingPercent(
+              habit.id,
+              days[index].date,
+              firstCheckinKey()
+            );
+
+          showChartTooltip(
+            tooltip,
+            event.clientX,
+            event.clientY,
+            `
+              <div class="tooltip-title">
+                ${escapeHTML(habit.name)}
+              </div>
+
+              <div class="tooltip-sub">
+                ${formatDate(
+                  days[index].date,
+                  {
+                    weekday:"short",
+                    month:"short",
+                    day:"numeric"
+                  }
+                )}
+              </div>
+
+              <div class="tooltip-grid">
+
+                <div class="tooltip-row">
+                  <span>7-day rolling</span>
+                  <b>${value ?? 0}%</b>
+                </div>
+
+                <div class="tooltip-row">
+                  <span>Current streak</span>
+                  <b>${currentStreak(habit.id)}d</b>
+                </div>
+
+              </div>
+            `
+          );
+
+        }
+      );
+
+      point.addEventListener(
+        "mousemove",
+        event => {
+
+          moveChartTooltip(
+            tooltip,
+            event.clientX,
+            event.clientY
+          );
+
+        }
+      );
+
+      point.addEventListener(
+        "mouseleave",
+        () => {
+          hideChartTooltip(
+            tooltip
+          );
+        }
+      );
+
+      point.addEventListener(
+        "click",
+        () => {
+
+          const habit =
+            habitById(
+              point.dataset.chartHabit
+            );
+
+          if(habit){
+            showHabitInsight(
+              habit.id
+            );
+          }
+
+        }
+      );
+
+    });
+
+  host
+    .querySelectorAll(
+      "[data-chart-habit]"
+    )
+    .forEach(line => {
+
+      line.addEventListener(
+        "click",
+        () => {
+
+          showHabitInsight(
+            line.dataset.chartHabit
+          );
+
+        }
+      );
+
+    });
+
+  /*
+    On touch devices, tapping a line opens
+    the detailed stats directly.
+  */
+
+}
+
+
+/* =========================================================
+   CHART TOOLTIP
+========================================================= */
+
+function getChartTooltip(){
+
+  let tooltip =
+    $("chartTooltip");
+
+  if(tooltip){
+    return tooltip;
+  }
+
+  tooltip =
+    document.createElement("div");
+
+  tooltip.id =
+    "chartTooltip";
+
+  tooltip.className =
+    "chart-tooltip";
+
+  document.body.appendChild(
+    tooltip
+  );
+
+  return tooltip;
+}
+
+function showChartTooltip(
+  tooltip,
+  x,
+  y,
+  html
+){
+
+  tooltip.innerHTML =
+    html;
+
+  tooltip.classList.add(
+    "show"
+  );
+
+  positionTooltip(
+    tooltip,
+    x,
+    y
+  );
+}
+
+function moveChartTooltip(
+  tooltip,
+  x,
+  y
+){
+
+  if(
+    tooltip.classList.contains(
+      "show"
+    )
+  ){
+
+    positionTooltip(
+      tooltip,
+      x,
+      y
+    );
+
+  }
+}
+
+function positionTooltip(
+  tooltip,
+  x,
+  y
+){
+
+  const gap = 14;
+
+  const rect =
+    tooltip.getBoundingClientRect();
+
+  let left =
+    x + gap;
+
+  let top =
+    y + gap;
+
+  if(
+    left + rect.width >
+    window.innerWidth - 10
+  ){
+
+    left =
+      x -
+      rect.width -
+      gap;
+
+  }
+
+  if(
+    top + rect.height >
+    window.innerHeight - 10
+  ){
+
+    top =
+      y -
+      rect.height -
+      gap;
+
+  }
+
+  tooltip.style.left =
+    Math.max(
+      10,
+      left
+    ) + "px";
+
+  tooltip.style.top =
+    Math.max(
+      10,
+      top
+    ) + "px";
+}
+
+function hideChartTooltip(
+  tooltip
+){
+
+  tooltip.classList.remove(
+    "show"
+  );
+}
+
+
+/* =========================================================
+   HABIT DETAIL MODAL
+========================================================= */
+
+function showHabitInsight(habitId){
+
+  const habit =
+    habitById(habitId);
+
+  if(!habit){
+    return;
+  }
+
+  const days =
+    dateList(insightRange);
+
+  const completed =
+    days.filter(
+      d =>
+        isDone(
+          d.key,
+          habit.id
+        )
+    ).length;
+
+  const completion =
+    days.length
+      ? Math.round(
+          completed /
+          days.length *
+          100
+        )
+      : 0;
+
+  const recentDays =
+    days.slice(
+      -Math.min(
+        7,
+        days.length
+      )
+    );
+
+  const recentCompleted =
+    recentDays.filter(
+      d =>
+        isDone(
+          d.key,
+          habit.id
+        )
+    ).length;
+
+  const recentRate =
+    recentDays.length
+      ? Math.round(
+          recentCompleted /
+          recentDays.length *
+          100
+        )
+      : 0;
+
+  const best =
+    bestStreak(
+      habit.id
+    );
+
+  $("detailSectionLabel").innerHTML =
+    `<span style="color:${habit.color}">●</span> Habit performance`;
+
+  $("detailTitle").textContent =
+    habit.name;
+
+  $("detailSummary").innerHTML = `
+
+    <div class="detail-stat">
+
+      <div class="detail-stat-label">
+        ${insightRange} days
+      </div>
+
+      <div class="detail-stat-value">
+        ${completion}%
+      </div>
+
+    </div>
+
+    <div class="detail-stat">
+
+      <div class="detail-stat-label">
+        Last 7 days
+      </div>
+
+      <div class="detail-stat-value">
+        ${recentRate}%
+      </div>
+
+    </div>
+
+    <div class="detail-stat">
+
+      <div class="detail-stat-label">
+        Best streak
+      </div>
+
+      <div class="detail-stat-value">
+        ${best}d
+      </div>
+
+    </div>
+
+  `;
+
+  $("detailList").innerHTML =
+    days
+      .slice()
+      .reverse()
+      .map(d => {
+
+        const done =
+          isDone(
+            d.key,
+            habit.id
+          );
+
+        const rolling =
+          rollingPercent(
+            habit.id,
+            d.date,
+            firstCheckinKey()
+          );
+
+        return `
+
+          <div class="detail-day">
+
+            <div>
+
+              <div class="detail-day-date">
+                ${formatDate(
+                  d.date,
+                  {
+                    weekday:"short",
+                    month:"short",
+                    day:"numeric"
+                  }
+                )}
+              </div>
+
+              <div class="detail-day-sub">
+                7-day rolling:
+                ${rolling === null ? "—" : rolling + "%"}
+              </div>
+
+            </div>
+
+            <div
+              class="detail-day-percent ${
+                done
+                  ? "done"
+                  : "missed"
+              }"
+            >
+              ${done ? "Done" : "Missed"}
+            </div>
+
+          </div>
+
+        `;
+
+      })
+      .join("");
+
+  openModal(
+    "insightDetailModal"
+  );
+}
+
+
+/* =========================================================
+   INSIGHT KPIs
+========================================================= */
 
 function renderInsightKpis(days){
 
   const week =
-    days.slice(-Math.min(7,days.length));
+    days.slice(
+      -Math.min(
+        7,
+        days.length
+      )
+    );
 
   const previous =
     days.length >= 14
@@ -4070,14 +5538,17 @@ function renderInsightKpis(days){
   const delta =
     previousPercent === null
       ? null
-      : current-previousPercent;
+      : current -
+        previousPercent;
 
-  const best = Math.max(
-    0,
-    ...visibleHabits().map(
-      h => bestStreak(h.id)
-    )
-  );
+  const best =
+    Math.max(
+      0,
+      ...visibleHabits().map(
+        h =>
+          bestStreak(h.id)
+      )
+    );
 
   const perfect =
     countPerfectDays(days);
@@ -4117,6 +5588,7 @@ function renderInsightKpis(days){
 
   $("insightKpis").innerHTML =
     cards.map(c => `
+
       <div class="kpi">
 
         <div class="kpi-label">
@@ -4128,32 +5600,54 @@ function renderInsightKpis(days){
         </div>
 
       </div>
+
     `).join("");
 }
+
+
+/* =========================================================
+   LEADERBOARD
+========================================================= */
 
 function renderLeaderboard(){
 
   const days =
-    dateList(leaderboardRange);
+    dateList(
+      leaderboardRange
+    );
 
-  const habits = visibleHabits();
+  const habits =
+    visibleHabits();
 
   const rows =
-    habits.map(h => {
+    habits
+      .map(h => {
 
-      const done =
-        days.filter(
-          d => isDone(d.key,h.id)
-        ).length;
+        const done =
+          days.filter(
+            d =>
+              isDone(
+                d.key,
+                h.id
+              )
+          ).length;
 
-      return {
-        habit:h,
-        percent:Math.round(done/days.length*100)
-      };
+        return {
+          habit:h,
+          percent:
+            Math.round(
+              done /
+              days.length *
+              100
+            )
+        };
 
-    }).sort(
-      (a,b) => b.percent-a.percent
-    );
+      })
+      .sort(
+        (a,b) =>
+          b.percent -
+          a.percent
+      );
 
   if(!rows.length){
 
@@ -4167,6 +5661,7 @@ function renderLeaderboard(){
 
   $("leaderboard").innerHTML =
     rows.map((r,index) => `
+
       <div class="rank-row">
 
         <div class="rank-top">
@@ -4177,7 +5672,8 @@ function renderLeaderboard(){
           ></span>
 
           <span class="rank-name">
-            ${index+1}. ${escapeHTML(r.habit.name)}
+            ${index+1}.
+            ${escapeHTML(r.habit.name)}
           </span>
 
           <span class="rank-score">
@@ -4190,26 +5686,43 @@ function renderLeaderboard(){
 
           <div
             class="progress-fill"
-            style="width:${r.percent}%;background:${r.habit.color}"
+            style="
+              width:${r.percent}%;
+              background:${r.habit.color}
+            "
           ></div>
 
         </div>
 
       </div>
+
     `).join("");
 }
+
+
+/* =========================================================
+   STREAKS
+========================================================= */
 
 function renderStreaks(){
 
   const habits =
     visibleHabits()
       .map(h => ({
+
         habit:h,
-        current:currentStreak(h.id),
-        best:bestStreak(h.id)
+
+        current:
+          currentStreak(h.id),
+
+        best:
+          bestStreak(h.id)
+
       }))
       .sort(
-        (a,b) => b.current-a.current
+        (a,b) =>
+          b.current -
+          a.current
       );
 
   if(!habits.length){
@@ -4224,6 +5737,7 @@ function renderStreaks(){
 
   $("streakList").innerHTML =
     habits.map(r => `
+
       <div class="streak-row">
 
         <div class="streak-left">
@@ -4234,10 +5748,17 @@ function renderStreaks(){
           ></span>
 
           <div>
-            <b>${escapeHTML(r.habit.name)}</b>
+
+            <b>
+              ${escapeHTML(
+                r.habit.name
+              )}
+            </b>
+
             <div class="muted small">
               Best: ${r.best} days
             </div>
+
           </div>
 
         </div>
@@ -4247,48 +5768,94 @@ function renderStreaks(){
         </div>
 
       </div>
+
     `).join("");
 }
 
+
+/* =========================================================
+   WEEKLY INSIGHTS
+========================================================= */
+
 function renderWeeklyInsights(){
 
-  const habits = visibleHabits();
+  const habits =
+    visibleHabits();
 
   const weeks =
     Math.min(
       8,
-      Math.ceil(insightRange/7)
+      Math.ceil(
+        insightRange/7
+      )
     );
 
   const allDays =
-    dateList(weeks*7);
+    dateList(
+      weeks*7
+    );
 
   const result = [];
 
-  for(let i=0;i<weeks;i++){
+  for(
+    let i=0;
+    i<weeks;
+    i++
+  ){
 
     const slice =
-      allDays.slice(i*7,i*7+7);
+      allDays.slice(
+        i*7,
+        i*7+7
+      );
 
     if(!slice.length){
       continue;
     }
 
-    const startDate = slice[0].date;
-    const endDate = slice[slice.length-1].date;
+    const startDate =
+      slice[0].date;
+
+    const endDate =
+      slice[slice.length-1].date;
 
     result.push({
-      label:`W${i+1}`,
-      dates:`${formatDate(startDate,{month:"short",day:"numeric"})} – ${formatDate(endDate,{month:"short",day:"numeric"})}`,
-      percent:overallPercent(slice),
-      habits:habits.map(h => ({
-        habit:h,
-        percent:Math.round(
-          slice.filter(d => isDone(d.key,h.id)).length /
-          slice.length *
-          100
-        )
-      }))
+
+      label:
+        `W${i+1}`,
+
+      dates:
+        `${formatDate(startDate,{month:"short",day:"numeric"})} – ${formatDate(endDate,{month:"short",day:"numeric"})}`,
+
+      startKey:
+        slice[0].key,
+
+      endKey:
+        slice[slice.length-1].key,
+
+      percent:
+        overallPercent(slice),
+
+      habits:
+        habits.map(h => ({
+
+          habit:h,
+
+          percent:
+            Math.round(
+              slice.filter(
+                d =>
+                  isDone(
+                    d.key,
+                    h.id
+                  )
+              ).length /
+              slice.length *
+              100
+            )
+
+        }))
+
     });
 
   }
@@ -4297,8 +5864,12 @@ function renderWeeklyInsights(){
     `repeat(${Math.max(1,result.length)},minmax(56px,1fr))`;
 
   $("weeklyInsights").innerHTML =
-    result.map(w => `
-      <div class="week-column">
+    result.map((w,index) => `
+
+      <div
+        class="week-column"
+        data-week-index="${index}"
+      >
 
         <div class="day-percent">
           ${w.percent}%
@@ -4307,28 +5878,254 @@ function renderWeeklyInsights(){
         <div class="bar-group">
 
           ${w.habits.map(item => `
+
             <div
               class="bar-track"
-              title="${escapeHTML(item.habit.name)}: ${item.percent}%"
+              style="cursor:pointer"
             >
+
               <div
                 class="bar-fill"
-                style="height:${item.percent}%;background:${item.habit.color}"
+                style="
+                  height:${item.percent}%;
+                  background:${item.habit.color}
+                "
               ></div>
+
             </div>
+
           `).join("")}
 
         </div>
 
         <div class="week-label">
-          <div>${w.label}</div>
-          <div>${w.dates}</div>
+
+          <div>
+            ${w.label}
+          </div>
+
+          <div>
+            ${w.dates}
+          </div>
+
         </div>
 
       </div>
+
     `).join("");
+
+  attachWeeklyInteractions(
+    result
+  );
 }
 
+
+/* =========================================================
+   WEEKLY TOOLTIP
+========================================================= */
+
+function getWeekTooltip(){
+
+  let tooltip =
+    $("weekTooltip");
+
+  if(tooltip){
+    return tooltip;
+  }
+
+  tooltip =
+    document.createElement("div");
+
+  tooltip.id =
+    "weekTooltip";
+
+  tooltip.className =
+    "week-tooltip";
+
+  document.body.appendChild(
+    tooltip
+  );
+
+  return tooltip;
+}
+
+function weeklyTooltipHTML(week){
+
+  return `
+
+    <div class="tooltip-title">
+      ${week.label} · ${week.percent}% overall
+    </div>
+
+    <div class="tooltip-sub">
+      ${formatDate(
+        fromKey(week.startKey),
+        {
+          month:"short",
+          day:"numeric",
+          year:"numeric"
+        }
+      )}
+      –
+      ${formatDate(
+        fromKey(week.endKey),
+        {
+          month:"short",
+          day:"numeric",
+          year:"numeric"
+        }
+      )}
+    </div>
+
+    <div class="tooltip-grid">
+
+      ${week.habits.map(item => `
+
+        <div class="tooltip-row">
+
+          <span>
+            <span
+              style="
+                display:inline-block;
+                width:7px;
+                height:7px;
+                border-radius:50%;
+                background:${item.habit.color};
+                margin-right:5px;
+              "
+            ></span>
+
+            ${escapeHTML(
+              item.habit.name
+            )}
+          </span>
+
+          <b>
+            ${item.percent}%
+          </b>
+
+        </div>
+
+      `).join("")}
+
+    </div>
+  `;
+}
+
+function attachWeeklyInteractions(
+  weeks
+){
+
+  const tooltip =
+    getWeekTooltip();
+
+  document
+    .querySelectorAll(
+      "#weeklyInsights .week-column"
+    )
+    .forEach(column => {
+
+      const index =
+        Number(
+          column.dataset.weekIndex
+        );
+
+      const week =
+        weeks[index];
+
+      if(!week){
+        return;
+      }
+
+      column.addEventListener(
+        "mouseenter",
+        event => {
+
+          tooltip.innerHTML =
+            weeklyTooltipHTML(
+              week
+            );
+
+          tooltip.classList.add(
+            "show"
+          );
+
+          positionTooltip(
+            tooltip,
+            event.clientX,
+            event.clientY
+          );
+
+        }
+      );
+
+      column.addEventListener(
+        "mousemove",
+        event => {
+
+          positionTooltip(
+            tooltip,
+            event.clientX,
+            event.clientY
+          );
+
+        }
+      );
+
+      column.addEventListener(
+        "mouseleave",
+        () => {
+
+          tooltip.classList.remove(
+            "show"
+          );
+
+        }
+      );
+
+      /*
+        Mobile/touch support:
+        tapping the week shows the same
+        information and keeps it visible
+        until another week is tapped.
+      */
+
+      column.addEventListener(
+        "click",
+        event => {
+
+          if(
+            window.matchMedia(
+              "(hover: none)"
+            ).matches
+          ){
+
+            tooltip.innerHTML =
+              weeklyTooltipHTML(
+                week
+              );
+
+            tooltip.classList.toggle(
+              "show"
+            );
+
+            const rect =
+              column.getBoundingClientRect();
+
+            positionTooltip(
+              tooltip,
+              rect.left +
+                rect.width/2,
+              rect.top
+            );
+
+          }
+
+        }
+      );
+
+    });
+}
 
 
 /* =========================================================
@@ -4337,7 +6134,8 @@ function renderWeeklyInsights(){
 
 function renderManage(){
 
-  const habits = state.habits;
+  const habits =
+    state.habits;
 
   if(!habits.length){
 
@@ -4352,6 +6150,7 @@ function renderManage(){
 
   $("manageList").innerHTML =
     habits.map(h => `
+
       <div class="manage-item">
 
         <span
@@ -4361,12 +6160,19 @@ function renderManage(){
 
         <div class="manage-info">
 
-          <b>${escapeHTML(h.name)}</b>
+          <b>
+            ${escapeHTML(h.name)}
+          </b>
 
           <small>
-            ${h.visible === false
-              ? "Hidden"
-              : escapeHTML(h.desc || "No description")}
+            ${
+              h.visible === false
+                ? "Hidden"
+                : escapeHTML(
+                    h.desc ||
+                    "No description"
+                  )
+            }
           </small>
 
         </div>
@@ -4376,17 +6182,27 @@ function renderManage(){
           data-edit="${h.id}"
           title="Edit"
         >
+
           <svg class="icon icon-sm">
             <use href="#edit"/>
           </svg>
+
         </button>
 
         <button
           class="manage-action"
           data-toggle="${h.id}"
-          title="${h.visible === false ? "Show" : "Hide"}"
+          title="${
+            h.visible === false
+              ? "Show"
+              : "Hide"
+          }"
         >
-          ${h.visible === false ? "○" : "●"}
+          ${
+            h.visible === false
+              ? "○"
+              : "●"
+          }
         </button>
 
         <button
@@ -4394,43 +6210,69 @@ function renderManage(){
           data-delete="${h.id}"
           title="Delete"
         >
+
           <svg class="icon icon-sm">
             <use href="#trash"/>
           </svg>
+
         </button>
 
       </div>
+
     `).join("");
 }
 
-function addHabit(name,desc){
+function addHabit(
+  name,
+  desc
+){
 
   const color =
-    COLORS[state.habits.length % COLORS.length];
+    COLORS[
+      state.habits.length %
+      COLORS.length
+    ];
 
   state.habits.push({
+
     id:uid(),
+
     name,
+
     desc,
+
     color,
+
     visible:true
+
   });
 
   save();
+
   renderAll();
 }
 
-function updateHabit(id,name,desc){
+function updateHabit(
+  id,
+  name,
+  desc
+){
 
   const habit =
     habitById(id);
 
-  if(!habit)return;
+  if(!habit){
+    return;
+  }
 
-  habit.name = name;
-  habit.desc = desc;
+  habit.name =
+    name;
+
+  habit.desc =
+    desc;
 
   save();
+
   renderAll();
 }
 
@@ -4439,13 +6281,17 @@ function toggleHabit(id){
   const habit =
     habitById(id);
 
-  if(!habit)return;
+  if(!habit){
+    return;
+  }
 
   habit.visible =
     habit.visible === false;
 
   save();
+
   renderAll();
+
   renderManage();
 }
 
@@ -4454,14 +6300,18 @@ function deleteHabit(id){
   const habit =
     habitById(id);
 
-  if(!habit)return;
+  if(!habit){
+    return;
+  }
 
   if(
     !confirm(
       `Delete "${habit.name}"?\n\nIts history will also be removed.`
     )
   ){
+
     return;
+
   }
 
   state.habits =
@@ -4469,17 +6319,22 @@ function deleteHabit(id){
       h => h.id !== id
     );
 
-  Object.keys(state.checkins)
-    .forEach(key => {
+  Object.keys(
+    state.checkins
+  ).forEach(key => {
 
-      if(state.checkins[key]){
-        delete state.checkins[key][id];
-      }
+    if(state.checkins[key]){
 
-    });
+      delete state.checkins[key][id];
+
+    }
+
+  });
 
   save();
+
   renderAll();
+
   renderManage();
 }
 
@@ -4488,9 +6343,13 @@ function deleteHabit(id){
    EMPTY
 ========================================================= */
 
-function emptyHTML(title,text){
+function emptyHTML(
+  title,
+  text
+){
 
   return `
+
     <div class="empty">
 
       <div class="empty-icon">
@@ -4510,6 +6369,7 @@ function emptyHTML(title,text){
       </div>
 
     </div>
+
   `;
 }
 
@@ -4521,13 +6381,18 @@ function emptyHTML(title,text){
 function showView(view){
 
   const valid =
-    ["today","habits","insights"];
+    [
+      "today",
+      "habits",
+      "insights"
+    ];
 
   if(!valid.includes(view)){
     view = "today";
   }
 
-  currentView = view;
+  currentView =
+    view;
 
   $("page-today").hidden =
     view !== "today";
@@ -4539,38 +6404,55 @@ function showView(view){
     view !== "insights";
 
   document
-    .querySelectorAll("[data-view]")
+    .querySelectorAll(
+      "[data-view]"
+    )
     .forEach(button => {
 
-      if(button.dataset.view === view){
+      if(
+        button.dataset.view ===
+        view
+      ){
+
         button.setAttribute(
           "aria-current",
           "page"
         );
+
       }else{
+
         button.removeAttribute(
           "aria-current"
         );
+
       }
 
     });
 
   if(view === "today"){
+
     renderToday();
+
   }
 
   if(view === "habits"){
-    habitCenterToday = true;
+
+    habitCenterToday =
+      true;
+
     renderHabitsPage();
+
   }
 
   if(view === "insights"){
+
     renderInsights();
 
     setTimeout(
       renderInsights,
       30
     );
+
   }
 
   history.replaceState(
@@ -4588,14 +6470,21 @@ function showView(view){
 function renderAll(){
 
   renderToday();
+
   renderHabitsPage();
+
   renderInsights();
 
   if(
-    $("manageModal").classList.contains("open")
+    $("manageModal")
+      .classList
+      .contains("open")
   ){
+
     renderManage();
+
   }
+
 }
 
 
@@ -4605,24 +6494,31 @@ function renderAll(){
 
 function openModal(id){
 
-  $(id).classList.add("open");
+  $(id)
+    .classList
+    .add("open");
 
 }
 
 function closeModal(id){
 
-  $(id).classList.remove("open");
+  $(id)
+    .classList
+    .remove("open");
 
 }
 
 function closeAllModals(){
 
   document
-    .querySelectorAll(".overlay")
+    .querySelectorAll(
+      ".overlay"
+    )
     .forEach(m =>
-      m.classList.remove("open")
+      m.classList.remove(
+        "open"
+      )
     );
-
 }
 
 
@@ -4637,7 +6533,9 @@ document.addEventListener(
   event => {
 
     const nav =
-      event.target.closest("[data-view]");
+      event.target.closest(
+        "[data-view]"
+      );
 
     if(nav){
 
@@ -4668,8 +6566,12 @@ document.addEventListener(
     }
 
     if(input.disabled){
-      input.checked = false;
+
+      input.checked =
+        false;
+
       return;
+
     }
 
     setDone(
@@ -4686,115 +6588,150 @@ document.addEventListener(
 
 /* HABIT RANGE */
 
-$("habitRange").addEventListener(
-  "change",
-  event => {
+$("habitRange")
+  .addEventListener(
+    "change",
+    event => {
 
-    habitRange =
-      Number(event.target.value);
+      habitRange =
+        Number(
+          event.target.value
+        );
 
-    habitCenterToday = true;
+      habitCenterToday =
+        true;
 
-    renderHabitsPage();
+      renderHabitsPage();
 
-  }
-);
+    }
+  );
 
 
 /* INSIGHT RANGE */
 
-$("insightRange").addEventListener(
-  "change",
-  event => {
+$("insightRange")
+  .addEventListener(
+    "change",
+    event => {
 
-    insightRange =
-      Number(event.target.value);
+      insightRange =
+        Number(
+          event.target.value
+        );
 
-    renderInsights();
+      renderInsights();
 
-  }
-);
+    }
+  );
 
 
 /* LEADERBOARD */
 
-$("leaderRange").addEventListener(
-  "change",
-  event => {
+$("leaderRange")
+  .addEventListener(
+    "change",
+    event => {
 
-    leaderboardRange =
-      Number(event.target.value);
+      leaderboardRange =
+        Number(
+          event.target.value
+        );
 
-    renderLeaderboard();
+      renderLeaderboard();
 
-  }
-);
+    }
+  );
 
 
 /* THEME */
 
-$("themeBtn").addEventListener(
-  "click",
-  toggleTheme
-);
+$("themeBtn")
+  .addEventListener(
+    "click",
+    toggleTheme
+  );
 
 
 /* ADD */
 
-$("addBtn").addEventListener(
-  "click",
-  () => {
+$("addBtn")
+  .addEventListener(
+    "click",
+    () => {
 
-    $("newName").value = "";
-    $("newDesc").value = "";
+      $("newName").value =
+        "";
 
-    openModal("addModal");
+      $("newDesc").value =
+        "";
 
-    setTimeout(
-      () => $("newName").focus(),
-      50
-    );
+      openModal(
+        "addModal"
+      );
 
-  }
-);
+      setTimeout(
+        () =>
+          $("newName").focus(),
+        50
+      );
+
+    }
+  );
 
 
 /* CREATE HABIT */
 
-$("createHabit").addEventListener(
-  "click",
-  () => {
+$("createHabit")
+  .addEventListener(
+    "click",
+    () => {
 
-    const name =
-      $("newName").value.trim();
+      const name =
+        $("newName")
+          .value
+          .trim();
 
-    const desc =
-      $("newDesc").value.trim();
+      const desc =
+        $("newDesc")
+          .value
+          .trim();
 
-    if(!name){
-      $("newName").focus();
-      return;
+      if(!name){
+
+        $("newName").focus();
+
+        return;
+
+      }
+
+      addHabit(
+        name,
+        desc
+      );
+
+      closeModal(
+        "addModal"
+      );
+
     }
-
-    addHabit(name,desc);
-
-    closeModal("addModal");
-
-  }
-);
+  );
 
 
 /* MANAGE */
 
-$("manageBtn").addEventListener(
-  "click",
-  () => {
+$("manageBtn")
+  .addEventListener(
+    "click",
+    () => {
 
-    renderManage();
-    openModal("manageModal");
+      renderManage();
 
-  }
-);
+      openModal(
+        "manageModal"
+      );
+
+    }
+  );
 
 
 /* MODAL CLOSE */
@@ -4838,7 +6775,9 @@ document.addEventListener(
           edit.dataset.edit
         );
 
-      if(!habit)return;
+      if(!habit){
+        return;
+      }
 
       $("editId").value =
         habit.id;
@@ -4849,9 +6788,12 @@ document.addEventListener(
       $("editDesc").value =
         habit.desc || "";
 
-      openModal("editModal");
+      openModal(
+        "editModal"
+      );
 
       return;
+
     }
 
 
@@ -4867,6 +6809,7 @@ document.addEventListener(
       );
 
       return;
+
     }
 
 
@@ -4882,6 +6825,7 @@ document.addEventListener(
       );
 
       return;
+
     }
 
   }
@@ -4890,34 +6834,45 @@ document.addEventListener(
 
 /* SAVE EDIT */
 
-$("saveEdit").addEventListener(
-  "click",
-  () => {
+$("saveEdit")
+  .addEventListener(
+    "click",
+    () => {
 
-    const id =
-      $("editId").value;
+      const id =
+        $("editId")
+          .value;
 
-    const name =
-      $("editName").value.trim();
+      const name =
+        $("editName")
+          .value
+          .trim();
 
-    const desc =
-      $("editDesc").value.trim();
+      const desc =
+        $("editDesc")
+          .value
+          .trim();
 
-    if(!name){
-      $("editName").focus();
-      return;
+      if(!name){
+
+        $("editName").focus();
+
+        return;
+
+      }
+
+      updateHabit(
+        id,
+        name,
+        desc
+      );
+
+      closeModal(
+        "editModal"
+      );
+
     }
-
-    updateHabit(
-      id,
-      name,
-      desc
-    );
-
-    closeModal("editModal");
-
-  }
-);
+  );
 
 
 /* CLICK OUTSIDE MODAL */
@@ -4931,9 +6886,11 @@ document.addEventListener(
         "overlay"
       )
     ){
+
       event.target.classList.remove(
         "open"
       );
+
     }
 
   }
@@ -4946,8 +6903,31 @@ document.addEventListener(
   "keydown",
   event => {
 
-    if(event.key === "Escape"){
+    if(
+      event.key ===
+      "Escape"
+    ){
+
       closeAllModals();
+
+      const chartTooltip =
+        $("chartTooltip");
+
+      const weekTooltip =
+        $("weekTooltip");
+
+      if(chartTooltip){
+        chartTooltip.classList.remove(
+          "show"
+        );
+      }
+
+      if(weekTooltip){
+        weekTooltip.classList.remove(
+          "show"
+        );
+      }
+
     }
 
   }
@@ -4956,71 +6936,103 @@ document.addEventListener(
 
 /* ENTER TO ADD */
 
-$("newName").addEventListener(
-  "keydown",
-  event => {
+$("newName")
+  .addEventListener(
+    "keydown",
+    event => {
 
-    if(
-      event.key === "Enter" &&
-      !event.shiftKey
-    ){
+      if(
+        event.key === "Enter" &&
+        !event.shiftKey
+      ){
 
-      event.preventDefault();
+        event.preventDefault();
 
-      $("createHabit").click();
+        $("createHabit")
+          .click();
+
+      }
 
     }
-
-  }
-);
+  );
 
 
 /* AUTH */
 
-$("loginSwitchBtn").addEventListener(
-  "click",
-  () => switchAuthForm("signup")
-);
+$("loginSwitchBtn")
+  .addEventListener(
+    "click",
+    () =>
+      switchAuthForm(
+        "signup"
+      )
+  );
 
-$("signupSwitchBtn").addEventListener(
-  "click",
-  () => switchAuthForm("login")
-);
+$("signupSwitchBtn")
+  .addEventListener(
+    "click",
+    () =>
+      switchAuthForm(
+        "login"
+      )
+  );
 
-$("loginSubmitBtn").addEventListener(
-  "click",
-  signInWithEmail
-);
+$("loginSubmitBtn")
+  .addEventListener(
+    "click",
+    signInWithEmail
+  );
 
-$("signupSubmitBtn").addEventListener(
-  "click",
-  signUpWithEmail
-);
+$("signupSubmitBtn")
+  .addEventListener(
+    "click",
+    signUpWithEmail
+  );
 
-$("loginPassword").addEventListener(
-  "keydown",
-  event => {
-    if(event.key === "Enter"){
-      event.preventDefault();
-      signInWithEmail();
+$("loginPassword")
+  .addEventListener(
+    "keydown",
+    event => {
+
+      if(
+        event.key ===
+        "Enter"
+      ){
+
+        event.preventDefault();
+
+        signInWithEmail();
+
+      }
+
     }
-  }
-);
+  );
 
-$("signupConfirm").addEventListener(
-  "keydown",
-  event => {
-    if(event.key === "Enter"){
-      event.preventDefault();
-      signUpWithEmail();
+$("signupConfirm")
+  .addEventListener(
+    "keydown",
+    event => {
+
+      if(
+        event.key ===
+        "Enter"
+      ){
+
+        event.preventDefault();
+
+        signUpWithEmail();
+
+      }
+
     }
-  }
-);
+  );
 
-$("logoutBtn").addEventListener(
-  "click",
-  signOut
-);
+$("logoutBtn")
+  .addEventListener(
+    "click",
+    signOut
+  );
+
 
 /* RESIZE */
 
@@ -5030,14 +7042,21 @@ window.addEventListener(
   "resize",
   () => {
 
-    clearTimeout(resizeTimer);
+    clearTimeout(
+      resizeTimer
+    );
 
     resizeTimer =
       setTimeout(
         () => {
 
-          if(currentView === "insights"){
+          if(
+            currentView ===
+            "insights"
+          ){
+
             renderInsights();
+
           }
 
         },
@@ -5061,9 +7080,12 @@ setInterval(
     const now =
       todayKey();
 
-    if(now !== lastDate){
+    if(
+      now !== lastDate
+    ){
 
-      lastDate = now;
+      lastDate =
+        now;
 
       renderAll();
 
@@ -5082,21 +7104,38 @@ async function init(){
 
   showLogin();
 
-  const ready = await initSupabase();
+  const ready =
+    await initSupabase();
 
   if(!ready){
-    showLoginError("Unable to connect to the account service. Check your Supabase configuration.");
+
+    showLoginError(
+      "Unable to connect to the account service. Check your Supabase configuration."
+    );
+
     return;
   }
 
-  const {data:{session}} =
+  const {
+    data:{
+      session
+    }
+  } =
     await supabaseClient.auth.getSession();
 
   if(session){
-    currentUser = session.user;
+
+    currentUser =
+      session.user;
+
     await loadAuthenticatedData();
+
   }else{
-    switchAuthForm("login");
+
+    switchAuthForm(
+      "login"
+    );
+
   }
 }
 
