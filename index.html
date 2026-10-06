@@ -186,13 +186,6 @@ button:disabled{
   gap:8px;
 }
 
-.header-actions .btn{
-  height:42px;
-  min-height:42px;
-  padding:0 15px;
-  white-space:nowrap;
-}
-
 .icon-btn{
   width:42px;
   height:42px;
@@ -240,6 +233,32 @@ button:disabled{
   color:var(--on-accent);
   background:var(--accent2);
   border-color:var(--accent2);
+}
+
+/* Header actions: same height for every control, same width for text buttons */
+
+.header-actions .icon-btn,
+.header-actions .btn{
+  height:42px;
+}
+
+.header-actions .icon-btn{
+  width:42px;
+  border-radius:999px;
+}
+
+.header-actions .btn{
+  width:128px;
+  flex:none;
+  padding:0 14px;
+  font-size:13px;
+  white-space:nowrap;
+}
+
+.btn-label{
+  min-width:0;
+  overflow:hidden;
+  text-overflow:ellipsis;
 }
 
 .subbar{
@@ -812,6 +831,7 @@ button:disabled{
 }
 
 .calendar-wrap{
+  position:relative;
   overflow-x:auto;
   -webkit-overflow-scrolling:touch;
 }
@@ -835,13 +855,35 @@ button:disabled{
 }
 
 .calendar-habit{
+  position:sticky;
+  left:0;
+  z-index:5;
   display:flex;
   align-items:center;
   gap:9px;
   min-height:52px;
   padding-left:8px;
+  padding-right:8px;
+  background:var(--panel);
   font-size:12px;
   font-weight:750;
+}
+
+.calendar-head-habit{
+  position:sticky;
+  left:0;
+  z-index:5;
+  padding-left:8px;
+  background:var(--panel);
+  text-align:left;
+}
+
+.calendar-day.future{
+  opacity:.4;
+}
+
+.range-text{
+  margin-top:6px;
 }
 
 .calendar-day{
@@ -957,12 +999,12 @@ button:disabled{
 .chart{
   margin-top:25px;
   width:100%;
-  min-height:300px;
+  min-height:270px;
 }
 
 .chart svg{
   width:100%;
-  height:300px;
+  height:270px;
   display:block;
 }
 
@@ -1100,33 +1142,18 @@ button:disabled{
   grid-template-columns:repeat(8,minmax(40px,1fr));
   gap:10px;
   align-items:end;
+  overflow-x:auto;
+  padding-bottom:4px;
 }
 
 .week-column{
   display:grid;
   gap:7px;
   justify-items:center;
-  min-width:0;
 }
 
 .week-column .bar-track{
   height:145px;
-}
-
-.week-bars-stack{
-  width:100%;
-  max-width:38px;
-  height:145px;
-  display:flex;
-  align-items:flex-end;
-  gap:2px;
-}
-
-.week-habit-bar{
-  flex:1;
-  min-width:0;
-  border-radius:8px 8px 4px 4px;
-  transition:height .35s;
 }
 
 .week-label{
@@ -1137,13 +1164,15 @@ button:disabled{
   text-align:center;
 }
 
-.week-legend{
+.legend{
   display:flex;
   flex-wrap:wrap;
-  gap:12px 18px;
+  gap:8px 18px;
   margin-top:20px;
-  padding-top:16px;
-  border-top:1px solid var(--line);
+}
+
+.legend-top{
+  margin:0 0 20px;
 }
 
 .legend-item{
@@ -1151,15 +1180,38 @@ button:disabled{
   align-items:center;
   gap:7px;
   color:var(--muted);
-  font-size:11px;
+  font-size:12px;
   font-weight:700;
 }
 
-.legend-dot{
-  width:8px;
-  height:8px;
-  border-radius:50%;
-  flex:none;
+.chart-note{
+  margin-top:6px;
+}
+
+.bar-group{
+  display:flex;
+  align-items:flex-end;
+  justify-content:center;
+  gap:3px;
+  width:100%;
+  height:145px;
+}
+
+.bar-group .bar-track,
+.bar-group .bar-fill{
+  border-radius:7px;
+}
+
+.bar-group .bar-track{
+  flex:1;
+  width:auto;
+  min-width:4px;
+  max-width:22px;
+  height:145px;
+}
+
+.day-bar.future{
+  opacity:.5;
 }
 
 /* =========================
@@ -1365,7 +1417,6 @@ button:disabled{
 
   .header-actions{
     justify-content:flex-start;
-    flex-wrap:wrap;
   }
 
   .hero{
@@ -1422,15 +1473,18 @@ button:disabled{
   }
 
   .header-actions{
+    display:grid;
+    grid-template-columns:42px repeat(3,minmax(0,1fr));
+    gap:6px;
     width:100%;
   }
 
-  .header-actions .btn-primary{
-    flex:1;
-  }
-
   .header-actions .btn{
+    width:auto;
     min-width:0;
+    padding:0 8px;
+    gap:6px;
+    font-size:12px;
   }
 
   .nav button{
@@ -1473,7 +1527,7 @@ button:disabled{
   }
 
   .grid-4{
-    grid-template-columns:repeat(2,1fr);
+    grid-template-columns:repeat(2,minmax(0,1fr));
   }
 
   .kpi-grid{
@@ -1496,11 +1550,11 @@ button:disabled{
   .modal{
     padding:21px;
   }
+}
 
-  .weekly-grid{
-    overflow-x:auto;
-    grid-template-columns:repeat(8,60px);
-    padding-bottom:5px;
+@media(max-width:420px){
+  .header-actions .btn .icon{
+    display:none;
   }
 }
 
@@ -1685,6 +1739,8 @@ button:disabled{
   display:none;
 }
 
+/* App hidden when not logged in */
+
 .app{
   opacity:1;
   visibility:visible;
@@ -1762,6 +1818,18 @@ button:disabled{
   <path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-3-5.6 3 1.1-6.2L3 9.6l6.2-.9L12 3z"/>
 </symbol>
 
+<symbol id="download" viewBox="0 0 24 24">
+  <path d="M12 3v12"/>
+  <path d="m7 10 5 5 5-5"/>
+  <path d="M4 21h16"/>
+</symbol>
+
+<symbol id="upload" viewBox="0 0 24 24">
+  <path d="M12 16V4"/>
+  <path d="m7 9 5-5 5 5"/>
+  <path d="M4 20h16"/>
+</symbol>
+
 <symbol id="close" viewBox="0 0 24 24">
   <path d="M6 6l12 12M18 6 6 18"/>
 </symbol>
@@ -1770,6 +1838,11 @@ button:disabled{
   <circle cx="12" cy="12" r="9"/>
   <circle cx="12" cy="12" r="5"/>
   <circle cx="12" cy="12" r="1.5"/>
+</symbol>
+
+<symbol id="user" viewBox="0 0 24 24">
+  <circle cx="12" cy="8" r="4"/>
+  <path d="M4 21v-1a6 6 0 0 1 12 0v1"/>
 </symbol>
 
 <symbol id="logout" viewBox="0 0 24 24">
@@ -1785,133 +1858,65 @@ button:disabled{
 <!-- LOGIN SCREEN -->
 <div class="login-screen" id="loginScreen">
   <div class="login-card">
-
     <div class="login-logo">
       <div class="brand-title">The Arc</div>
       <div class="brand-sub">Become who you said you would</div>
     </div>
 
     <div class="login-form" id="loginForm">
-
-      <h3 class="login-form-title" id="loginFormTitle">
-        Sign In
-      </h3>
-
-      <p class="login-form-sub" id="loginFormSub">
-        Enter your email and password to continue
-      </p>
+      <h3 class="login-form-title" id="loginFormTitle">Sign In</h3>
+      <p class="login-form-sub" id="loginFormSub">Enter your email and password to continue</p>
 
       <div class="form-group">
         <label for="loginEmail">Email</label>
-        <input
-          type="email"
-          id="loginEmail"
-          placeholder="you@example.com"
-          autocomplete="email"
-        >
+        <input type="email" id="loginEmail" placeholder="you@example.com" autocomplete="email">
       </div>
 
       <div class="form-group">
         <label for="loginPassword">Password</label>
-        <input
-          type="password"
-          id="loginPassword"
-          placeholder="Enter password"
-          autocomplete="current-password"
-        >
+        <input type="password" id="loginPassword" placeholder="Enter password" autocomplete="current-password">
       </div>
 
-      <button class="login-btn btn-primary" id="loginSubmitBtn">
-        Sign In
-      </button>
+      <button class="login-btn btn-primary" id="loginSubmitBtn">Sign In</button>
 
       <p class="login-switch">
-        <span id="loginSwitchText">
-          Don't have an account?
-        </span>
-
-        <button
-          type="button"
-          class="btn-link"
-          id="loginSwitchBtn"
-        >
-          Create one
-        </button>
+        <span id="loginSwitchText">Don't have an account?</span>
+        <button type="button" class="btn-link" id="loginSwitchBtn">Create one</button>
       </p>
-
     </div>
 
     <div class="login-form hidden" id="signupForm">
-
-      <h3 class="login-form-title">
-        Create Account
-      </h3>
-
-      <p class="login-form-sub">
-        Start tracking your habits today
-      </p>
+      <h3 class="login-form-title">Create Account</h3>
+      <p class="login-form-sub">Start tracking your habits today</p>
 
       <div class="form-group">
         <label for="signupEmail">Email</label>
-        <input
-          type="email"
-          id="signupEmail"
-          placeholder="you@example.com"
-          autocomplete="email"
-        >
+        <input type="email" id="signupEmail" placeholder="you@example.com" autocomplete="email">
       </div>
 
       <div class="form-group">
         <label for="signupPassword">Password</label>
-        <input
-          type="password"
-          id="signupPassword"
-          placeholder="Min 6 characters"
-          autocomplete="new-password"
-          minlength="6"
-        >
+        <input type="password" id="signupPassword" placeholder="Min 6 characters" autocomplete="new-password" minlength="6">
       </div>
 
       <div class="form-group">
         <label for="signupConfirm">Confirm Password</label>
-        <input
-          type="password"
-          id="signupConfirm"
-          placeholder="Confirm password"
-          autocomplete="new-password"
-        >
+        <input type="password" id="signupConfirm" placeholder="Confirm password" autocomplete="new-password">
       </div>
 
-      <button
-        class="login-btn btn-primary"
-        id="signupSubmitBtn"
-      >
-        Create Account
-      </button>
+      <button class="login-btn btn-primary" id="signupSubmitBtn">Create Account</button>
 
       <p class="login-switch">
         <span>Already have an account?</span>
-
-        <button
-          type="button"
-          class="btn-link"
-          id="signupSwitchBtn"
-        >
-          Sign In
-        </button>
+        <button type="button" class="btn-link" id="signupSwitchBtn">Sign In</button>
       </p>
-
     </div>
 
     <div class="login-footer">
       Your data is securely stored and synced
     </div>
 
-    <div
-      class="login-error hidden"
-      id="loginError"
-    ></div>
-
+    <div class="login-error hidden" id="loginError"></div>
   </div>
 </div>
 
@@ -1923,100 +1928,48 @@ button:disabled{
   <header class="top">
 
     <div class="brand">
-
-      <div class="brand-title">
-        The Arc
-      </div>
-
-      <div class="brand-sub">
-        Become who you said you would
-      </div>
-
+      <div class="brand-title">The Arc</div>
+      <div class="brand-sub">Become who you said you would</div>
     </div>
 
+    <nav class="nav" aria-label="Main navigation">
 
-    <nav
-      class="nav"
-      aria-label="Main navigation"
-    >
-
-      <button
-        type="button"
-        data-view="today"
-        aria-current="page"
-      >
-        <svg class="icon icon-sm">
-          <use href="#home"/>
-        </svg>
+      <button type="button" data-view="today" aria-current="page">
+        <svg class="icon icon-sm"><use href="#home"/></svg>
         Today
       </button>
 
-      <button
-        type="button"
-        data-view="habits"
-      >
-        <svg class="icon icon-sm">
-          <use href="#grid"/>
-        </svg>
+      <button type="button" data-view="habits">
+        <svg class="icon icon-sm"><use href="#grid"/></svg>
         Habits
       </button>
 
-      <button
-        type="button"
-        data-view="insights"
-      >
-        <svg class="icon icon-sm">
-          <use href="#chart"/>
-        </svg>
+      <button type="button" data-view="insights">
+        <svg class="icon icon-sm"><use href="#chart"/></svg>
         Insights
       </button>
 
     </nav>
 
-
     <div class="header-actions">
 
-      <button
-        class="icon-btn"
-        id="themeBtn"
-        title="Toggle theme"
-      >
-        <svg class="icon">
-          <use href="#moon"/>
-        </svg>
+      <button class="icon-btn" id="themeBtn" title="Toggle theme">
+        <svg class="icon"><use href="#moon"/></svg>
       </button>
 
-      <button
-        class="btn"
-        id="manageBtn"
-      >
-        <svg class="icon icon-sm">
-          <use href="#settings"/>
-        </svg>
-        Manage
+      <button class="btn" id="manageBtn">
+        <svg class="icon icon-sm"><use href="#settings"/></svg>
+        <span class="btn-label">Manage</span>
       </button>
 
-      <button
-        class="btn btn-primary"
-        id="addBtn"
-      >
-        <svg class="icon icon-sm">
-          <use href="#plus"/>
-        </svg>
-        Add Habit
+      <button class="btn btn-primary" id="addBtn">
+        <svg class="icon icon-sm"><use href="#plus"/></svg>
+        <span class="btn-label">Add Habit</span>
       </button>
 
-      <button
-        class="btn"
-        id="logoutBtn"
-        title="Sign out"
-      >
-        <svg class="icon icon-sm">
-          <use href="#logout"/>
-        </svg>
-        <span id="userDisplayName">
-          User
-        </span>
+      <button class="btn" id="logoutBtn" title="Sign out">
+        <svg class="icon icon-sm"><use href="#logout"/></svg>
+        <span class="btn-label" id="userDisplayName">User</span>
       </button>
 
     </div>
@@ -2026,10 +1979,7 @@ button:disabled{
 
   <div class="subbar">
 
-    <div
-      class="status"
-      id="statusText"
-    >
+    <div class="status" id="statusText">
       Saved locally
     </div>
 
@@ -2042,10 +1992,7 @@ button:disabled{
 
   <main>
 
-    <section
-      id="page-today"
-      class="view"
-    >
+    <section id="page-today" class="view">
 
       <div class="hero">
 
@@ -2055,22 +2002,13 @@ button:disabled{
             Your arc · Today
           </div>
 
-          <div
-            class="hero-title"
-            id="todayHeadline"
-          >
+          <div class="hero-title" id="todayHeadline">
             Show up.
           </div>
 
-          <div
-            class="hero-date"
-            id="todayDate"
-          ></div>
+          <div class="hero-date" id="todayDate"></div>
 
-          <div
-            class="hero-message"
-            id="todayMessage"
-          >
+          <div class="hero-message" id="todayMessage">
             Small actions compound. Keep the chain alive.
           </div>
 
@@ -2083,53 +2021,33 @@ button:disabled{
         <div class="hero-stats">
 
           <div class="hero-stat">
-
-            <svg
-              class="icon"
-              style="color:var(--accent)"
-            >
+            <svg class="icon" style="color:var(--accent)">
               <use href="#flame"/>
             </svg>
-
             <div>
               <b id="todayStreak">0</b>
               <span>day streak</span>
             </div>
-
           </div>
 
-
           <div class="hero-stat">
-
-            <svg
-              class="icon"
-              style="color:var(--gold)"
-            >
+            <svg class="icon" style="color:var(--gold)">
               <use href="#star"/>
             </svg>
-
             <div>
               <b id="bestStreak">0</b>
               <span>best streak</span>
             </div>
-
           </div>
 
-
           <div class="hero-stat">
-
-            <svg
-              class="icon"
-              style="color:var(--green)"
-            >
+            <svg class="icon" style="color:var(--green)">
               <use href="#target"/>
             </svg>
-
             <div>
               <b id="perfectDays">0</b>
               <span>perfect days</span>
             </div>
-
           </div>
 
         </div>
@@ -2142,30 +2060,17 @@ button:disabled{
         <div class="panel-heading">
 
           <div>
-
-            <div class="section-label">
-              Daily execution
-            </div>
-
-            <div class="section-title">
-              Today's commitments
-            </div>
-
+            <div class="section-label">Daily execution</div>
+            <div class="section-title">Today's commitments</div>
           </div>
 
-          <div
-            class="muted small"
-            id="todayCount"
-          >
+          <div class="muted small" id="todayCount">
             0 / 0
           </div>
 
         </div>
 
-        <div
-          class="habit-list"
-          id="todayHabits"
-        ></div>
+        <div class="habit-list" id="todayHabits"></div>
 
       </div>
 
@@ -2177,28 +2082,15 @@ button:disabled{
           <div class="panel-heading">
 
             <div>
-
-              <div class="section-label">
-                Consistency
-              </div>
-
-              <div class="section-title">
-                This week
-              </div>
-
+              <div class="section-label">Consistency</div>
+              <div class="section-title">This week</div>
             </div>
 
-            <div
-              class="muted small"
-              id="weekRange"
-            ></div>
+            <div class="muted small" id="weekRange"></div>
 
           </div>
 
-          <div
-            class="week-bars"
-            id="weekBars"
-          ></div>
+          <div class="week-bars" id="weekBars"></div>
 
         </div>
 
@@ -2208,40 +2100,24 @@ button:disabled{
           <div class="panel-heading">
 
             <div>
-
-              <div class="section-label">
-                30-day view
-              </div>
-
-              <div class="section-title">
-                Progress
-              </div>
-
+              <div class="section-label">30-day view</div>
+              <div class="section-title">Progress</div>
             </div>
 
-            <div
-              class="muted small"
-              id="overallRate"
-            >
+            <div class="muted small" id="overallRate">
               0%
             </div>
 
           </div>
 
-          <div
-            class="progress-list"
-            id="overallProgress"
-          ></div>
+          <div class="progress-list" id="overallProgress"></div>
 
         </div>
 
       </div>
 
 
-      <div
-        class="grid-4"
-        id="todayStats"
-      ></div>
+      <div class="grid-4" id="todayStats"></div>
 
     </section>
 
@@ -2250,51 +2126,23 @@ button:disabled{
          HABITS
     ====================== -->
 
-    <section
-      id="page-habits"
-      class="view"
-      hidden
-    >
+    <section id="page-habits" class="view" hidden>
 
       <div class="panel">
 
         <div class="toolbar">
 
           <div>
-
-            <div class="section-label">
-              Tracking history
-            </div>
-
-            <div class="section-title">
-              Your habits
-            </div>
-
+            <div class="section-label">Tracking history</div>
+            <div class="section-title">Your habits</div>
+            <div class="muted small range-text" id="habitRangeText"></div>
           </div>
 
-          <select
-            class="select"
-            id="habitRange"
-          >
-            <option value="7">
-              Last 7 days
-            </option>
-
-            <option
-              value="14"
-              selected
-            >
-              Last 14 days
-            </option>
-
-            <option value="30">
-              Last 30 days
-            </option>
-
-            <option value="60">
-              Last 60 days
-            </option>
-
+          <select class="select" id="habitRange" aria-label="Days shown around today">
+            <option value="7">7 days</option>
+            <option value="14" selected>14 days</option>
+            <option value="30">30 days</option>
+            <option value="60">60 days</option>
           </select>
 
         </div>
@@ -2310,11 +2158,7 @@ button:disabled{
          INSIGHTS
     ====================== -->
 
-    <section
-      id="page-insights"
-      class="view"
-      hidden
-    >
+    <section id="page-insights" class="view" hidden>
 
       <div class="panel">
 
@@ -2322,24 +2166,15 @@ button:disabled{
 
           <div>
 
-            <div
-              class="section-label"
-              id="insightLabel"
-            >
+            <div class="section-label" id="insightLabel">
               Overall consistency
             </div>
 
-            <div
-              class="insight-score"
-              id="insightScore"
-            >
+            <div class="insight-score" id="insightScore">
               0%
             </div>
 
-            <div
-              class="muted small"
-              id="insightRangeText"
-            >
+            <div class="muted small" id="insightRangeText">
               Last 14 days
             </div>
 
@@ -2348,53 +2183,29 @@ button:disabled{
 
           <div class="filters">
 
-            <select
-              class="select"
-              id="insightRange"
-            >
-              <option value="7">
-                Last 7 days
-              </option>
-
-              <option
-                value="14"
-                selected
-              >
-                Last 14 days
-              </option>
-
-              <option value="30">
-                Last 30 days
-              </option>
-
-              <option value="60">
-                Last 60 days
-              </option>
-
+            <select class="select" id="insightRange">
+              <option value="7">Last 7 days</option>
+              <option value="14" selected>Last 14 days</option>
+              <option value="30">Last 30 days</option>
+              <option value="60">Last 60 days</option>
             </select>
 
           </div>
 
         </div>
 
+        <div class="legend" id="insightLegend"></div>
 
-        <div
-          class="chart"
-          id="insightChart"
-        ></div>
+        <div class="chart" id="insightChart"></div>
 
-        <div
-          class="week-legend"
-          id="insightLegend"
-        ></div>
+        <div class="muted small chart-note">
+          Each line is one habit's 7-day rolling completion rate.
+        </div>
 
       </div>
 
 
-      <div
-        class="kpi-grid"
-        id="insightKpis"
-      ></div>
+      <div class="kpi-grid" id="insightKpis"></div>
 
 
       <div class="grid-2">
@@ -2404,48 +2215,20 @@ button:disabled{
           <div class="panel-heading">
 
             <div>
-
-              <div class="section-label">
-                Ranking
-              </div>
-
-              <div class="section-title">
-                Leaderboard
-              </div>
-
+              <div class="section-label">Ranking</div>
+              <div class="section-title">Leaderboard</div>
             </div>
 
-            <select
-              class="select"
-              id="leaderRange"
-            >
-              <option value="1">
-                1D
-              </option>
-
-              <option
-                value="7"
-                selected
-              >
-                7D
-              </option>
-
-              <option value="14">
-                14D
-              </option>
-
-              <option value="30">
-                30D
-              </option>
-
+            <select class="select" id="leaderRange">
+              <option value="1">1D</option>
+              <option value="7" selected>7D</option>
+              <option value="14">14D</option>
+              <option value="30">30D</option>
             </select>
 
           </div>
 
-          <div
-            class="leaderboard"
-            id="leaderboard"
-          ></div>
+          <div class="leaderboard" id="leaderboard"></div>
 
         </div>
 
@@ -2455,15 +2238,8 @@ button:disabled{
           <div class="panel-heading">
 
             <div>
-
-              <div class="section-label">
-                Momentum
-              </div>
-
-              <div class="section-title">
-                Streaks
-              </div>
-
+              <div class="section-label">Momentum</div>
+              <div class="section-title">Streaks</div>
             </div>
 
           </div>
@@ -2480,28 +2256,15 @@ button:disabled{
         <div class="panel-heading">
 
           <div>
-
-            <div class="section-label">
-              Consistency over time
-            </div>
-
-            <div class="section-title">
-              Week by week
-            </div>
-
+            <div class="section-label">Consistency over time</div>
+            <div class="section-title">Week by week</div>
           </div>
 
         </div>
 
-        <div
-          class="weekly-grid"
-          id="weeklyInsights"
-        ></div>
+        <div class="legend legend-top" id="weeklyLegend"></div>
 
-        <div
-          class="week-legend"
-          id="weeklyLegend"
-        ></div>
+        <div class="weekly-grid" id="weeklyInsights"></div>
 
       </div>
 
@@ -2516,44 +2279,26 @@ button:disabled{
      ADD MODAL
 ====================== -->
 
-<div
-  class="overlay"
-  id="addModal"
->
+<div class="overlay" id="addModal">
 
   <div class="modal">
 
     <div class="modal-head">
 
       <div>
-
-        <div class="section-label">
-          Build your arc
-        </div>
-
-        <div class="modal-title">
-          Add habit
-        </div>
-
+        <div class="section-label">Build your arc</div>
+        <div class="modal-title">Add habit</div>
       </div>
 
-      <button
-        class="icon-btn"
-        data-close="addModal"
-      >
-        <svg class="icon">
-          <use href="#close"/>
-        </svg>
+      <button class="icon-btn" data-close="addModal">
+        <svg class="icon"><use href="#close"/></svg>
       </button>
 
     </div>
 
-
     <div class="field">
 
-      <label for="newName">
-        Habit name
-      </label>
+      <label for="newName">Habit name</label>
 
       <input
         id="newName"
@@ -2563,12 +2308,9 @@ button:disabled{
 
     </div>
 
-
     <div class="field">
 
-      <label for="newDesc">
-        Description
-      </label>
+      <label for="newDesc">Description</label>
 
       <textarea
         id="newDesc"
@@ -2578,20 +2320,13 @@ button:disabled{
 
     </div>
 
-
     <div class="modal-actions">
 
-      <button
-        class="btn"
-        data-close="addModal"
-      >
+      <button class="btn" data-close="addModal">
         Cancel
       </button>
 
-      <button
-        class="btn btn-primary"
-        id="createHabit"
-      >
+      <button class="btn btn-primary" id="createHabit">
         Add Habit
       </button>
 
@@ -2606,86 +2341,48 @@ button:disabled{
      EDIT MODAL
 ====================== -->
 
-<div
-  class="overlay"
-  id="editModal"
->
+<div class="overlay" id="editModal">
 
   <div class="modal">
 
     <div class="modal-head">
 
       <div>
-
-        <div class="section-label">
-          Habit
-        </div>
-
-        <div class="modal-title">
-          Edit habit
-        </div>
-
+        <div class="section-label">Habit</div>
+        <div class="modal-title">Edit habit</div>
       </div>
 
-      <button
-        class="icon-btn"
-        data-close="editModal"
-      >
-        <svg class="icon">
-          <use href="#close"/>
-        </svg>
+      <button class="icon-btn" data-close="editModal">
+        <svg class="icon"><use href="#close"/></svg>
       </button>
 
     </div>
 
-
-    <input
-      type="hidden"
-      id="editId"
-    >
-
+    <input type="hidden" id="editId">
 
     <div class="field">
 
-      <label for="editName">
-        Habit name
-      </label>
+      <label for="editName">Habit name</label>
 
-      <input
-        id="editName"
-        maxlength="50"
-      >
+      <input id="editName" maxlength="50">
 
     </div>
-
 
     <div class="field">
 
-      <label for="editDesc">
-        Description
-      </label>
+      <label for="editDesc">Description</label>
 
-      <textarea
-        id="editDesc"
-        maxlength="120"
-      ></textarea>
+      <textarea id="editDesc" maxlength="120"></textarea>
 
     </div>
-
 
     <div class="modal-actions">
 
-      <button
-        class="btn"
-        data-close="editModal"
-      >
+      <button class="btn" data-close="editModal">
         Cancel
       </button>
 
-      <button
-        class="btn btn-primary"
-        id="saveEdit"
-      >
+      <button class="btn btn-primary" id="saveEdit">
         Save changes
       </button>
 
@@ -2700,42 +2397,24 @@ button:disabled{
      MANAGE MODAL
 ====================== -->
 
-<div
-  class="overlay"
-  id="manageModal"
->
+<div class="overlay" id="manageModal">
 
   <div class="modal">
 
     <div class="modal-head">
 
       <div>
-
-        <div class="section-label">
-          Customize
-        </div>
-
-        <div class="modal-title">
-          Manage habits
-        </div>
-
+        <div class="section-label">Customize</div>
+        <div class="modal-title">Manage habits</div>
       </div>
 
-      <button
-        class="icon-btn"
-        data-close="manageModal"
-      >
-        <svg class="icon">
-          <use href="#close"/>
-        </svg>
+      <button class="icon-btn" data-close="manageModal">
+        <svg class="icon"><use href="#close"/></svg>
       </button>
 
     </div>
 
-    <div
-      class="manage-list"
-      id="manageList"
-    ></div>
+    <div class="manage-list" id="manageList"></div>
 
   </div>
 
@@ -2782,6 +2461,7 @@ let state = {
 
 let currentView = "today";
 let habitRange = 14;
+let habitCenterToday = true;
 let insightRange = 14;
 let leaderboardRange = 7;
 
@@ -2815,7 +2495,6 @@ function todayKey(){
 
 function fromKey(key){
   const p = key.split("-");
-
   return new Date(
     Number(p[0]),
     Number(p[1])-1,
@@ -2837,96 +2516,83 @@ function dateList(range){
   const result = [];
 
   for(let i=range-1;i>=0;i--){
-
     const d = daysAgo(i);
 
     result.push({
       date:d,
       key:dateKey(d)
     });
-
   }
 
   return result;
 }
 
 /*
-  Returns a centered range around today.
-
-  7  = 3 before + today + 4 after
-  14 = 7 before + today + 7 after
-  30 = 15 before + today + 15 after
-  60 = 30 before + today + 30 after
+  Window centred on today: the first half of the range is
+  before today, the rest starts with today.
+  7 days  -> 3 before, today, 3 after
+  14 days -> 7 before, today, 6 after
 */
 
-function centeredDateList(range){
-
-  const today = new Date();
-
-  let before;
-  let after;
-
-  if(range === 7){
-    before = 3;
-    after = 4;
-  }else{
-    before = Math.floor(range/2);
-    after = Math.floor(range/2);
-  }
-
+function windowList(range){
+  const before = Math.floor(range/2);
   const result = [];
 
-  for(let i=-before;i<=after;i++){
-
-    const d = addDays(today,i);
+  for(let i=-before;i<range-before;i++){
+    const d = addDays(new Date(),i);
 
     result.push({
       date:d,
       key:dateKey(d)
     });
+  }
 
+  return result;
+}
+
+function currentWeekDays(){
+  const now = new Date();
+  const sinceMonday = (now.getDay()+6)%7;
+  const result = [];
+
+  for(let i=0;i<7;i++){
+    const d = addDays(now,i-sinceMonday);
+
+    result.push({
+      date:d,
+      key:dateKey(d)
+    });
   }
 
   return result;
 }
 
 function formatDate(date, options){
-  return date.toLocaleDateString(
-    "en-US",
-    options
-  );
+  return date.toLocaleDateString("en-US",options);
 }
 
 function escapeHTML(value){
-
   return String(value)
     .replaceAll("&","&amp;")
     .replaceAll("<","&lt;")
     .replaceAll(">","&gt;")
     .replaceAll('"',"&quot;")
     .replaceAll("'","&#039;");
-
 }
 
 function habitById(id){
-  return state.habits.find(
-    h => h.id === id
-  );
+  return state.habits.find(h => h.id === id);
 }
 
 function visibleHabits(){
-  return state.habits.filter(
-    h => h.visible !== false
-  );
+  return state.habits.filter(h => h.visible !== false);
 }
 
 function isDone(key,id){
-
   return !!(
     state.checkins[key] &&
     state.checkins[key][id] === true
   );
-
 }
 
 function setDone(key,id,value){
@@ -2936,37 +2602,28 @@ function setDone(key,id,value){
   }
 
   if(value){
-
     state.checkins[key][id] = true;
-
   }else{
-
     delete state.checkins[key][id];
-
   }
 
   if(
     state.checkins[key] &&
     Object.keys(state.checkins[key]).length === 0
   ){
-
     delete state.checkins[key];
-
   }
 
   save();
 }
 
 function completedOnDay(key){
-
   return visibleHabits().filter(
     h => isDone(key,h.id)
   ).length;
-
 }
 
 function dayPercent(key){
-
   const habits = visibleHabits();
 
   if(!habits.length){
@@ -2978,11 +2635,9 @@ function dayPercent(key){
     habits.length *
     100
   );
-
 }
 
 function overallPercent(days){
-
   const habits = visibleHabits();
 
   if(!habits.length || !days.length){
@@ -3000,55 +2655,6 @@ function overallPercent(days){
     (days.length * habits.length) *
     100
   );
-
-}
-
-
-/* =========================================================
-   MONDAY → SUNDAY WEEK
-========================================================= */
-
-function currentWeekMonday(){
-
-  const today = new Date();
-
-  const day = today.getDay();
-
-  const daysFromMonday =
-    day === 0
-      ? 6
-      : day - 1;
-
-  return addDays(
-    today,
-    -daysFromMonday
-  );
-
-}
-
-function currentWeekDays(){
-
-  const monday =
-    currentWeekMonday();
-
-  return Array.from(
-    {length:7},
-    (_,index) => {
-
-      const d =
-        addDays(
-          monday,
-          index
-        );
-
-      return {
-        date:d,
-        key:dateKey(d)
-      };
-
-    }
-  );
-
 }
 
 
@@ -3061,24 +2667,22 @@ function currentStreak(habitId){
   let count = 0;
   let d = new Date();
 
-  if(isDone(dateKey(d),habitId)){
+  /*
+    A habit can have a current streak even if today
+    has not been completed yet. In that case we start
+    from yesterday.
+  */
 
+  if(isDone(dateKey(d),habitId)){
     count = 1;
     d = addDays(d,-1);
-
   }else{
-
     d = addDays(d,-1);
-
   }
 
-  while(
-    isDone(dateKey(d),habitId)
-  ){
-
+  while(isDone(dateKey(d),habitId)){
     count++;
     d = addDays(d,-1);
-
   }
 
   return count;
@@ -3087,26 +2691,16 @@ function currentStreak(habitId){
 function bestStreak(habitId){
 
   const days = dateList(365);
-
   let best = 0;
   let current = 0;
 
   days.forEach(d => {
 
     if(isDone(d.key,habitId)){
-
       current++;
-
-      best =
-        Math.max(
-          best,
-          current
-        );
-
+      best = Math.max(best,current);
     }else{
-
       current = 0;
-
     }
 
   });
@@ -3116,8 +2710,7 @@ function bestStreak(habitId){
 
 function streakForAll(){
 
-  const habits =
-    visibleHabits();
+  const habits = visibleHabits();
 
   if(!habits.length){
     return 0;
@@ -3128,18 +2721,14 @@ function streakForAll(){
 
   while(true){
 
-    const key =
-      dateKey(d);
+    const key = dateKey(d);
 
     if(dayPercent(key) !== 100){
       break;
     }
 
     count++;
-
-    d =
-      addDays(d,-1);
-
+    d = addDays(d,-1);
   }
 
   return count;
@@ -3147,35 +2736,23 @@ function streakForAll(){
 
 function bestPerfectDays(){
 
-  const habits =
-    visibleHabits();
+  const habits = visibleHabits();
 
   if(!habits.length){
     return 0;
   }
 
-  const days =
-    dateList(365);
-
+  const days = dateList(365);
   let best = 0;
   let current = 0;
 
   days.forEach(d => {
 
     if(dayPercent(d.key) === 100){
-
       current++;
-
-      best =
-        Math.max(
-          best,
-          current
-        );
-
+      best = Math.max(best,current);
     }else{
-
       current = 0;
-
     }
 
   });
@@ -3188,101 +2765,57 @@ function countPerfectDays(days){
   return days.filter(
     d => dayPercent(d.key) === 100
   ).length;
-
 }
 
 
 /* =========================================================
-   SUPABASE
+   SUPABASE INTEGRATION
 ========================================================= */
 
 async function initSupabase(){
-
-  if(
-    !SUPABASE_URL ||
-    !SUPABASE_ANON_KEY ||
-    SUPABASE_URL.includes("%VITE_")
-  ){
-
-    console.error(
-      "Supabase is not configured."
-    );
-
+  if(!SUPABASE_URL || !SUPABASE_ANON_KEY){
+    console.error("Supabase is not configured.");
     return false;
-
   }
 
   try{
-
-    if(
-      typeof window.supabase === "undefined"
-    ){
-
-      const script =
-        document.createElement("script");
-
-      script.src =
-        "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2";
-
+    if(typeof window.supabase === "undefined"){
+      const script = document.createElement("script");
+      script.src = "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2";
       document.head.appendChild(script);
 
-      await new Promise(
-        (resolve,reject) => {
-
-          script.onload = resolve;
-          script.onerror = reject;
-
-        }
-      );
-
+      await new Promise((resolve,reject) => {
+        script.onload = resolve;
+        script.onerror = reject;
+      });
     }
 
-    supabaseClient =
-      window.supabase.createClient(
-        SUPABASE_URL,
-        SUPABASE_ANON_KEY
-      );
+    supabaseClient = window.supabase.createClient(
+      SUPABASE_URL,
+      SUPABASE_ANON_KEY
+    );
 
     supabaseClient.auth.onAuthStateChange(
       async (_event,session) => {
-
         if(session){
-
-          currentUser =
-            session.user;
-
+          currentUser = session.user;
           await loadAuthenticatedData();
-
         }else{
-
           currentUser = null;
-
           showLogin();
-
         }
-
       }
     );
 
     return true;
-
   }catch(error){
-
-    console.error(
-      "Supabase init error:",
-      error
-    );
-
+    console.error("Supabase init error:",error);
     return false;
-
   }
-
 }
 
 function defaultState(){
-
   return {
-
     habits:[
       {
         id:uid(),
@@ -3299,424 +2832,206 @@ function defaultState(){
         visible:true
       }
     ],
-
     checkins:{},
-
     dark:false
-
   };
-
 }
 
 function localStorageKey(){
-
   return currentUser
     ? `${STORAGE_KEY}:${currentUser.id}`
     : STORAGE_KEY;
-
 }
 
 function showLogin(){
-
-  $("appContainer")
-    .classList.add("hidden");
-
-  $("loginScreen")
-    .classList.remove("hidden");
-
+  $("appContainer").classList.add("hidden");
+  $("loginScreen").classList.remove("hidden");
   clearLoginError();
-
 }
 
 function showApp(){
-
-  $("loginScreen")
-    .classList.add("hidden");
-
-  $("appContainer")
-    .classList.remove("hidden");
-
+  $("loginScreen").classList.add("hidden");
+  $("appContainer").classList.remove("hidden");
   $("userDisplayName").textContent =
     currentUser?.email || "User";
-
+  $("logoutBtn").title =
+    currentUser?.email
+      ? "Sign out " + currentUser.email
+      : "Sign out";
 }
 
 function clearLoginError(){
-
   $("loginError").textContent = "";
-
-  $("loginError")
-    .classList.add("hidden");
-
+  $("loginError").classList.add("hidden");
 }
 
 function showLoginError(message){
-
-  $("loginError").textContent =
-    message;
-
-  $("loginError")
-    .classList.remove("hidden");
-
+  $("loginError").textContent = message;
+  $("loginError").classList.remove("hidden");
 }
 
 function switchAuthForm(mode){
-
   clearLoginError();
 
-  const login =
-    mode === "login";
+  const login = mode === "login";
 
-  $("loginForm")
-    .classList.toggle(
-      "hidden",
-      !login
-    );
-
-  $("signupForm")
-    .classList.toggle(
-      "hidden",
-      login
-    );
-
+  $("loginForm").classList.toggle("hidden",!login);
+  $("signupForm").classList.toggle("hidden",login);
 }
 
 async function signInWithEmail(){
-
   clearLoginError();
 
-  const email =
-    $("loginEmail").value.trim();
-
-  const password =
-    $("loginPassword").value;
+  const email = $("loginEmail").value.trim();
+  const password = $("loginPassword").value;
 
   if(!email || !password){
-
-    showLoginError(
-      "Enter your email and password."
-    );
-
+    showLoginError("Enter your email and password.");
     return;
-
   }
 
-  const button =
-    $("loginSubmitBtn");
-
+  const button = $("loginSubmitBtn");
   button.disabled = true;
-  button.textContent =
-    "Signing in...";
+  button.textContent = "Signing in...";
 
   try{
+    const {data,error} = await supabaseClient.auth.signInWithPassword({
+      email,
+      password
+    });
 
-    const {
-      data,
-      error
-    } =
-      await supabaseClient.auth
-        .signInWithPassword({
-          email,
-          password
-        });
-
-    if(error){
-      throw error;
-    }
+    if(error) throw error;
 
     if(data.user){
-
-      currentUser =
-        data.user;
-
+      currentUser = data.user;
       await loadAuthenticatedData();
-
     }
-
   }catch(error){
-
-    console.error(
-      "Sign in error:",
-      error
-    );
-
-    showLoginError(
-      error.message ||
-      "Could not sign in. Please try again."
-    );
-
+    console.error("Sign in error:",error);
+    showLoginError(error.message || "Could not sign in. Please try again.");
   }finally{
-
     button.disabled = false;
-
-    button.textContent =
-      "Sign In";
-
+    button.textContent = "Sign In";
   }
-
 }
 
 async function signUpWithEmail(){
-
   clearLoginError();
 
-  const email =
-    $("signupEmail").value.trim();
+  const email = $("signupEmail").value.trim();
+  const password = $("signupPassword").value;
+  const confirmPassword = $("signupConfirm").value;
 
-  const password =
-    $("signupPassword").value;
-
-  const confirmPassword =
-    $("signupConfirm").value;
-
-  if(
-    !email ||
-    !password ||
-    !confirmPassword
-  ){
-
-    showLoginError(
-      "Complete all fields."
-    );
-
+  if(!email || !password || !confirmPassword){
+    showLoginError("Complete all fields.");
     return;
-
   }
 
   if(password.length < 6){
-
-    showLoginError(
-      "Password must be at least 6 characters."
-    );
-
+    showLoginError("Password must be at least 6 characters.");
     return;
-
   }
 
   if(password !== confirmPassword){
-
-    showLoginError(
-      "Passwords do not match."
-    );
-
+    showLoginError("Passwords do not match.");
     return;
-
   }
 
-  const button =
-    $("signupSubmitBtn");
-
+  const button = $("signupSubmitBtn");
   button.disabled = true;
-  button.textContent =
-    "Creating...";
+  button.textContent = "Creating...";
 
   try{
+    const {data,error} = await supabaseClient.auth.signUp({
+      email,
+      password
+    });
 
-    const {
-      data,
-      error
-    } =
-      await supabaseClient.auth
-        .signUp({
-          email,
-          password
-        });
+    if(error) throw error;
 
-    if(error){
-      throw error;
-    }
-
-    if(
-      data.session &&
-      data.user
-    ){
-
-      currentUser =
-        data.user;
-
+    if(data.session && data.user){
+      currentUser = data.user;
       await loadAuthenticatedData();
-
     }else{
-
       switchAuthForm("login");
-
-      $("loginEmail").value =
-        email;
-
-      showLoginError(
-        "Account created. Check your email to confirm your account, then sign in."
-      );
-
+      $("loginEmail").value = email;
+      showLoginError("Account created. Check your email to confirm your account, then sign in.");
     }
-
   }catch(error){
-
-    console.error(
-      "Sign up error:",
-      error
-    );
-
-    showLoginError(
-      error.message ||
-      "Could not create your account. Please try again."
-    );
-
+    console.error("Sign up error:",error);
+    showLoginError(error.message || "Could not create your account. Please try again.");
   }finally{
-
     button.disabled = false;
-
-    button.textContent =
-      "Create Account";
-
+    button.textContent = "Create Account";
   }
-
 }
 
 async function signOut(){
-
-  if(!supabaseClient){
-    return;
-  }
+  if(!supabaseClient) return;
 
   try{
-
-    await supabaseClient
-      .auth
-      .signOut();
-
+    await supabaseClient.auth.signOut();
   }catch(error){
-
-    console.error(
-      "Sign out error:",
-      error
-    );
-
+    console.error("Sign out error:",error);
   }
 
   currentUser = null;
-
-  state =
-    defaultState();
-
+  state = defaultState();
   applyTheme();
-
   showLogin();
-
 }
 
 async function syncToCloud(){
-
-  if(
-    !supabaseClient ||
-    !currentUser
-  ){
-    return false;
-  }
+  if(!supabaseClient || !currentUser) return false;
 
   try{
+    const updatedAt = new Date().toISOString();
 
-    const updatedAt =
-      new Date().toISOString();
+    const {error} = await supabaseClient
+      .from("arc_data")
+      .upsert({
+        user_id:currentUser.id,
+        data:state,
+        updated_at:updatedAt
+      },{onConflict:"user_id"});
 
-    const {
-      error
-    } =
-      await supabaseClient
-        .from("arc_data")
-        .upsert(
-          {
-            user_id:currentUser.id,
-            data:state,
-            updated_at:updatedAt
-          },
-          {
-            onConflict:"user_id"
-          }
-        );
-
-    if(error){
-      throw error;
-    }
+    if(error) throw error;
 
     localStorage.setItem(
       localStorageKey() + "_updated",
-      String(
-        Date.parse(updatedAt)
-      )
+      String(Date.parse(updatedAt))
     );
 
-    $("statusText").textContent =
-      "Synced to cloud";
-
+    $("statusText").textContent = "Synced to cloud";
     return true;
-
   }catch(error){
-
-    console.error(
-      "Sync to cloud error:",
-      error
-    );
-
-    $("statusText").textContent =
-      "Saved locally (sync failed)";
-
+    console.error("Sync to cloud error:",error);
+    $("statusText").textContent = "Saved locally (sync failed)";
     return false;
-
   }
-
 }
 
 async function syncFromCloud(){
-
-  if(
-    !supabaseClient ||
-    !currentUser
-  ){
-    return false;
-  }
+  if(!supabaseClient || !currentUser) return false;
 
   try{
+    const {data,error} = await supabaseClient
+      .from("arc_data")
+      .select("data,updated_at")
+      .eq("user_id",currentUser.id)
+      .maybeSingle();
 
-    const {
-      data,
-      error
-    } =
-      await supabaseClient
-        .from("arc_data")
-        .select("data,updated_at")
-        .eq(
-          "user_id",
-          currentUser.id
-        )
-        .maybeSingle();
+    if(error) throw error;
 
-    if(error){
-      throw error;
-    }
-
-    if(
-      data &&
-      data.data
-    ){
-
-      const cloudState =
-        data.data;
+    if(data && data.data){
+      const cloudState = data.data;
 
       state = {
-
-        habits:
-          Array.isArray(
-            cloudState.habits
-          )
-            ? cloudState.habits
-            : [],
-
-        checkins:
-          cloudState.checkins || {},
-
-        dark:
-          !!cloudState.dark
-
+        habits:Array.isArray(cloudState.habits)
+          ? cloudState.habits
+          : [],
+        checkins:cloudState.checkins || {},
+        dark:!!cloudState.dark
       };
 
       localStorage.setItem(
@@ -3725,94 +3040,50 @@ async function syncFromCloud(){
       );
 
       if(data.updated_at){
-
         localStorage.setItem(
-          localStorageKey() +
-          "_updated",
-          String(
-            Date.parse(
-              data.updated_at
-            )
-          )
+          localStorageKey() + "_updated",
+          String(Date.parse(data.updated_at))
         );
-
       }
 
       applyTheme();
-
-      $("statusText").textContent =
-        "Synced from cloud";
-
+      $("statusText").textContent = "Synced from cloud";
       return true;
-
     }
-
   }catch(error){
-
-    console.error(
-      "Sync from cloud error:",
-      error
-    );
-
+    console.error("Sync from cloud error:",error);
   }
 
   return false;
-
 }
 
 async function loadAuthenticatedData(){
+  if(!currentUser) return;
 
-  if(!currentUser){
-    return;
-  }
-
-  const localLoaded =
-    load();
-
-  const cloudLoaded =
-    await syncFromCloud();
+  const localLoaded = load();
+  const cloudLoaded = await syncFromCloud();
 
   if(!cloudLoaded){
-
     await syncToCloud();
-
   }
 
-  if(
-    !localLoaded &&
-    !cloudLoaded
-  ){
-
-    state =
-      defaultState();
-
+  if(!localLoaded && !cloudLoaded){
+    state = defaultState();
     applyTheme();
-
     save();
-
     await syncToCloud();
-
   }
 
   showApp();
-
   renderAll();
 
-  const initialHash =
-    location.hash.replace("#","");
-
+  const initialHash = location.hash.replace("#","");
   showView(
-    [
-      "today",
-      "habits",
-      "insights"
-    ].includes(initialHash)
+    ["today","habits","insights"].includes(initialHash)
       ? initialHash
       : "today"
   );
-
 }
-
 
 /* =========================================================
    SAVE / LOAD
@@ -3820,8 +3091,7 @@ async function loadAuthenticatedData(){
 
 function save(){
 
-  const key =
-    localStorageKey();
+  const key = localStorageKey();
 
   localStorage.setItem(
     key,
@@ -3833,15 +3103,13 @@ function save(){
     Date.now().toString()
   );
 
-  $("statusText").textContent =
-    currentUser
-      ? "Saving..."
-      : "Saved locally";
+  $("statusText").textContent = currentUser
+    ? "Saving..."
+    : "Saved locally";
 
   if(currentUser){
     syncToCloud();
   }
-
 }
 
 function load(){
@@ -3849,60 +3117,32 @@ function load(){
   let loaded = false;
 
   try{
-
-    const raw =
-      localStorage.getItem(
-        localStorageKey()
-      );
+    const raw = localStorage.getItem(localStorageKey());
 
     if(raw){
-
-      const parsed =
-        JSON.parse(raw);
+      const parsed = JSON.parse(raw);
 
       state = {
-
-        habits:
-          Array.isArray(
-            parsed.habits
-          )
-            ? parsed.habits
-            : [],
-
-        checkins:
-          parsed.checkins || {},
-
-        dark:
-          !!parsed.dark
-
+        habits:Array.isArray(parsed.habits)
+          ? parsed.habits
+          : [],
+        checkins:parsed.checkins || {},
+        dark:!!parsed.dark
       };
 
       loaded = true;
-
     }
-
   }catch(error){
-
-    console.error(
-      "Load error:",
-      error
-    );
-
+    console.error("Load error:",error);
   }
 
   if(!loaded){
-
-    state =
-      defaultState();
-
+    state = defaultState();
   }
 
   applyTheme();
-
   return loaded;
-
 }
-
 
 /* =========================================================
    THEME
@@ -3910,40 +3150,27 @@ function load(){
 
 function applyTheme(){
 
-  document.documentElement
-    .classList.toggle(
-      "dark",
-      state.dark
-    );
+  document.documentElement.classList.toggle(
+    "dark",
+    state.dark
+  );
 
   $("themeBtn").innerHTML =
     `<svg class="icon">
-      <use href="#${
-        state.dark
-          ? "sun"
-          : "moon"
-      }"/>
+      <use href="#${state.dark ? "sun" : "moon"}"/>
     </svg>`;
-
 }
 
 function toggleTheme(){
 
-  state.dark =
-    !state.dark;
+  state.dark = !state.dark;
 
   applyTheme();
-
   save();
 
-  if(
-    currentView === "insights"
-  ){
-
+  if(currentView === "insights"){
     renderInsights();
-
   }
-
 }
 
 
@@ -3955,18 +3182,14 @@ function ringHTML(percent){
 
   const size = 190;
   const stroke = 14;
-  const radius =
-    (size-stroke)/2;
-
-  const circumference =
-    2*Math.PI*radius;
+  const radius = (size-stroke)/2;
+  const circumference = 2*Math.PI*radius;
 
   const offset =
     circumference *
     (1-percent/100);
 
   return `
-
     <div class="ring">
 
       <svg
@@ -3995,21 +3218,12 @@ function ringHTML(percent){
       </svg>
 
       <div class="ring-center">
-
-        <div class="ring-number">
-          ${percent}%
-        </div>
-
-        <div class="ring-label">
-          Today
-        </div>
-
+        <div class="ring-number">${percent}%</div>
+        <div class="ring-label">Today</div>
       </div>
 
     </div>
-
   `;
-
 }
 
 
@@ -4020,65 +3234,38 @@ function ringHTML(percent){
 function todayMessage(percent){
 
   if(percent === 100){
-
     return "Every commitment is done. You kept the promise today.";
-
   }
 
   if(percent >= 75){
-
     return "You're close. Finish the arc before the day ends.";
-
   }
 
   if(percent >= 50){
-
     return "Halfway there. Don't let an unfinished day become a zero.";
-
   }
 
   if(percent > 0){
-
     return "You started. Now keep moving.";
-
   }
 
   return "The day is still yours. Make the first move.";
-
 }
 
 function todayHeadline(percent){
 
-  if(percent === 100){
-    return "Arc complete.";
-  }
-
-  if(percent >= 75){
-    return "Finish strong.";
-  }
-
-  if(percent >= 50){
-    return "Stay in motion.";
-  }
-
-  if(percent > 0){
-    return "Keep going.";
-  }
-
+  if(percent === 100) return "Arc complete.";
+  if(percent >= 75) return "Finish strong.";
+  if(percent >= 50) return "Stay in motion.";
+  if(percent > 0) return "Keep going.";
   return "Show up.";
-
 }
 
 function renderToday(){
 
-  const habits =
-    visibleHabits();
-
-  const today =
-    todayKey();
-
-  const percent =
-    dayPercent(today);
+  const habits = visibleHabits();
+  const today = todayKey();
+  const percent = dayPercent(today);
 
   $("todayRing").innerHTML =
     ringHTML(percent);
@@ -4107,9 +3294,7 @@ function renderToday(){
     bestPerfectDays();
 
   $("perfectDays").textContent =
-    countPerfectDays(
-      dateList(30)
-    );
+    countPerfectDays(dateList(30));
 
   $("todayCount").textContent =
     `${completedOnDay(today)} / ${habits.length} completed`;
@@ -4118,49 +3303,32 @@ function renderToday(){
   renderWeek();
   renderOverall();
   renderTodayStats();
-
 }
 
 function renderTodayHabits(){
 
-  const container =
-    $("todayHabits");
-
-  const habits =
-    visibleHabits();
+  const container = $("todayHabits");
+  const habits = visibleHabits();
 
   if(!habits.length){
 
-    container.innerHTML =
-      emptyHTML(
-        "No habits yet",
-        "Add your first commitment to start your arc."
-      );
+    container.innerHTML = emptyHTML(
+      "No habits yet",
+      "Add your first commitment to start your arc."
+    );
 
     return;
-
   }
 
   container.innerHTML =
     habits.map(h => {
 
-      const done =
-        isDone(
-          todayKey(),
-          h.id
-        );
-
-      const streak =
-        currentStreak(h.id);
+      const done = isDone(todayKey(),h.id);
+      const streak = currentStreak(h.id);
 
       return `
-
         <div
-          class="habit-card ${
-            done
-              ? "completed"
-              : ""
-          }"
+          class="habit-card ${done ? "completed" : ""}"
           data-habit-card="${h.id}"
         >
 
@@ -4178,7 +3346,6 @@ function renderTodayHabits(){
 
           </label>
 
-
           <div class="habit-info">
 
             <div class="habit-name">
@@ -4188,29 +3355,17 @@ function renderTodayHabits(){
                 style="background:${h.color}"
               ></span>
 
-              <b>
-                ${escapeHTML(h.name)}
-              </b>
+              <b>${escapeHTML(h.name)}</b>
 
             </div>
 
             <div class="habit-desc">
-              ${escapeHTML(
-                h.desc ||
-                "Keep this commitment."
-              )}
+              ${escapeHTML(h.desc || "Keep this commitment.")}
             </div>
 
           </div>
 
-
-          <div
-            class="streak ${
-              streak
-                ? ""
-                : "zero"
-            }"
-          >
+          <div class="streak ${streak ? "" : "zero"}">
 
             <svg class="icon icon-sm">
               <use href="#flame"/>
@@ -4221,109 +3376,58 @@ function renderTodayHabits(){
           </div>
 
         </div>
-
       `;
 
     }).join("");
-
 }
 
 function renderWeek(){
 
-  const days =
-    currentWeekDays();
-
-  const monday =
-    days[0];
-
-  const sunday =
-    days[6];
+  const days = currentWeekDays();
+  const today = todayKey();
 
   $("weekRange").textContent =
-    `${formatDate(
-      monday.date,
-      {
-        month:"short",
-        day:"numeric"
-      }
-    )} – ${formatDate(
-      sunday.date,
-      {
-        month:"short",
-        day:"numeric"
-      }
-    )}`;
+    `${formatDate(days[0].date,{month:"short",day:"numeric"})} – ${formatDate(days[6].date,{month:"short",day:"numeric"})}`;
 
   $("weekBars").innerHTML =
     days.map(d => {
 
-      const percent =
-        dayPercent(d.key);
-
-      const today =
-        d.key === todayKey();
-
-      const future =
-        d.key > todayKey();
+      const future = d.key > today;
+      const isToday = d.key === today;
+      const percent = future ? 0 : dayPercent(d.key);
 
       return `
-
-        <div
-          class="day-bar ${
-            today
-              ? "today"
-              : ""
-          }"
-        >
+        <div class="day-bar ${isToday ? "today" : ""} ${future ? "future" : ""}">
 
           <div class="day-percent">
-            ${
-              future
-                ? "—"
-                : percent + "%"
-            }
+            ${future ? "–" : percent + "%"}
           </div>
 
           <div class="bar-track">
 
             <div
               class="bar-fill"
-              style="height:${
-                future
-                  ? 0
-                  : percent
-              }%"
+              style="height:${percent}%"
             ></div>
 
           </div>
 
           <div class="day-name">
-            ${formatDate(
-              d.date,
-              {
-                weekday:"short"
-              }
-            )}
+            ${formatDate(d.date,{weekday:"short"})}
           </div>
 
         </div>
-
       `;
 
     }).join("");
-
 }
 
 function renderOverall(){
 
-  const days =
-    dateList(30);
+  const days = dateList(30);
+  const habits = visibleHabits();
 
-  const habits =
-    visibleHabits();
-
-  const total =
-    overallPercent(days);
+  const total = overallPercent(days);
 
   $("overallRate").textContent =
     `${total}%`;
@@ -4331,34 +3435,21 @@ function renderOverall(){
   if(!habits.length){
 
     $("overallProgress").innerHTML =
-      `<div class="muted small">
-        No habits.
-      </div>`;
+      `<div class="muted small">No habits.</div>`;
 
     return;
-
   }
 
   $("overallProgress").innerHTML =
     habits.map(h => {
 
       const done =
-        days.filter(
-          d => isDone(
-            d.key,
-            h.id
-          )
-        ).length;
+        days.filter(d => isDone(d.key,h.id)).length;
 
       const percent =
-        Math.round(
-          done /
-          days.length *
-          100
-        );
+        Math.round(done/days.length*100);
 
       return `
-
         <div class="progress-row">
 
           <div class="progress-head">
@@ -4375,64 +3466,49 @@ function renderOverall(){
             </div>
 
             <div class="progress-value">
-              ${done}/${days.length}
-              ·
-              ${percent}%
+              ${done}/${days.length} · ${percent}%
             </div>
 
           </div>
 
           <div class="progress-track">
-
             <div
               class="progress-fill"
-              style="
-                width:${percent}%;
-                background:${h.color};
-              "
+              style="width:${percent}%"
             ></div>
-
           </div>
 
         </div>
-
       `;
 
     }).join("");
-
 }
 
 function renderTodayStats(){
 
-  const days =
-    dateList(30);
-
-  const habits =
-    visibleHabits();
+  const days = dateList(30);
+  const habits = visibleHabits();
 
   let totalCompleted = 0;
 
   days.forEach(d => {
-
-    totalCompleted +=
-      completedOnDay(d.key);
-
+    totalCompleted += completedOnDay(d.key);
   });
 
   const possible =
-    days.length *
-    habits.length;
+    days.length * habits.length;
 
   const perfect =
     countPerfectDays(days);
 
+  const bestCurrent =
+    habits.length
+      ? Math.max(...habits.map(h => currentStreak(h.id)))
+      : 0;
+
   const bestHistorical =
     habits.length
-      ? Math.max(
-          ...habits.map(
-            h => bestStreak(h.id)
-          )
-        )
+      ? Math.max(...habits.map(h => bestStreak(h.id)))
       : 0;
 
   const stats = [
@@ -4446,14 +3522,9 @@ function renderTodayStats(){
 
     {
       label:"Consistency",
-      value:
-        possible
-          ? Math.round(
-              totalCompleted /
-              possible *
-              100
-            ) + "%"
-          : "0%",
+      value:possible
+        ? Math.round(totalCompleted/possible*100)+"%"
+        : "0%",
       caption:"overall completion",
       icon:"chart"
     },
@@ -4467,8 +3538,7 @@ function renderTodayStats(){
 
     {
       label:"Best streak",
-      value:
-        bestHistorical + "d",
+      value:bestHistorical+"d",
       caption:"single habit record",
       icon:"flame"
     }
@@ -4477,7 +3547,6 @@ function renderTodayStats(){
 
   $("todayStats").innerHTML =
     stats.map(s => `
-
       <div class="stat-card">
 
         <div class="stat-top">
@@ -4487,11 +3556,9 @@ function renderTodayStats(){
           </div>
 
           <div class="stat-icon">
-
             <svg class="icon icon-sm">
               <use href="#${s.icon}"/>
             </svg>
-
           </div>
 
         </div>
@@ -4505,9 +3572,7 @@ function renderTodayStats(){
         </div>
 
       </div>
-
     `).join("");
-
 }
 
 
@@ -4517,22 +3582,21 @@ function renderTodayStats(){
 
 function renderHabitsPage(){
 
-  /*
-    Center the selected range around today.
+  const days = windowList(habitRange);
+  const habits = visibleHabits();
+  const today = todayKey();
 
-    7  = 3 before + today + 4 after
-    14 = 7 before + today + 7 after
-    30 = 15 before + today + 15 after
-    60 = 30 before + today + 30 after
-  */
+  const before = Math.floor(habitRange/2);
+  const after = habitRange-before-1;
 
-  const days =
-    centeredDateList(
-      habitRange
-    );
+  $("habitRangeText").textContent =
+    `${formatDate(days[0].date,{month:"short",day:"numeric"})} – ${formatDate(days[days.length-1].date,{month:"short",day:"numeric"})} · ${before} days before, today, ${after} days after`;
 
-  const habits =
-    visibleHabits();
+  const oldWrap =
+    document.querySelector("#habitCalendar .calendar-wrap");
+
+  const oldScroll =
+    oldWrap ? oldWrap.scrollLeft : 0;
 
   if(!habits.length){
 
@@ -4543,113 +3607,61 @@ function renderHabitsPage(){
       );
 
     return;
-
   }
 
   let html = `
-
     <div class="calendar-wrap">
-
       <div
         class="calendar"
         style="--days:${days.length}"
       >
 
-        <div
-          class="calendar-row calendar-header"
-        >
+        <div class="calendar-row calendar-header">
 
-          <div
-            style="text-align:left;padding-left:8px"
-          >
+          <div class="calendar-head-habit">
             HABIT
           </div>
-
   `;
 
-  days.forEach((d,i) => {
+  days.forEach((d, i) => {
 
-    const showMonth =
-      i === 0 ||
-      (
-        d.date.getMonth() !==
-        days[i-1].date.getMonth()
-      );
+    const showMonth = i === 0 ||
+      (d.date.getMonth() !== days[i-1].date.getMonth());
 
-    const monthName =
-      d.date.toLocaleDateString(
-        "en-US",
-        {
-          month:"short"
-        }
-      );
+    const monthName = d.date.toLocaleDateString("en-US", {month:"short"});
 
     html += `
-
       <div
-        class="calendar-date ${
-          d.key === todayKey()
-            ? "today"
-            : ""
-        }"
+        class="calendar-date ${d.key===todayKey() ? "today" : ""}"
       >
-
-        <div class="calendar-day-num">
-          ${d.date.getDate()}
-        </div>
-
-        ${
-          showMonth
-            ? `
-              <div class="calendar-month">
-                ${monthName}
-              </div>
-            `
-            : ""
-        }
-
+        <div class="calendar-day-num">${d.date.getDate()}</div>
+        ${showMonth ? `<div class="calendar-month">${monthName}</div>` : ""}
       </div>
-
     `;
 
   });
 
   html += `
-
-          <div>
-            STATS
-          </div>
-
+          <div>STATS</div>
         </div>
-
   `;
 
   habits.forEach(h => {
 
-    const pastAndTodayDays =
-      days.filter(
-        d => d.key <= todayKey()
-      );
+    /* Percent counts only days up to today, not the days still ahead */
+
+    const elapsed =
+      days.filter(d => d.key <= today);
 
     const done =
-      pastAndTodayDays.filter(
-        d => isDone(
-          d.key,
-          h.id
-        )
-      ).length;
+      elapsed.filter(d => isDone(d.key,h.id)).length;
 
     const percent =
-      pastAndTodayDays.length
-        ? Math.round(
-            done /
-            pastAndTodayDays.length *
-            100
-          )
+      elapsed.length
+        ? Math.round(done/elapsed.length*100)
         : 0;
 
     html += `
-
       <div class="calendar-row">
 
         <div class="calendar-habit">
@@ -4662,23 +3674,18 @@ function renderHabitsPage(){
           ${escapeHTML(h.name)}
 
         </div>
-
     `;
 
     days.forEach(d => {
 
       const checked =
-        isDone(
-          d.key,
-          h.id
-        );
+        isDone(d.key,h.id);
 
       const future =
         d.key > todayKey();
 
       html += `
-
-        <div class="calendar-day">
+        <div class="calendar-day ${future ? "future" : ""}">
 
           <label class="calendar-check">
 
@@ -4696,40 +3703,53 @@ function renderHabitsPage(){
           </label>
 
         </div>
-
       `;
 
     });
 
     html += `
-
         <div class="calendar-stats">
-
           ${percent}%
-
           <span>
             ${currentStreak(h.id)}d
           </span>
-
         </div>
 
       </div>
-
     `;
 
   });
 
   html += `
-
       </div>
-
     </div>
-
   `;
 
-  $("habitCalendar").innerHTML =
-    html;
+  $("habitCalendar").innerHTML = html;
 
+  const wrap =
+    document.querySelector("#habitCalendar .calendar-wrap");
+
+  const todayCell =
+    document.querySelector("#habitCalendar .calendar-date.today");
+
+  if(wrap && wrap.clientWidth){
+
+    if(habitCenterToday && todayCell){
+
+      wrap.scrollLeft = Math.max(
+        0,
+        todayCell.offsetLeft -
+        (wrap.clientWidth-todayCell.offsetWidth)/2
+      );
+
+      habitCenterToday = false;
+
+    }else{
+      wrap.scrollLeft = oldScroll;
+    }
+
+  }
 }
 
 
@@ -4737,264 +3757,302 @@ function renderHabitsPage(){
    INSIGHTS
 ========================================================= */
 
-function overallDailyPercent(key){
+function firstCheckinKey(){
 
-  return dayPercent(key);
+  const keys =
+    Object.keys(state.checkins)
+      .filter(key =>
+        state.checkins[key] &&
+        Object.keys(state.checkins[key]).length
+      )
+      .sort();
 
+  return keys.length ? keys[0] : null;
+}
+
+/*
+  Rolling completion rate over the 7 days ending on `date`.
+  Days before the first check-in are not counted, so the
+  line starts honestly instead of at a low number.
+*/
+
+function rollingPercent(habitId,date,firstKey){
+
+  let done = 0;
+  let total = 0;
+
+  for(let i=0;i<7;i++){
+
+    const key = dateKey(addDays(date,-i));
+
+    if(!firstKey || key < firstKey){
+      break;
+    }
+
+    total++;
+
+    if(isDone(key,habitId)){
+      done++;
+    }
+  }
+
+  return total
+    ? Math.round(done/total*100)
+    : null;
+}
+
+function legendHTML(){
+
+  return visibleHabits().map(h => `
+    <span class="legend-item">
+      <span
+        class="dot"
+        style="background:${h.color}"
+      ></span>
+      ${escapeHTML(h.name)}
+    </span>
+  `).join("");
 }
 
 function renderInsights(){
 
-  const days =
-    dateList(insightRange);
-
-  const percent =
-    overallPercent(days);
-
-  $("insightLabel").textContent =
-    "Overall consistency";
+  const days = dateList(insightRange);
 
   $("insightScore").textContent =
-    `${percent}%`;
+    `${overallPercent(days)}%`;
 
   $("insightRangeText").textContent =
     `Last ${insightRange} days`;
+
+  $("insightLegend").innerHTML = legendHTML();
+  $("weeklyLegend").innerHTML = legendHTML();
 
   renderInsightChart(days);
   renderInsightKpis(days);
   renderLeaderboard();
   renderStreaks();
   renderWeeklyInsights();
-
 }
-
-
-/* =========================================================
-   MULTI-HABIT INSIGHTS GRAPH
-========================================================= */
 
 function renderInsightChart(days){
 
-  const host =
-    $("insightChart");
-
-  const habits =
-    visibleHabits();
-
-  if(!habits.length){
-
-    host.innerHTML =
-      `<div class="empty">
-        <div class="empty-title">
-          No habits yet
-        </div>
-        <div class="empty-text">
-          Add habits to see your insights.
-        </div>
-      </div>`;
-
-    $("insightLegend").innerHTML =
-      "";
-
-    return;
-
-  }
+  const host = $("insightChart");
+  const habits = visibleHabits();
+  const firstKey = firstCheckinKey();
 
   const width =
-    Math.max(
-      host.clientWidth || 700,
-      500
-    );
+    host.clientWidth || 700;
 
-  const height = 300;
+  const height = 270;
 
   const padLeft = 40;
-  const padRight = 20;
+  const padRight = 15;
   const padTop = 15;
-  const padBottom = 35;
+  const padBottom = 30;
 
   const innerWidth =
-    width -
-    padLeft -
-    padRight;
+    width-padLeft-padRight;
 
   const innerHeight =
-    height -
-    padTop -
-    padBottom;
+    height-padTop-padBottom;
 
   const x = i =>
     padLeft +
     (
       days.length === 1
         ? 0
-        : i /
-          (days.length - 1)
-    ) *
-    innerWidth;
+        : i/(days.length-1)
+    ) * innerWidth;
 
   const y = value =>
     padTop +
-    (
-      1 -
-      value / 100
-    ) *
-    innerHeight;
+    (1-value/100)*innerHeight;
 
   let svg = `
-
     <svg
       viewBox="0 0 ${width} ${height}"
-      preserveAspectRatio="none"
+      role="img"
+      aria-label="Habit consistency over time"
     >
-
   `;
 
-  [0,25,50,75,100]
-    .forEach(value => {
+  [0,25,50,75,100].forEach(value => {
 
-      const yy =
-        y(value);
-
-      svg += `
-
-        <line
-          x1="${padLeft}"
-          x2="${width-padRight}"
-          y1="${yy}"
-          y2="${yy}"
-          stroke="var(--line)"
-        />
-
-        <text
-          x="${padLeft-8}"
-          y="${yy+4}"
-          text-anchor="end"
-        >
-          ${value}
-        </text>
-
-      `;
-
-    });
-
-
-  habits.forEach(habit => {
-
-    const values =
-      days.map(d => {
-
-        return isDone(
-          d.key,
-          habit.id
-        )
-          ? 100
-          : 0;
-
-      });
-
-    const points =
-      values.map(
-        (v,i) =>
-          `${x(i).toFixed(1)},${y(v).toFixed(1)}`
-      );
-
-    const line =
-      points.map(
-        (p,i) =>
-          `${
-            i === 0
-              ? "M"
-              : "L"
-          }${p}`
-      ).join(" ");
+    const yy = y(value);
 
     svg += `
-
-      <path
-        d="${line}"
-        fill="none"
-        stroke="${habit.color}"
-        stroke-width="3"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        opacity=".9"
+      <line
+        x1="${padLeft}"
+        x2="${width-padRight}"
+        y1="${yy}"
+        y2="${yy}"
+        stroke="var(--line)"
       />
 
+      <text
+        x="${padLeft-8}"
+        y="${yy+4}"
+        text-anchor="end"
+      >
+        ${value}
+      </text>
     `;
 
   });
 
+  if(!habits.length || !firstKey){
+
+    svg += `
+      <text
+        x="${padLeft+innerWidth/2}"
+        y="${padTop+innerHeight/2}"
+        text-anchor="middle"
+      >
+        Check in to a habit and its line appears here.
+      </text>
+    `;
+
+  }else{
+
+    habits.forEach((h,index) => {
+
+      const values =
+        days.map(d =>
+          rollingPercent(h.id,d.date,firstKey)
+        );
+
+      let path = "";
+      let pen = false;
+      let last = -1;
+
+      values.forEach((v,i) => {
+
+        if(v === null){
+          pen = false;
+          return;
+        }
+
+        path +=
+          `${pen ? "L" : "M"}${x(i).toFixed(1)} ${y(v).toFixed(1)} `;
+
+        pen = true;
+        last = i;
+
+      });
+
+      if(last < 0){
+        return;
+      }
+
+      /*
+        Earlier habits get a thicker stroke and are drawn first,
+        so two habits with the same value both stay visible.
+      */
+
+      const strokeWidth =
+        Math.max(2,4-index*0.6);
+
+      svg += `
+        <path
+          d="${path.trim()}"
+          fill="none"
+          stroke="${h.color}"
+          stroke-width="${strokeWidth}"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
+      `;
+
+      values.forEach((v,i) => {
+
+        if(v === null){
+          return;
+        }
+
+        const isLast = i === last;
+
+        if(!isLast && days.length > 31){
+          return;
+        }
+
+        svg += `
+          <circle
+            cx="${x(i).toFixed(1)}"
+            cy="${y(v).toFixed(1)}"
+            r="${isLast ? 4.5 : 2.5}"
+            fill="${isLast ? h.color : "var(--panel)"}"
+            stroke="${h.color}"
+            stroke-width="2"
+          >
+            <title>${escapeHTML(h.name)} · ${formatDate(days[i].date,{month:"short",day:"numeric"})} · ${v}%</title>
+          </circle>
+        `;
+
+      });
+
+    });
+
+  }
 
   const step =
     Math.max(
       1,
-      Math.ceil(
-        days.length / 7
-      )
+      Math.ceil(days.length/(width < 500 ? 4 : 7))
     );
 
-  days.forEach((d,i) => {
+  const labelled = [];
 
-    if(
-      i % step === 0 ||
-      i === days.length-1
-    ){
+  for(let i=0;i<days.length;i+=step){
+    labelled.push(i);
+  }
 
-      svg += `
+  const lastIndex = days.length-1;
 
-        <text
-          x="${x(i)}"
-          y="${height-8}"
-          text-anchor="middle"
-        >
-          ${d.date.getDate()}
-        </text>
+  if(labelled[labelled.length-1] !== lastIndex){
 
-      `;
-
+    if(lastIndex-labelled[labelled.length-1] < step*0.6){
+      labelled[labelled.length-1] = lastIndex;
+    }else{
+      labelled.push(lastIndex);
     }
+
+  }
+
+  let previousMonth = null;
+
+  labelled.forEach(i => {
+
+    const d = days[i];
+    const month = d.date.getMonth();
+
+    const label =
+      month !== previousMonth
+        ? formatDate(d.date,{month:"short",day:"numeric"})
+        : d.date.getDate();
+
+    previousMonth = month;
+
+    svg += `
+      <text
+        x="${x(i)}"
+        y="${height-8}"
+        text-anchor="${i === lastIndex && i !== 0 ? "end" : i === 0 ? "start" : "middle"}"
+      >
+        ${label}
+      </text>
+    `;
 
   });
 
   svg += "</svg>";
 
-  host.innerHTML =
-    svg;
-
-
-  $("insightLegend").innerHTML =
-    habits.map(h => `
-
-      <div class="legend-item">
-
-        <span
-          class="legend-dot"
-          style="background:${h.color}"
-        ></span>
-
-        ${escapeHTML(h.name)}
-
-      </div>
-
-    `).join("");
-
+  host.innerHTML = svg;
 }
-
-
-/* =========================================================
-   INSIGHT KPIS
-========================================================= */
 
 function renderInsightKpis(days){
 
   const week =
-    days.slice(
-      -Math.min(
-        7,
-        days.length
-      )
-    );
+    days.slice(-Math.min(7,days.length));
 
   const previous =
     days.length >= 14
@@ -5012,16 +4070,14 @@ function renderInsightKpis(days){
   const delta =
     previousPercent === null
       ? null
-      : current -
-        previousPercent;
+      : current-previousPercent;
 
-  const best =
-    Math.max(
-      0,
-      ...visibleHabits().map(
-        h => bestStreak(h.id)
-      )
-    );
+  const best = Math.max(
+    0,
+    ...visibleHabits().map(
+      h => bestStreak(h.id)
+    )
+  );
 
   const perfect =
     countPerfectDays(days);
@@ -5038,11 +4094,7 @@ function renderInsightKpis(days){
       value:
         delta === null
           ? "—"
-          : `${
-              delta >= 0
-                ? "+"
-                : ""
-            }${delta}%`,
+          : `${delta >= 0 ? "+" : ""}${delta}%`,
       cls:
         delta === null
           ? ""
@@ -5065,71 +4117,42 @@ function renderInsightKpis(days){
 
   $("insightKpis").innerHTML =
     cards.map(c => `
-
       <div class="kpi">
 
         <div class="kpi-label">
           ${c.label}
         </div>
 
-        <div
-          class="kpi-value ${
-            c.cls || ""
-          }"
-        >
+        <div class="kpi-value ${c.cls || ""}">
           ${c.value}
         </div>
 
       </div>
-
     `).join("");
-
 }
-
-
-/* =========================================================
-   LEADERBOARD
-========================================================= */
 
 function renderLeaderboard(){
 
   const days =
-    dateList(
-      leaderboardRange
-    );
+    dateList(leaderboardRange);
 
-  const habits =
-    visibleHabits();
+  const habits = visibleHabits();
 
   const rows =
     habits.map(h => {
 
       const done =
         days.filter(
-          d =>
-            isDone(
-              d.key,
-              h.id
-            )
+          d => isDone(d.key,h.id)
         ).length;
 
       return {
-
         habit:h,
-
-        percent:
-          Math.round(
-            done /
-            days.length *
-            100
-          )
-
+        percent:Math.round(done/days.length*100)
       };
 
     }).sort(
-      (a,b) =>
-        b.percent -
-        a.percent
+      (a,b) => b.percent-a.percent
     );
 
   if(!rows.length){
@@ -5140,82 +4163,53 @@ function renderLeaderboard(){
       </div>`;
 
     return;
-
   }
 
   $("leaderboard").innerHTML =
-    rows.map(
-      (r,index) => `
+    rows.map((r,index) => `
+      <div class="rank-row">
 
-        <div class="rank-row">
+        <div class="rank-top">
 
-          <div class="rank-top">
+          <span
+            class="dot"
+            style="background:${r.habit.color}"
+          ></span>
 
-            <span
-              class="dot"
-              style="
-                background:${r.habit.color}
-              "
-            ></span>
+          <span class="rank-name">
+            ${index+1}. ${escapeHTML(r.habit.name)}
+          </span>
 
-            <span class="rank-name">
-
-              ${index+1}.
-              ${escapeHTML(
-                r.habit.name
-              )}
-
-            </span>
-
-            <span class="rank-score">
-              ${r.percent}%
-            </span>
-
-          </div>
-
-          <div class="progress-track">
-
-            <div
-              class="progress-fill"
-              style="
-                width:${r.percent}%;
-                background:${r.habit.color}
-              "
-            ></div>
-
-          </div>
+          <span class="rank-score">
+            ${r.percent}%
+          </span>
 
         </div>
 
-      `
-    ).join("");
+        <div class="progress-track">
 
+          <div
+            class="progress-fill"
+            style="width:${r.percent}%;background:${r.habit.color}"
+          ></div>
+
+        </div>
+
+      </div>
+    `).join("");
 }
-
-
-/* =========================================================
-   STREAKS
-========================================================= */
 
 function renderStreaks(){
 
   const habits =
     visibleHabits()
       .map(h => ({
-
         habit:h,
-
-        current:
-          currentStreak(h.id),
-
-        best:
-          bestStreak(h.id)
-
+        current:currentStreak(h.id),
+        best:bestStreak(h.id)
       }))
       .sort(
-        (a,b) =>
-          b.current -
-          a.current
+        (a,b) => b.current-a.current
       );
 
   if(!habits.length){
@@ -5226,35 +4220,24 @@ function renderStreaks(){
       </div>`;
 
     return;
-
   }
 
   $("streakList").innerHTML =
     habits.map(r => `
-
       <div class="streak-row">
 
         <div class="streak-left">
 
           <span
             class="dot"
-            style="
-              background:${r.habit.color}
-            "
+            style="background:${r.habit.color}"
           ></span>
 
           <div>
-
-            <b>
-              ${escapeHTML(
-                r.habit.name
-              )}
-            </b>
-
+            <b>${escapeHTML(r.habit.name)}</b>
             <div class="muted small">
               Best: ${r.best} days
             </div>
-
           </div>
 
         </div>
@@ -5264,194 +4247,88 @@ function renderStreaks(){
         </div>
 
       </div>
-
     `).join("");
-
 }
 
-
-/* =========================================================
-   WEEKLY INSIGHTS
-========================================================= */
-
 function renderWeeklyInsights(){
+
+  const habits = visibleHabits();
 
   const weeks =
     Math.min(
       8,
-      Math.ceil(
-        insightRange / 7
-      )
+      Math.ceil(insightRange/7)
     );
 
   const allDays =
-    dateList(
-      weeks * 7
-    );
-
-  const habits =
-    visibleHabits();
+    dateList(weeks*7);
 
   const result = [];
 
-  for(
-    let i=0;
-    i<weeks;
-    i++
-  ){
+  for(let i=0;i<weeks;i++){
 
     const slice =
-      allDays.slice(
-        i * 7,
-        i * 7 + 7
-      );
+      allDays.slice(i*7,i*7+7);
 
     if(!slice.length){
       continue;
     }
 
-    const startDate =
-      slice[0].date;
-
-    const endDate =
-      slice[slice.length-1].date;
+    const startDate = slice[0].date;
+    const endDate = slice[slice.length-1].date;
 
     result.push({
-
-      label:
-        `W${i+1}`,
-
-      dates:
-        `${formatDate(
-          startDate,
-          {
-            month:"short",
-            day:"numeric"
-          }
-        )} – ${formatDate(
-          endDate,
-          {
-            month:"short",
-            day:"numeric"
-          }
-        )}`,
-
-      habits:
-        habits.map(h => {
-
-          const done =
-            slice.filter(
-              d =>
-                isDone(
-                  d.key,
-                  h.id
-                )
-            ).length;
-
-          return {
-
-            habit:h,
-
-            percent:
-              Math.round(
-                done /
-                slice.length *
-                100
-              )
-
-          };
-
-        })
-
+      label:`W${i+1}`,
+      dates:`${formatDate(startDate,{month:"short",day:"numeric"})} – ${formatDate(endDate,{month:"short",day:"numeric"})}`,
+      percent:overallPercent(slice),
+      habits:habits.map(h => ({
+        habit:h,
+        percent:Math.round(
+          slice.filter(d => isDone(d.key,h.id)).length /
+          slice.length *
+          100
+        )
+      }))
     });
 
   }
 
-
-  if(!habits.length){
-
-    $("weeklyInsights").innerHTML =
-      `<div class="muted small">
-        No habits.
-      </div>`;
-
-    $("weeklyLegend").innerHTML =
-      "";
-
-    return;
-
-  }
-
+  $("weeklyInsights").style.gridTemplateColumns =
+    `repeat(${Math.max(1,result.length)},minmax(56px,1fr))`;
 
   $("weeklyInsights").innerHTML =
     result.map(w => `
-
       <div class="week-column">
 
-        <div
-          class="day-percent"
-          style="visibility:hidden"
-        >
-          100%
+        <div class="day-percent">
+          ${w.percent}%
         </div>
 
-        <div class="week-bars-stack">
+        <div class="bar-group">
 
-          ${w.habits.map(r => `
-
+          ${w.habits.map(item => `
             <div
-              class="week-habit-bar"
-              title="${
-                escapeHTML(
-                  r.habit.name
-                )
-              }: ${r.percent}%"
-              style="
-                height:${r.percent}%;
-                background:${r.habit.color};
-              "
-            ></div>
-
+              class="bar-track"
+              title="${escapeHTML(item.habit.name)}: ${item.percent}%"
+            >
+              <div
+                class="bar-fill"
+                style="height:${item.percent}%;background:${item.habit.color}"
+              ></div>
+            </div>
           `).join("")}
 
         </div>
 
         <div class="week-label">
-
-          <div>
-            ${w.label}
-          </div>
-
-          <div>
-            ${w.dates}
-          </div>
-
+          <div>${w.label}</div>
+          <div>${w.dates}</div>
         </div>
 
       </div>
-
     `).join("");
-
-
-  $("weeklyLegend").innerHTML =
-    habits.map(h => `
-
-      <div class="legend-item">
-
-        <span
-          class="legend-dot"
-          style="
-            background:${h.color}
-          "
-        ></span>
-
-        ${escapeHTML(h.name)}
-
-      </div>
-
-    `).join("");
-
 }
+
 
 
 /* =========================================================
@@ -5460,8 +4337,7 @@ function renderWeeklyInsights(){
 
 function renderManage(){
 
-  const habits =
-    state.habits;
+  const habits = state.habits;
 
   if(!habits.length){
 
@@ -5472,12 +4348,10 @@ function renderManage(){
       );
 
     return;
-
   }
 
   $("manageList").innerHTML =
     habits.map(h => `
-
       <div class="manage-item">
 
         <span
@@ -5487,23 +4361,15 @@ function renderManage(){
 
         <div class="manage-info">
 
-          <b>
-            ${escapeHTML(h.name)}
-          </b>
+          <b>${escapeHTML(h.name)}</b>
 
           <small>
-            ${
-              h.visible === false
-                ? "Hidden"
-                : escapeHTML(
-                    h.desc ||
-                    "No description"
-                  )
-            }
+            ${h.visible === false
+              ? "Hidden"
+              : escapeHTML(h.desc || "No description")}
           </small>
 
         </div>
-
 
         <button
           class="manage-action"
@@ -5515,23 +4381,13 @@ function renderManage(){
           </svg>
         </button>
 
-
         <button
           class="manage-action"
           data-toggle="${h.id}"
-          title="${
-            h.visible === false
-              ? "Show"
-              : "Hide"
-          }"
+          title="${h.visible === false ? "Show" : "Hide"}"
         >
-          ${
-            h.visible === false
-              ? "○"
-              : "●"
-          }
+          ${h.visible === false ? "○" : "●"}
         </button>
-
 
         <button
           class="manage-action danger"
@@ -5544,62 +4400,38 @@ function renderManage(){
         </button>
 
       </div>
-
     `).join("");
-
 }
 
 function addHabit(name,desc){
 
   const color =
-    COLORS[
-      state.habits.length %
-      COLORS.length
-    ];
+    COLORS[state.habits.length % COLORS.length];
 
   state.habits.push({
-
     id:uid(),
-
     name,
-
     desc,
-
     color,
-
     visible:true
-
   });
 
   save();
-
   renderAll();
-
 }
 
-function updateHabit(
-  id,
-  name,
-  desc
-){
+function updateHabit(id,name,desc){
 
   const habit =
     habitById(id);
 
-  if(!habit){
-    return;
-  }
+  if(!habit)return;
 
-  habit.name =
-    name;
-
-  habit.desc =
-    desc;
+  habit.name = name;
+  habit.desc = desc;
 
   save();
-
   renderAll();
-
 }
 
 function toggleHabit(id){
@@ -5607,19 +4439,14 @@ function toggleHabit(id){
   const habit =
     habitById(id);
 
-  if(!habit){
-    return;
-  }
+  if(!habit)return;
 
   habit.visible =
     habit.visible === false;
 
   save();
-
   renderAll();
-
   renderManage();
-
 }
 
 function deleteHabit(id){
@@ -5627,18 +4454,14 @@ function deleteHabit(id){
   const habit =
     habitById(id);
 
-  if(!habit){
-    return;
-  }
+  if(!habit)return;
 
   if(
     !confirm(
       `Delete "${habit.name}"?\n\nIts history will also be removed.`
     )
   ){
-
     return;
-
   }
 
   state.habits =
@@ -5646,24 +4469,18 @@ function deleteHabit(id){
       h => h.id !== id
     );
 
-  Object.keys(
-    state.checkins
-  ).forEach(key => {
+  Object.keys(state.checkins)
+    .forEach(key => {
 
-    if(state.checkins[key]){
+      if(state.checkins[key]){
+        delete state.checkins[key][id];
+      }
 
-      delete state.checkins[key][id];
-
-    }
-
-  });
+    });
 
   save();
-
   renderAll();
-
   renderManage();
-
 }
 
 
@@ -5671,13 +4488,9 @@ function deleteHabit(id){
    EMPTY
 ========================================================= */
 
-function emptyHTML(
-  title,
-  text
-){
+function emptyHTML(title,text){
 
   return `
-
     <div class="empty">
 
       <div class="empty-icon">
@@ -5697,9 +4510,7 @@ function emptyHTML(
       </div>
 
     </div>
-
   `;
-
 }
 
 
@@ -5710,18 +4521,13 @@ function emptyHTML(
 function showView(view){
 
   const valid =
-    [
-      "today",
-      "habits",
-      "insights"
-    ];
+    ["today","habits","insights"];
 
   if(!valid.includes(view)){
     view = "today";
   }
 
-  currentView =
-    view;
+  currentView = view;
 
   $("page-today").hidden =
     view !== "today";
@@ -5733,49 +4539,38 @@ function showView(view){
     view !== "insights";
 
   document
-    .querySelectorAll(
-      "[data-view]"
-    )
+    .querySelectorAll("[data-view]")
     .forEach(button => {
 
-      if(
-        button.dataset.view ===
-        view
-      ){
-
+      if(button.dataset.view === view){
         button.setAttribute(
           "aria-current",
           "page"
         );
-
       }else{
-
         button.removeAttribute(
           "aria-current"
         );
-
       }
 
     });
-
 
   if(view === "today"){
     renderToday();
   }
 
   if(view === "habits"){
+    habitCenterToday = true;
     renderHabitsPage();
   }
 
   if(view === "insights"){
-
     renderInsights();
 
     setTimeout(
       renderInsights,
       30
     );
-
   }
 
   history.replaceState(
@@ -5783,7 +4578,6 @@ function showView(view){
     "",
     "#" + view
   );
-
 }
 
 
@@ -5794,21 +4588,14 @@ function showView(view){
 function renderAll(){
 
   renderToday();
-
   renderHabitsPage();
-
   renderInsights();
 
   if(
-    $("manageModal")
-      .classList
-      .contains("open")
+    $("manageModal").classList.contains("open")
   ){
-
     renderManage();
-
   }
-
 }
 
 
@@ -5818,17 +4605,13 @@ function renderAll(){
 
 function openModal(id){
 
-  $(id)
-    .classList
-    .add("open");
+  $(id).classList.add("open");
 
 }
 
 function closeModal(id){
 
-  $(id)
-    .classList
-    .remove("open");
+  $(id).classList.remove("open");
 
 }
 
@@ -5836,11 +4619,8 @@ function closeAllModals(){
 
   document
     .querySelectorAll(".overlay")
-    .forEach(
-      m =>
-        m.classList.remove(
-          "open"
-        )
+    .forEach(m =>
+      m.classList.remove("open")
     );
 
 }
@@ -5857,9 +4637,7 @@ document.addEventListener(
   event => {
 
     const nav =
-      event.target.closest(
-        "[data-view]"
-      );
+      event.target.closest("[data-view]");
 
     if(nav){
 
@@ -5868,7 +4646,6 @@ document.addEventListener(
       );
 
       return;
-
     }
 
   }
@@ -5891,12 +4668,8 @@ document.addEventListener(
     }
 
     if(input.disabled){
-
-      input.checked =
-        false;
-
+      input.checked = false;
       return;
-
     }
 
     setDone(
@@ -5913,148 +4686,115 @@ document.addEventListener(
 
 /* HABIT RANGE */
 
-$("habitRange")
-  .addEventListener(
-    "change",
-    event => {
+$("habitRange").addEventListener(
+  "change",
+  event => {
 
-      habitRange =
-        Number(
-          event.target.value
-        );
+    habitRange =
+      Number(event.target.value);
 
-      renderHabitsPage();
+    habitCenterToday = true;
 
-    }
-  );
+    renderHabitsPage();
+
+  }
+);
 
 
 /* INSIGHT RANGE */
 
-$("insightRange")
-  .addEventListener(
-    "change",
-    event => {
+$("insightRange").addEventListener(
+  "change",
+  event => {
 
-      insightRange =
-        Number(
-          event.target.value
-        );
+    insightRange =
+      Number(event.target.value);
 
-      renderInsights();
+    renderInsights();
 
-    }
-  );
+  }
+);
 
 
 /* LEADERBOARD */
 
-$("leaderRange")
-  .addEventListener(
-    "change",
-    event => {
+$("leaderRange").addEventListener(
+  "change",
+  event => {
 
-      leaderboardRange =
-        Number(
-          event.target.value
-        );
+    leaderboardRange =
+      Number(event.target.value);
 
-      renderLeaderboard();
+    renderLeaderboard();
 
-    }
-  );
+  }
+);
 
 
 /* THEME */
 
-$("themeBtn")
-  .addEventListener(
-    "click",
-    toggleTheme
-  );
+$("themeBtn").addEventListener(
+  "click",
+  toggleTheme
+);
 
 
 /* ADD */
 
-$("addBtn")
-  .addEventListener(
-    "click",
-    () => {
+$("addBtn").addEventListener(
+  "click",
+  () => {
 
-      $("newName").value =
-        "";
+    $("newName").value = "";
+    $("newDesc").value = "";
 
-      $("newDesc").value =
-        "";
+    openModal("addModal");
 
-      openModal(
-        "addModal"
-      );
+    setTimeout(
+      () => $("newName").focus(),
+      50
+    );
 
-      setTimeout(
-        () =>
-          $("newName").focus(),
-        50
-      );
-
-    }
-  );
+  }
+);
 
 
 /* CREATE HABIT */
 
-$("createHabit")
-  .addEventListener(
-    "click",
-    () => {
+$("createHabit").addEventListener(
+  "click",
+  () => {
 
-      const name =
-        $("newName")
-          .value
-          .trim();
+    const name =
+      $("newName").value.trim();
 
-      const desc =
-        $("newDesc")
-          .value
-          .trim();
+    const desc =
+      $("newDesc").value.trim();
 
-      if(!name){
-
-        $("newName")
-          .focus();
-
-        return;
-
-      }
-
-      addHabit(
-        name,
-        desc
-      );
-
-      closeModal(
-        "addModal"
-      );
-
+    if(!name){
+      $("newName").focus();
+      return;
     }
-  );
+
+    addHabit(name,desc);
+
+    closeModal("addModal");
+
+  }
+);
 
 
 /* MANAGE */
 
-$("manageBtn")
-  .addEventListener(
-    "click",
-    () => {
+$("manageBtn").addEventListener(
+  "click",
+  () => {
 
-      renderManage();
+    renderManage();
+    openModal("manageModal");
 
-      openModal(
-        "manageModal"
-      );
-
-    }
-  );
+  }
+);
 
 
 /* MODAL CLOSE */
@@ -6098,9 +4838,7 @@ document.addEventListener(
           edit.dataset.edit
         );
 
-      if(!habit){
-        return;
-      }
+      if(!habit)return;
 
       $("editId").value =
         habit.id;
@@ -6111,12 +4849,9 @@ document.addEventListener(
       $("editDesc").value =
         habit.desc || "";
 
-      openModal(
-        "editModal"
-      );
+      openModal("editModal");
 
       return;
-
     }
 
 
@@ -6132,7 +4867,6 @@ document.addEventListener(
       );
 
       return;
-
     }
 
 
@@ -6148,7 +4882,6 @@ document.addEventListener(
       );
 
       return;
-
     }
 
   }
@@ -6157,46 +4890,34 @@ document.addEventListener(
 
 /* SAVE EDIT */
 
-$("saveEdit")
-  .addEventListener(
-    "click",
-    () => {
+$("saveEdit").addEventListener(
+  "click",
+  () => {
 
-      const id =
-        $("editId")
-          .value;
+    const id =
+      $("editId").value;
 
-      const name =
-        $("editName")
-          .value
-          .trim();
+    const name =
+      $("editName").value.trim();
 
-      const desc =
-        $("editDesc")
-          .value
-          .trim();
+    const desc =
+      $("editDesc").value.trim();
 
-      if(!name){
-
-        $("editName")
-          .focus();
-
-        return;
-
-      }
-
-      updateHabit(
-        id,
-        name,
-        desc
-      );
-
-      closeModal(
-        "editModal"
-      );
-
+    if(!name){
+      $("editName").focus();
+      return;
     }
-  );
+
+    updateHabit(
+      id,
+      name,
+      desc
+    );
+
+    closeModal("editModal");
+
+  }
+);
 
 
 /* CLICK OUTSIDE MODAL */
@@ -6206,14 +4927,13 @@ document.addEventListener(
   event => {
 
     if(
-      event.target.classList
-        .contains("overlay")
+      event.target.classList.contains(
+        "overlay"
+      )
     ){
-
-      event.target
-        .classList
-        .remove("open");
-
+      event.target.classList.remove(
+        "open"
+      );
     }
 
   }
@@ -6227,9 +4947,7 @@ document.addEventListener(
   event => {
 
     if(event.key === "Escape"){
-
       closeAllModals();
-
     }
 
   }
@@ -6238,101 +4956,71 @@ document.addEventListener(
 
 /* ENTER TO ADD */
 
-$("newName")
-  .addEventListener(
-    "keydown",
-    event => {
+$("newName").addEventListener(
+  "keydown",
+  event => {
 
-      if(
-        event.key === "Enter" &&
-        !event.shiftKey
-      ){
+    if(
+      event.key === "Enter" &&
+      !event.shiftKey
+    ){
 
-        event.preventDefault();
+      event.preventDefault();
 
-        $("createHabit")
-          .click();
-
-      }
+      $("createHabit").click();
 
     }
-  );
+
+  }
+);
 
 
 /* AUTH */
 
-$("loginSwitchBtn")
-  .addEventListener(
-    "click",
-    () =>
-      switchAuthForm(
-        "signup"
-      )
-  );
+$("loginSwitchBtn").addEventListener(
+  "click",
+  () => switchAuthForm("signup")
+);
 
-$("signupSwitchBtn")
-  .addEventListener(
-    "click",
-    () =>
-      switchAuthForm(
-        "login"
-      )
-  );
+$("signupSwitchBtn").addEventListener(
+  "click",
+  () => switchAuthForm("login")
+);
 
-$("loginSubmitBtn")
-  .addEventListener(
-    "click",
-    signInWithEmail
-  );
+$("loginSubmitBtn").addEventListener(
+  "click",
+  signInWithEmail
+);
 
-$("signupSubmitBtn")
-  .addEventListener(
-    "click",
-    signUpWithEmail
-  );
+$("signupSubmitBtn").addEventListener(
+  "click",
+  signUpWithEmail
+);
 
-$("loginPassword")
-  .addEventListener(
-    "keydown",
-    event => {
-
-      if(
-        event.key === "Enter"
-      ){
-
-        event.preventDefault();
-
-        signInWithEmail();
-
-      }
-
+$("loginPassword").addEventListener(
+  "keydown",
+  event => {
+    if(event.key === "Enter"){
+      event.preventDefault();
+      signInWithEmail();
     }
-  );
+  }
+);
 
-$("signupConfirm")
-  .addEventListener(
-    "keydown",
-    event => {
-
-      if(
-        event.key === "Enter"
-      ){
-
-        event.preventDefault();
-
-        signUpWithEmail();
-
-      }
-
+$("signupConfirm").addEventListener(
+  "keydown",
+  event => {
+    if(event.key === "Enter"){
+      event.preventDefault();
+      signUpWithEmail();
     }
-  );
+  }
+);
 
-$("logoutBtn")
-  .addEventListener(
-    "click",
-    signOut
-  );
-
+$("logoutBtn").addEventListener(
+  "click",
+  signOut
+);
 
 /* RESIZE */
 
@@ -6342,21 +5030,14 @@ window.addEventListener(
   "resize",
   () => {
 
-    clearTimeout(
-      resizeTimer
-    );
+    clearTimeout(resizeTimer);
 
     resizeTimer =
       setTimeout(
         () => {
 
-          if(
-            currentView ===
-            "insights"
-          ){
-
+          if(currentView === "insights"){
             renderInsights();
-
           }
 
         },
@@ -6382,8 +5063,7 @@ setInterval(
 
     if(now !== lastDate){
 
-      lastDate =
-        now;
+      lastDate = now;
 
       renderAll();
 
@@ -6402,43 +5082,22 @@ async function init(){
 
   showLogin();
 
-  const ready =
-    await initSupabase();
+  const ready = await initSupabase();
 
   if(!ready){
-
-    showLoginError(
-      "Unable to connect to the account service. Check your Supabase configuration."
-    );
-
+    showLoginError("Unable to connect to the account service. Check your Supabase configuration.");
     return;
-
   }
 
-  const {
-    data:{
-      session
-    }
-  } =
-    await supabaseClient
-      .auth
-      .getSession();
+  const {data:{session}} =
+    await supabaseClient.auth.getSession();
 
   if(session){
-
-    currentUser =
-      session.user;
-
+    currentUser = session.user;
     await loadAuthenticatedData();
-
   }else{
-
-    switchAuthForm(
-      "login"
-    );
-
+    switchAuthForm("login");
   }
-
 }
 
 init();
